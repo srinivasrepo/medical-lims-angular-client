@@ -1,0 +1,68 @@
+<mat-card class="mat-card-c" *ngIf="pageType == 'MNG'">
+    <mat-card-content>
+        <mat-grid-list cols="1" rowHeight="68px" class="mt-2">
+            <mat-grid-tile>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Type</mat-label>
+                    <mat-select [(ngModel)]="capaMngObj.type">
+                        <mat-option *ngFor="let typ of typeList" [value]="typ.catItemID">{{typ.catItem}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-grid-tile>
+        </mat-grid-list>
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Action</mat-label>
+            <textarea matInput rows="4" [(ngModel)]="capaMngObj.capa" name="Action" maxlength="5000"></textarea>
+        </mat-form-field>
+        <mat-grid-list cols="2" rowHeight="68px">
+            <mat-grid-tile>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Target Date</mat-label>
+                    <input matInput [(ngModel)]="capaMngObj.targetDate" [matDatepicker]="targetDate" [min]="maxDate"
+                        placeholder="Target Date">
+                    <mat-datepicker-toggle matSuffix [for]="targetDate"></mat-datepicker-toggle>
+                    <mat-datepicker #targetDate></mat-datepicker>
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile>
+                <div class="full-width">
+                    <lims-lookup [info]="responsibilityInfo" #responsibility>
+                    </lims-lookup>
+                </div>
+            </mat-grid-tile>
+            <mat-grid-tile>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Area Of Implementation</mat-label>
+                    <mat-select [(ngModel)]="capaMngObj.areaOfImplementation">
+                        <mat-option *ngFor="let typ of implementationList" [value]="typ.catItemID">{{typ.catItem}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Scope of the Action</mat-label>
+                    <mat-select [(ngModel)]="capaMngObj.scopeOfCapa">
+                        <mat-option *ngFor="let typ of scopeList" [value]="typ.catItemID">{{typ.catItem}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-grid-tile>
+        </mat-grid-list>
+        <div align="right">
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="add('ADD')"
+            id="btnLoadersAdd" btnLoader [isLoaderOn]="isLoaderStart">
+                <i class="{{_global.icnAdd}}" aria-hidden="true"></i>&nbsp;Add</button>
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="add('CLEAR')">
+                <i class="{{_global.icnCancel}}" aria-hidden="true"></i>&nbsp;Clear</button>
+        </div>
+    </mat-card-content>
+</mat-card>
+
+
+
+<div class="add_scroll pl-1 pr-1">
+    <lims-grid [headers]="headersData" [dataSource]="dataSource" [actions]="gridAction"
+        (onActionClicked)="onActionClicked($event)"></lims-grid>
+</div>

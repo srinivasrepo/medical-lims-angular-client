@@ -1,0 +1,223 @@
+<page-head [pageTitle]="pageTitle" viewBack="true" [backUrl]="backUrl" [status]="status" [refNo]="refNo" [encEntityActID]="encSolutionID"
+[viewHistoryVisible]="viewHistoryVisible" [viewHistory]="viewHistory" [entityCode]="entityCode" showRpts="true"
+[encRptEntActID]="encSolutionID"></page-head>
+<mat-card class="mat-card-c div-content mb-4 mt-1rem qc_mobp-main-tab">
+    <mat-card-content>
+        <div align="right" class="pos-r-btn">
+            <button type="button" mat-raised-button class="btnbase-confirm" *ngIf="appBO.canApprove && encSolutionID"
+                (click)="confirm()">
+                <i class="{{_global.icnConfirm}}" aria-hidden="true"></i>&nbsp;&nbsp;Confirm</button>
+        </div>
+        <mat-tab-group #mbTab mat-align-tabs="center" [selectedIndex]="selectedTab" class="qc_mobp-main-tab mt-2">
+            <mat-tab label="Preparation">
+                <div class="qc_heading_spce">
+                    <mat-card class="mat-card-heading"> 
+                    <mat-card-content>
+                        <h4 class="cardtitle"> Initiation Details</h4>
+                <div class="pl-1 pr-1 mt-2">
+                    <mat-grid-list cols="2" rowHeight="68px">
+                        <mat-grid-tile>
+                            <div class="full-width">
+                                <lims-lookup [info]="materialInfo" #material (onSelect)="onSelectedLookup($event)">
+                                </lims-lookup>
+                            </div>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>STP Reference Number</mat-label>
+                                <input matInput [(ngModel)]="solutionRefCode" name="stpReference" disabled>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <!-- <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label> Primary Standard Molecular Weight</mat-label>
+                                <input matInput [(ngModel)]="molecularWeight" name="molecularWeight"
+                                    (keypress)="allowdecimal($event)" disabled>
+                            </mat-form-field>
+                        </mat-grid-tile> -->
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Formula Type</mat-label>
+                                <input matInput [(ngModel)]="formulaType" name="formulaType" disabled>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width searchLookUpTxt">
+                                <mat-label>Preparation Volume</mat-label>
+                                <input matInput placeholder="Preparation Volume" [(ngModel)]="volume"
+                                    (keypress)="allowdecimal($event)" [disabled]="buttonType=='Update' || disableAll">
+                                <span>{{uom}}</span>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Formula ID</mat-label>
+                                <mat-select placeholder="Formula ID" [(ngModel)]="formulaID"
+                                    [disabled]="buttonType=='Update' || disableAll">
+                                    <mat-option *ngFor="let typ of solutionFormulaType" [value]="typ.formulaID">
+                                        {{typ.formulaTitle}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Validity Period</mat-label>
+                                <mat-select placeholder="Validity Period" [(ngModel)]="validPeriodID"
+                                    [disabled]="buttonType=='Update' || disableAll"
+                                    (ngModelChange)="getValidityDate('VALID')">
+                                    <mat-option *ngFor="let item of periodList" [value]="item.id">
+                                        {{item.name}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile *ngIf="false">
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Valid Up to</mat-label>
+                                <input type="text" matInput [(ngModel)]="validUpTo" name="useBeforeDate" maxlength="25"
+                                    [disabled]="true">
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Re-Standardization Period</mat-label>
+                                <mat-select placeholder="Re-Standardization Period" [(ngModel)]="restdPeriodID"
+                                    [disabled]="buttonType=='Update' || disableAll"
+                                    (ngModelChange)="getValidityDate('RE_STD')">
+                                    <mat-option *ngFor="let item of periodList" [value]="item.id">
+                                        {{item.name}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile *ngIf="false">
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label> Re-Standardization Valid Date</mat-label>
+                                <input type="text" matInput [(ngModel)]="restdData" name="useBeforeDate" maxlength="25"
+                                    [disabled]="true">
+                            </mat-form-field>
+                        </mat-grid-tile>
+                    </mat-grid-list>
+                    <div align="right" class="pb-2 mt-2">
+
+                        <button type="button" mat-raised-button class="btnbase btn-blue"
+                            (click)="savePreparation('INIT')"
+                            [disabled]="isFinalPrep ? isFinalPrep : btnDisabledReq || disableAll"
+                            id="solPrepBtnLoader" btnLoader [isLoaderOn]="isLoaderStart">
+                            <i class="{{_global.icnSave}}" *ngIf="buttonType =='Save'" aria-hidden="true"></i>
+                            <i class="{{_global.icnUpdate}}" *ngIf="buttonType == 'Update'"
+                                aria-hidden="true"></i>&nbsp;{{buttonType}}</button>
+                        <button type="button" mat-raised-button class="btnbase btn-blue"
+                            [disabled]="buttonType == 'Update' || disableAll" (click)="clear()">
+                            <i class="{{_global.icnCancel}}" aria-hidden="true"></i>&nbsp;Clear</button>
+                    </div>
+                </div>
+                </mat-card-content>
+                </mat-card>
+                </div>
+                
+
+                <div class="qc_heading_spce" *ngIf="buttonType == 'Update'">
+                    <mat-card class="mat-card-heading"> 
+                    <mat-card-content>
+                        <h4 class="cardtitle"> Details of Lab Chemicals</h4>
+                <div class="px-5">
+                    <div class="py-m-0" >
+                        <div class="mt-3 pl-1 pb-2 pr-1 qc_mobp-mstable">
+                            
+                            <mng-solv [pageAction]="appBO.operationType == 'VIEW'?'VIEW':PreparationAction"
+                            [encEntActID]="encSolutionID" [sourceType]="sourceType" [entitySourceCode]="entityCode"
+                            [initTime]="appBO.initTime" [dataSource]="dataSource" (updateData)="updateInitTime($event)"
+                            [requestCode]="appBO.referenceNumber">
+                        </mng-solv>
+                               
+                        </div>
+                    </div>
+                </div>
+                </mat-card-content>
+                </mat-card>
+                </div>
+
+                <div class="qc_heading_spce mt-5" *ngIf="buttonType == 'Update'" >
+                    <mat-card class="mat-card-heading"> 
+                    <mat-card-content>
+                        <h4 class="cardtitle">Preparation Details</h4>
+                <div class="pl-1 pr-1 mt-2">
+                
+                    <mat-grid-list cols="2" rowHeight="68px">
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Primary Standard Drying Temp</mat-label>
+                                <input matInput [(ngModel)]="psDryingTem" name="psDryingTem" maxlength="50"
+                                    [disabled]="briefBtn == 'Update' || disableAll">
+                                <mat-hint align="end">{{psDryingTem?.length || 0}} / 50</mat-hint>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Drying Duration</mat-label>
+                                <input matInput [(ngModel)]="dryingDuration" name="dryingDuration" maxlength="50"
+                                    [disabled]="briefBtn == 'Update' || disableAll">
+                                <mat-hint align="end">{{dryingDuration?.length || 0}} / 50</mat-hint>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width searchLookUpTxt">
+                                <mat-label>Cooling Duration</mat-label>
+                                <input matInput [(ngModel)]="coolingDuration" name="coolingDuration" maxlength="50"
+                                    [disabled]="briefBtn == 'Update' || disableAll">
+                                <mat-hint align="end">{{coolingDuration?.length || 0}} / 50</mat-hint>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                    </mat-grid-list>
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Brief Description Of Preparation</mat-label>
+                        <textarea matInput [(ngModel)]="briefDescription"
+                            [disabled]="briefBtn == 'Update' || disableAll" name="briefDescription" rows="6" cols="10"
+                            maxlength="5000"></textarea>
+                        <mat-hint align="end">{{briefDescription?.length || 0 }} / 5000</mat-hint>
+                    </mat-form-field>
+
+                    <div align="right" class="pb-2 mt-2">
+                        <!-- 
+                        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="Uploadfiles()">
+                            <i class="{{_global.icnViewFiles}}" *ngIf="btnUpload != 'Upload'" aria-hidden="true"></i>
+                            <i class="{{_global.icnUpload}}" *ngIf="btnUpload == 'Upload'"
+                                aria-hidden="true"></i>&nbsp;{{btnUpload}}</button> -->
+
+                        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="addOccupancy()">
+                            <i class="{{_global.icnAdd}}" aria-hidden="true" *ngIf="briefBtn == 'Save'"></i>
+                            <i class="{{_global.icnView}}" aria-hidden="true" *ngIf="briefBtn == 'Update'"></i>
+                            &nbsp;Occupancy</button>
+
+                        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="Uploadfiles()">
+                            <i class="{{_global.icnViewFiles}}" *ngIf="btnUpload != 'Upload'" aria-hidden="true"></i>
+                            <i class="{{_global.icnUpload}}" *ngIf="btnUpload == 'Upload'"
+                                aria-hidden="true"></i>&nbsp;{{btnUpload}}</button>
+
+                        <button type="button" mat-raised-button class="btnbase btn-blue"
+                            (click)="savePreparation('BREIF')" *ngIf="!isFinalPrep" [disabled]="disableAll"
+                            id="briefPrepBtnLoader" btnLoader [isLoaderOn]="isLoaderStartIcn">
+                            <i class="{{_global.icnSave}}" *ngIf="briefBtn == 'Save'" aria-hidden="true"></i>
+                            <i class="{{_global.icnUpdate}}" *ngIf="briefBtn == 'Update'"
+                                aria-hidden="true"></i>&nbsp;{{briefBtn}}</button>
+                    </div>
+
+                </div>
+                </mat-card-content>
+                </mat-card>
+                </div>
+
+            </mat-tab>
+            <mat-tab label="Standardization" [disabled]="!isFinalPrep">
+                <div class="qc_table-stand ">
+                    <lims-stand></lims-stand>
+                </div>
+            </mat-tab>
+
+
+        </mat-tab-group>
+
+    </mat-card-content>
+</mat-card>

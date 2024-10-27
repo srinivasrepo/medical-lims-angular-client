@@ -1,0 +1,56 @@
+<div class="qc_heading_spce">
+    <mat-card class="mat-card-heading">
+        <mat-card-content>
+            <h4 class="cardtitle"> Containerwise Analysis Details
+                <mat-checkbox [(ngModel)]="allSelect" (ngModelChange)="selectAll($event)" *ngIf="pageType != 'VIEW' && pageType != 'UPD'" class="mt-0 mb-0 ml-0 float-right">
+                    Select All
+                </mat-checkbox>
+            </h4>
+            <div class="pl-2 pr-2">
+                <div class="grid-syn mt-2">
+
+
+                    <mat-grid-list cols="6" rowHeight="6:1" gutterSize="10px">
+                        <mat-grid-tile *ngFor="let item of packList" [ngClass]="{'pack-active' : item.isActive}"
+                            class="{{getClass(item.statusCode)}}">
+                            <div style="width: 80%;">
+                                <mat-checkbox [(ngModel)]="item.isSkipedFromAnalysis" (ngModelChange)="selectSingle()"
+                                    *ngIf="pageType != 'VIEW'"></mat-checkbox>
+                                {{item.packNumber}}
+                            </div>
+                            <div class="qc_iconstyle1">
+                                <i class="fas fa-plus-circle " (click)="getAnalysis(item.continerAnalysisID)"></i>
+
+                                <i class="{{_global.icnNotAllow}}" style="margin-left: 5px;" *ngIf="item.showIsSkipIcon"
+                                    matTooltip="Skipped From Analysis" aria-hidden="true"></i>
+
+                                <i class="{{getIcon(item.packAnalysisStatus)}}" style="margin-left: 5px;"
+                                    *ngIf="getIcon(item.packAnalysisStatus)"
+                                    matTooltip="{{getIconTooltip(item.packAnalysisStatus)}}"></i>
+                            </div>
+                        </mat-grid-tile>
+                    </mat-grid-list>
+
+                </div>
+                </div>
+    <div class="mt-3 pb-2 pr-1" align="right">
+        <button type="button" mat-raised-button class="btnbase btn-blue" *ngIf="pageType != 'VIEW' && pageType != 'UPD'"
+            (click)="skipAnalysis()" id="btnLoadersSkip" btnLoader [isLoaderOn]="isLoaderStartObj.isLoaderStartForSkip">
+            <i class="{{_global.icnIncludeExclude}}" aria-hidden="true"></i>&nbsp;Skip Analysis</button>
+        <!-- <button type="button" mat-raised-button class="btnbase btn-blue" (click)="specReset()" id="btnLoaders" btnLoader [isLoaderOn]="isLoaderStartObj.isLoaderStartSpecReset"
+            *ngIf="showSpecRest && headerInfo.inwardType != 'AQUAL' && pageType != 'VIEW' && (headerInfo.statusCode !='APP' && headerInfo.statusCode !='REJ')">
+            <i class="{{_global.icnChange}}" aria-hidden="true"></i>&nbsp;Spec Reset</button> -->
+    </div>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+
+
+
+    <div *ngIf="isShow && containerAnaID">
+        <app-analysis [encEntityActID]="containerAnaID" #samAnalysis [entityCode]="'QCSAMPASYS'"
+            [analysisMode]="analysisMode" (emitArdsExecID)="getArdsExcuID($event)" [sourceCode]="'CONT_WISE_ANA'"
+            [encSioID]="encSioID" [pageType]="pageType">
+        </app-analysis>
+    </div>

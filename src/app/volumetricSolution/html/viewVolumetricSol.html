@@ -1,0 +1,172 @@
+<page-head [pageTitle]="pageTitle" viewBack="true" [backUrl]="backUrl" [viewHistoryVisible]="viewHistoryVisible"
+    [viewHistory]="viewHistory" [status]="status" [refNo]="refNo" [entityCode]="entityCode" showRpts="true" [encRptEntActID]="encSolutionID"></page-head>
+<mat-card class="mat-card-c div-content qc_mobp-main-tab mt-1rem">
+    <mat-card-content>
+        <mat-tab-group mat-align-tabs="center" (selectedIndexChange)="changeTrans()" #tabGroup>
+            <mat-tab label="preparation">
+                <div class="qc_heading_spce">
+                    <mat-card class="mat-card-heading"> 
+                    <mat-card-content>
+                        <h4 class="cardtitle"> Initiation Details</h4>
+                    <div class="view-inv pb-2">
+                        <ul>
+                            <li>
+                                <mat-label>
+                                    <span>Solution</span>
+                                    <span>{{volSolInfo.materialName}}</span>
+                                </mat-label>
+                            </li>
+                            <li>
+                                <mat-label>
+                                    <span>STP Reference Number</span>
+                                    <span>{{volSolInfo.solutionCode}}</span>
+                                </mat-label>
+                            </li>
+                            <!-- <li>
+                            <mat-label>
+                                <span>Primary Standard Molecular Weight</span>
+                                <span>{{volSolInfo.molecularWeight}}</span>
+                            </mat-label>
+                        </li> -->
+
+                            <li>
+                                <mat-label>
+                                    <span>Formula Type</span>
+                                    <span>{{volSolInfo.formulaType}}</span>
+                                </mat-label>
+                            </li>
+
+                            <li>
+                                <mat-label>
+                                    <span>Preparation Volume</span>
+                                    <span>{{volSolInfo.preparationVolume}} {{volSolInfo.uom}}</span>
+                                </mat-label>
+                            </li>
+                            <!-- <li>
+                                <mat-label>
+                                    <span>UOM</span>
+                                    <span>{{volSolInfo.uom}}</span>
+                                </mat-label>
+                            </li> -->
+                            <li>
+                                <mat-label>
+                                    <span>Formula ID</span>
+                                    <span>{{volSolInfo.formulaTitle || 'N / A'}}</span>
+                                </mat-label>
+                            </li>
+                            <li>
+                                <mat-label>
+                                    <span>Validity Period</span>
+                                    <span>{{volSolInfo.validityTitle || 'N / A'}}</span>
+                                </mat-label>
+                            </li>
+                            <li>
+                                <mat-label>
+                                    <span>Re-standardization Period</span>
+                                    <span>{{volSolInfo.restdPeriodTitle || 'N / A'}}</span>
+                                </mat-label>
+                            </li>
+                            <div *ngIf="volSolInfo.discardedBy">
+
+                                <li>
+                                    <mat-label>
+                                        <span>Discarded By</span>
+                                        <span>{{volSolInfo.discardedBy}}</span>
+                                    </mat-label>
+                                </li>
+                                <li>
+                                    <mat-label>
+                                        <span>Discarded On</span>
+                                        <span>{{volSolInfo.discardedOn | date : 'dd/MMM/yyyy'}}</span>
+                                    </mat-label>
+                                </li>
+                                <li>
+                                    <mat-label>
+                                        <span>Comment</span>
+                                        <span>{{volSolInfo.comment}}</span>
+                                    </mat-label>
+                                </li>
+                            </div>
+                        </ul>
+                    </div>
+                    </mat-card-content>
+                    </mat-card>
+                </div>
+
+                <div class="qc_heading_spce mt-5">
+                    <mat-card class="mat-card-heading"> 
+                    <mat-card-content>
+                        <h4 class="cardtitle"> Details of Lab Chemicals</h4>
+                <div class="px-5">
+                    <div class="py-m-0" >
+                        <div class="mt-2 pl-1 pb-2 pr-1 qc_mobp-mstable">
+                            
+                            <mng-solv [pageAction]="'VIEW'" [encEntActID]="encSolutionID" [sourceType]="sourceType"
+                            [entitySourceCode]="entityCode" [dataSource]="dataSourcePrep">
+                        </mng-solv>
+                               
+                        </div>
+                    </div>
+                </div>
+                </mat-card-content>
+                </mat-card>
+                </div>
+
+                 
+
+                <div class="qc_heading_spce mt-5">
+                    <mat-card class="mat-card-heading"> 
+                    <mat-card-content>
+                        <h4 class="cardtitle">Preparation Details</h4>
+               
+                        <div class="view-inv">
+                            <ul>
+                                <li>
+                                    <mat-label>
+                                        <span> Primary Standard Drying Temp </span>
+                                        <span>{{volSolInfo.primaryStandardDryingTern || 'N / A'}}</span>
+                                    </mat-label>
+                                </li>
+                                <li>
+                                    <mat-label>
+                                        <span>Drying Duration </span>
+                                        <span>{{volSolInfo.dryingDuration || 'N / A'}}</span>
+                                    </mat-label>
+                                </li>
+                                <li>
+                                    <mat-label>
+                                        <span>Cooling Duration </span>
+                                        <span>{{volSolInfo.coolingDuration || 'N / A'}}</span>
+                                    </mat-label>
+                                </li>
+
+                                <li class="w-100" style="white-space: pre-wrap;">
+                                    <mat-label>
+                                        <span>Brief Description Of Preparation</span>
+                                        <span>{{volSolInfo.briefDescription}}</span>
+                                    </mat-label>
+                                </li>
+
+                            </ul>
+                        </div>
+                        <div class="mt-2 pb-2 pr-1" align="right">
+                            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="Uploadfiles()">
+                                <i class="{{_global.icnViewFiles}}" aria-hidden="true"></i>&nbsp; View Documents</button>
+                            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="addOccupancy()">
+                                <i class="{{_global.icnView}}" aria-hidden="true"></i>
+                                &nbsp;Occupancy</button>
+                        </div>
+                        </mat-card-content>
+                        </mat-card>
+                    </div>
+              
+                
+            </mat-tab>
+            <mat-tab label="Standardization">
+                <div class="px-5 qc_n-table_1">
+                    <lims-stand [pageLevelAction]="'VIEW'"></lims-stand>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </mat-card-content>
+</mat-card>

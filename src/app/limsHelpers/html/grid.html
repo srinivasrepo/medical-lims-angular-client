@@ -1,0 +1,326 @@
+<!-- Material Grid -->
+<div class="mt-2 mb-3 mr-0 ml-0 qc_n-table">
+
+    <!-- <button class="btn btn-primary" (click)="isTableEdit()">Edit</button> -->
+
+
+    <!-- <mat-table #table [dataSource]="dataSource" *ngIf="isEdited"
+        multiTemplateDataRows> -->
+
+    <mat-table #table [dataSource]="dataSource" *ngIf="dataSource && dataSource.data" multiTemplateDataRows>
+        <ng-container *ngFor="let column of headers" [matColumnDef]="column.columnDef">
+            <mat-header-cell *matHeaderCellDef class="{{column.width}}">
+
+                <mat-checkbox [disabled]="isEnableCheckbox" (change)="$event ? masterToggle($event) : null"
+                    [checked]="allCheckboxSelected" *ngIf="isShowCheckBox(column.columnDef) && isParentCheckBoxVisible">
+                </mat-checkbox>
+
+                {{ column.header }}
+
+                <i class="{{_global.icnDelete}}" (click)="HeaderDelete()" *ngIf="column.columnDef == 'select'"
+                    aria-hidden="true"></i>
+            </mat-header-cell>
+
+            <mat-cell *matCellDef="let row; let i = dataIndex;" class="{{column.width}}" (click)="onRowClick(row)">
+                <mat-label *ngIf="!displayControls(column.columnDef, row)">
+
+                    {{ formatString(column.cell(row), column.columnDef) }}
+
+                    <span *ngIf="column.columnDef == 'oosResult'">
+                        <mat-label [innerHTML]="row['unitSymbol']">{{row['unitSymbol']}}</mat-label>
+                    </span>
+
+                    <span *ngIf="column.columnDef == 'refNumberCls'">
+                        <i class="fas fa-info-circle" *ngIf="getTooltip(row)" matTooltip="{{getTooltip(row)}}"
+                            matTooltipClass="section-tool"></i>
+                    </span>
+                    <span *ngIf="column.columnDef == 'viewPackQty'">{{row['uom']}}</span>
+                    <span style="float: right;color: #c32525;"
+                        *ngIf="getdiscardPreparationCls(row) && column.columnDef == 'materialName'">Removed from
+                        list</span>
+                </mat-label>
+                <i *ngIf="column.columnDef == 'activitySta' && row['comment']" class="fas fa-exclamation-circle"
+                    [matTooltip]="row['comment']" style="font-size: 17px; padding-left: 5px;">
+                </i>
+                <i *ngIf="column.columnDef == 'documentActualName' && row['remarks']" class="fas fa-exclamation-circle"
+                [matTooltip]="row['remarks']" style="font-size: 17px; padding-left: 5px;">
+            </i>
+                <i *ngIf="column.columnDef =='icon' && row['isDestroyed']"
+                    matTooltip="Discarded or Moved to Sample destruction" class="fas fa-recycle"></i>
+                <i *ngIf="column.columnDef =='isIncludeOtherPlan' && row['isIncludeOtherPlan']"
+                    matTooltip="Previous shift pending work" style="color: #0daa34; font-size: 17px;"
+                    class="fas fa-exclamation-circle"></i>
+                <i *ngIf="column.columnDef =='passOrFail' && row['passOrFail']=='Pass'"
+                    style="color: #0daa34; font-size: 17px;" class="fas fa-check-circle"></i>
+                <i *ngIf="column.columnDef =='passOrFail' && row['passOrFail']=='Fail'"
+                    style="color: #c32525; font-size: 17px;" class="fas fa-times-circle"></i>
+                <i class="{{_global.icnNotAllow}}" style="color: #c32525;"
+                    *ngIf="column.columnDef =='iconInv' && row['invalidationID']"
+                    matTooltip="Occupancy from Invalidations" aria-hidden="true"></i>
+                <span style="cursor: pointer;">
+                    <i class="fas fa-exchange-alt" matTooltip="Conversion Factor"
+                        *ngIf="column.columnDef == 'uomConvert' && !hasValue(row['denomination']) && row['statusCode']=='APP'"
+                        (click)="uomConvert(row)"></i></span>
+
+                <i class="{{_global.icnOk}}" aria-hidden="true" *ngIf="checkfieldExist(row, column.columnDef)"></i>
+
+
+                <a *ngIf="column.columnDef == 'packBatchNumber'" href="javascript:"
+                    (click)="packDetails(row['encPackInvID'], row['statusCode'], row['refPackID'])">{{formatString(column.cell(row),
+                    column.columnDef)}}</a>
+
+                <a *ngIf="column.columnDef == 'arNumber' && row['rptVersionCode']" href="javascript:"
+                    (click)="generateReport(row['sioID'], row['rptVersionCode'])">{{formatString(column.cell(row),
+                    column.columnDef)}}</a>
+
+
+                <a *ngIf="column.columnDef == 'sdmsDateReceived'" href="javascript:"
+                    (click)="getSdmsIDDetails(row)">{{formatString(column.cell(row), column.columnDef)}}</a>
+                
+                
+
+                <mat-checkbox [disabled]="isEnableCheckbox" (change)="selectSingleChk($event, row, 'minutes')"
+                    [(ngModel)]="row[checkboxField]" *ngIf="isShowCheckBox(column.columnDef, row)">
+                </mat-checkbox>
+
+                <mat-form-field appearance="outline"
+                    *ngIf="enableTxtBox(column.columnDef) && column.columnDef == 'quantity' && row['statusCode']=='APP'"
+                    class="maxWidth-85px">
+                    <input matInput placeholder="Quantity" [(ngModel)]="row['quantityPreparation']"
+                         (keypress)="allowdecimal($event)" onpaste="return false">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline"
+                    *ngIf="enableTxtBox(column.columnDef)  && column.columnDef == 'quantity' && row['statusCode']=='APP'"
+                    class="maxWidth-85px">
+                    <mat-select placeholder="UOM" [(ngModel)]="row['paramAlies']" (ngModelChange)="changeUOM(row, i)">
+                        <mat-option *ngFor="let uom of uomList" [value]="uom.targetUOM">{{uom.uom}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" rs232
+                    [mngObj]="prepareRs232('Weight of P.S / Volume Taken', 'VOL_STD_WEI_PS', 'VOL_STD_WEI_PS' + i, row)"
+                    (emitValue)="getRS232Values($event, row, column.columnDef)" [pageAction]='btnType'
+                    (isEnabledRs232Mode)="checkIsEnableRS232($event)"
+                    *ngIf="enableTxtBox(column.columnDef) && column.columnDef == 'psWeight'" class="full-width">
+                    <input matInput placeholder="Weight" [(ngModel)]="row['psWeight']" [disabled]="isRs232Enabled"
+                        (keypress)="allowdecimal($event)">
+
+                    <!-- (change)="changeStdWeight($event, row, row['psWeight'])" -->
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" rs232
+                    [mngObj]="prepareRs232('Vol of Sol. Consumed', 'VOL_STD_VOL_CON', 'VOL_STD_VOL_CON' + i, row)"
+                    (emitValue)="getRS232Values($event, row, column.columnDef)" [pageAction]='btnType'
+                    *ngIf="enableTxtBox(column.columnDef)  && column.columnDef == 'solutionConsumed'"
+                    class="full-width">
+                    <input matInput placeholder="Vol Consumed" [(ngModel)]="row['solutionConsumed']"
+                        (keypress)="allowdecimal($event)" [disabled]="isRs232Enabled">
+                    <!-- (change)="changeStdWeight($event, row, row['solutionConsumed'])" -->
+                </mat-form-field>
+
+                <mat-form-field appearance="outline"
+                    *ngIf="enableTxtBox(column.columnDef)  && column.columnDef == 'minutes'" class="full-width">
+                    <input matInput placeholder="Minutes" [(ngModel)]="row['minutes']" (keypress)="allowNumbers($event)"
+                        autocomplete="off" maxlength="4" [disabled]="isEnableCheckbox || !row[checkboxField]">
+                </mat-form-field>
+
+
+                <mat-form-field appearance="outline" *ngIf="column.columnDef == 'mfgBatchNumber' && !isDisabled"
+                    class="full-width">
+                    <input matInput placeholder="MfgBatchNumber" [(ngModel)]="row['mfgBatchNumber']" autocomplete="off"
+                        maxlength="25" [disabled]="isDisabled">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" *ngIf="column.columnDef == 'mngMfgDate'" class="full-width">
+                    <mat-label>Mfg. Date</mat-label>
+                    <input matInput [(ngModel)]="row['manufDate']" [matDatepicker]="mfgDate" placeholder="Mfg. Date"
+                        [max]="today" [disabled]="isDisabled">
+                    <mat-datepicker-toggle matSuffix [for]="mfgDate"></mat-datepicker-toggle>
+                    <mat-datepicker #mfgDate></mat-datepicker>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" *ngIf="column.columnDef == 'mngUserBeforeDate'" class="full-width">
+                    <mat-label>Expiry Date</mat-label>
+                    <input matInput [(ngModel)]="row['expiredDate']" [owlDateTime]="expiredDate"
+                        owl-date-time="expiredDate" readonly placeholder="Expiry Date" [min]="today"
+                        [disabled]="isDisabled">
+                    <owl-date-time #expiredDate></owl-date-time>
+                    <mat-icon matSuffix [owlDateTimeTrigger]="expiredDate">date_range</mat-icon>
+                    <!-- 
+                    <mat-datepicker-toggle matSuffix [for]="expDate"></mat-datepicker-toggle>
+                    <mat-datepicker #expDate></mat-datepicker> -->
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" *ngIf="column.columnDef == 'mngGrade'" class="full-width">
+                    <mat-label> Grade</mat-label>
+                    <mat-select placeholder="Grade" [(ngModel)]="row['gradeID']" [disabled]="isDisabled">
+                        <mat-option *ngFor="let grade of gradeList" [value]="grade.catItemID">{{grade.catItem}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" *ngIf="column.columnDef == 'mngBlock'" class="full-width">
+                    <mat-label> Block</mat-label>
+                    <mat-select placeholder="Block" [(ngModel)]="row['blockID']" [disabled]="isDisabled">
+                        <mat-option *ngFor="let block of blockList" [value]="block.blocK_ID">{{block.blocK_NAME}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" *ngIf="column.columnDef == 'rawDataVerified'" class="full-width">
+                    <mat-label> Raw Data</mat-label>
+                    <mat-select placeholder="Raw Data " [(ngModel)]="row['rawDataVerified']" [disabled]="isDisabled">
+                        <mat-option value="Yes">Yes </mat-option>
+                        <mat-option value="No">No </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" *ngIf="column.columnDef == 'electronicDataVerified'"
+                    class="full-width">
+                    <mat-label>Electronic Data Verified</mat-label>
+                    <mat-select placeholder="Electronic Data Verified" [(ngModel)]="row['electronicDataVerified']"
+                        [disabled]="isDisabled">
+                        <mat-option value="Yes">Yes </mat-option>
+                        <mat-option value="No">No </mat-option>
+                        <mat-option value="N/A">N/A</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" *ngIf="column.columnDef == 'packQty'"
+                    class="full-width searchLookUpTxt">
+                    <mat-label>Pack Quantity</mat-label>
+                    <input matInput placeholder="Pack Quantity" [(ngModel)]="row['packQty']"
+                        (keypress)="allowdecimal($event)" (blur)="packQty($event)" [disabled]="isDisabled"
+                        onpaste="return false">
+                    <span>{{row['uom']}}</span>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" *ngIf="column.columnDef == 'packIssueQty'" class="full-width">
+                    <mat-label>Pack Quantity</mat-label>
+                    <input matInput placeholder="Pack Quantity" [(ngModel)]="row['packIssueQty']" style="width: 90%;"
+                        (keypress)="allowdecimal($event)" (blur)="packIssueQty($event, i)" [disabled]="isDisabled"
+                        onpaste="return false">
+                    <span>{{row['uom']}}</span>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" *ngIf="column.columnDef == 'remarks'" class="full-width">
+                    <mat-label>Remarks </mat-label>
+                    <input matInput placeholder="Remarks" [(ngModel)]="row['remarks']" [disabled]="isDisabled"
+                        maxlength="250">
+                    <mat-hint align="end">{{row['remarks']?.length || 0}} / 250</mat-hint>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" *ngIf="column.columnDef == 'purity' && removeHeaderData()"
+                    class="full-width">
+                    <mat-label>Purity</mat-label>
+                    {{row['purity']}}
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" *ngIf="column.columnDef == 'activityStatus'" class="full-width">
+                    <mat-label> Actvity Status</mat-label>
+                    <mat-select placeholder="Activity Status" [(ngModel)]="row['activityStatusID']"
+                        [disabled]="isDisabled">
+                        <mat-option *ngFor="let lst of activityStatusLst" [value]="lst.catItemID">{{lst.catItem}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-cell>
+
+        </ng-container>
+
+        <!-- extended col -->
+        <ng-container matColumnDef="expandedDetail">
+            <div *matCellDef="let element" [attr.colspan]="headers.length" class="pl-1 pr-1">
+                <div class="view-inv add-hr">
+                    <ul>
+                        <li *ngFor="let val of extraColumns" [ngClass]="{hide: hideStdAvg(val.columnDef, element) }">
+                            <mat-label *ngIf="val.columnDef != 'wrsPurity'">
+                                <span>{{val.header}}</span>
+                                <b>:</b>
+                                <span>{{element[val.columnDef] || 'N / A'}}</span>
+                            </mat-label>
+                            <mat-label *ngIf="val.columnDef == 'wrsPurity'">
+                                <span>{{element['purityType']}}</span>
+                                <b>:</b>
+                                <span>{{element['potPurAssy'] || 'N / A'}}</span>
+                            </mat-label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </ng-container>
+
+        <!-- Special extra column -->
+        <ng-container matColumnDef="actions" *ngIf="actions.length > 0" stickyEnd>
+            <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+            <mat-cell *matCellDef="let row ;let idx = dataIndex ">
+                <div *ngIf="actions.length > 1 && checkUserActions(row, idx).length > 1">
+
+                    <a href="Javascript:" [matMenuTriggerFor]="menu">
+                        <i class="material-icons">
+                            more_vert
+                        </i>
+                    </a>
+
+                    <mat-menu #menu="matMenu" class="{{getWidthOfCalib()}}">
+                        <span *ngFor="let act of checkUserActions(row, idx);let index = index" id="act{{index + 1}}">
+                            <a href="Javascript:" mat-menu-item (click)="onActionClick(act.code, row)">
+                                <i class="material-icons">
+                                    {{act.icon}}
+                                </i>
+                                <div>{{actiontoolTip.get(act.code)}}</div>
+                            </a>
+                            <!-- <button type="button" (click)="onActionClick(act.code, row)">{{actiontoolTip.get(act.code)}}</button> -->
+                        </span>
+                    </mat-menu>
+
+                </div>
+
+                <div *ngIf="checkUserActions(row, idx).length == 1">
+
+                    <a href="Javascript:" id="c{{idx}}" *ngFor="let act of checkUserActions(row, idx)"
+                        (click)="onActionClick(act.code, row)">
+                        <i class="material-icons" matTooltip="{{actiontoolTip.get(act.code)}}">
+                            {{act.icon}}
+                        </i>
+                    </a>
+
+                </div>
+            </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+        <mat-row id="ParentGrid" mousehoverout [allowMouseEvt]="extraColumns && extraColumns.length > 0"
+            class="{{getRowClass(row)}}" *matRowDef="let row; columns: displayedColumns; let i = index;"
+            matTooltip="{{showMatTooltip(row)}}" matTooltipClass="tooltipCss"></mat-row>
+
+        <mat-row id="ChildGrid" style="display: none;" *matRowDef="let row; columns: ['expandedDetail']"
+            class="example-detail-row"></mat-row>
+
+    </mat-table>
+
+    <!-- <div *ngIf="dataSource && dataSource.data && dataSource.data.length < 1" class="textaligncenter pt-2">
+        <p>No Records Found</p>
+    </div> -->
+
+
+
+    <!-- EDIT COLUMNS CONFIG -->
+
+
+    <!-- <div *ngIf="!isEdited">
+        <div cdkDropList cdkDropListOrientation="horizontal" class="drag-table" (cdkDropListDropped)="drop($event)">
+            <div class="drag-item" *ngFor="let item of headers" cdkDrag>
+                {{item.header}}
+            </div>
+        </div>
+
+        <button class="btn btn-primary" (click)="savedHeaders()">Save</button>
+
+    </div> -->
+
+
+
+</div>

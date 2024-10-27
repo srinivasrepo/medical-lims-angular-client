@@ -1,0 +1,247 @@
+<div class="mt-0">
+    <div *ngIf="cntlShowCondtions('VEN_DOC')">
+        <h4 class="pl-1 cardtitle_md mb-0"> Vendor Documents :
+        <button type="button" mat-raised-button class="btnbase btn-blue ml-5" (click)="Uploadfiles('PREINSP')">
+            <i class="{{_global.icnView}}" aria-hidden="true"></i>&nbsp;View
+            Documents</button>
+        </h4>
+    </div>
+    <div *ngIf="headerInfo.checkListCategory" class="row pb-1">
+        <div class="col-6">
+            <h4 class=" cardtitle_md mb-0">Checklist :
+            <button type="button" mat-raised-button class="btnbase btn-blue  ml-5" (click)="openChecklist()">
+                <i class="{{_global.icnList}}"></i>&nbsp;Checklist</button>
+            </h4>
+        </div>
+        <div align="right" class="col-6 qc_name-txt mt-30">
+            <mat-label><span class="bold ml-1 mr-1">Sampled By</span>: {{getSampledBy(samplingInfo.sampledBy)}}
+            </mat-label>
+        </div>
+    </div>
+
+    <div class="qc_heading_spce mt-5">
+        <mat-card class="mat-card-heading">
+            <mat-card-content>
+                <h4 class="cardtitle"> Sampling Information</h4>
+                    <div class="pl-1 pr-1 mt-2">
+        <mat-grid-list cols="1" rowHeight="68px" [ngClass]="{'hide' : pageType != 'MNG'}">
+            <mat-grid-tile>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Sample Collected ?</mat-label>
+                    <mat-select placeholder="Sample Collected ?" [(ngModel)]="samplingInfo.sampleCollected"
+                        [disabled]="btnType == 'Update' || headerInfo.inwardType == 'AQUAL'">
+                        <mat-option value="S">Yes</mat-option>
+                        <mat-option value="N">No</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-grid-tile>
+        </mat-grid-list>
+
+        <div [ngClass]="{'hide' : samplingInfo.sampleCollected != 'S'}">
+            <mat-grid-list cols="2" rowHeight="68px">
+                <mat-grid-tile *ngIf="cntlShowCondtions('SAMPLER_ID')" >
+                    <!-- <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Sampler ID</mat-label>
+                        <input matInput placeholder="Sampler ID" [(ngModel)]="samplingInfo.samplerID" maxlength="100"
+                            [disabled]="btnType == 'Update'">
+                        <mat-hint align="end">{{samplingInfo.samplerID?.length || 0}} / 100</mat-hint>
+                    </mat-form-field> -->
+                    <div class="full-width">
+                        <lims-lookup [info]="equipmentInfo" #equipment></lims-lookup>
+                    </div>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>No. of containers /bags/bottles sampled</mat-label>
+                        <input matInput placeholder="No. of containers /bags/bottles sampled"
+                            [disabled]="btnType == 'Update'" (keypress)="allowNumbers($event)"
+                            [(ngModel)]="samplingInfo.noofContainers" maxlength="2" onpaste="return false">
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile *ngIf="headerInfo.inwardType == 'WATER'">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Sampling Point</mat-label>
+                        <input matInput placeholder="Sampling Point" [(ngModel)]="samplingInfo.samplingPoint" maxlength="50"
+                        [disabled]="btnType == 'Update'" >
+                        <mat-hint align="end">{{samplingInfo.samplingPoint?.length || 0}} / 50</mat-hint>
+                    </mat-form-field>
+                </mat-grid-tile>
+            </mat-grid-list>
+
+
+
+            <mat-grid-list cols="2" rowHeight="68px">
+                <mat-grid-tile>
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Sample Storage Temp. ( ℃ )</mat-label>
+                        <input matInput placeholder="Sample Storage Temp. ( ℃ )"
+                            [(ngModel)]="samplingInfo.sampleStorageTemp" maxlength="50"
+                            [disabled]="btnType == 'Update'">
+                        <mat-hint align="end">{{samplingInfo.sampleStorageTemp?.length || 0}} / 50</mat-hint>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile *ngIf="cntlShowCondtions('QTY_FROM')">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Qty. From</mat-label>
+                        <mat-select placeholder="Qty. From" [(ngModel)]="samplingInfo.qtyFrom"
+                            [disabled]="btnType == 'Update'">
+                            <mat-option value="SAM">Sample</mat-option>
+                            <mat-option value="EXT">Buffer Sample</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile *ngIf="cntlShowCondtions('COM_QTY')">
+                    <mat-form-field appearance="outline" class="width-75per">
+                        <mat-label>Composite Sample Quantity</mat-label>
+                        <input matInput placeholder="Composite Sample Quantity" (keypress)="allowDecimals($event)"
+                            [(ngModel)]="samplingInfo.compositeSampleQty" onpaste="return false"
+                            [disabled]="btnType == 'Update' || (samplingInfo.sampleCollected == 'S' && headerInfo.canShowPack)">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="width-25per pl-0">
+                        <mat-label> Select UOM</mat-label>
+                        <mat-select placeholder="Uom" [(ngModel)]="samplingInfo.uom" [disabled]="btnType == 'Update' || (samplingInfo.sampleCollected == 'S' && headerInfo.canShowPack)">
+                            <mat-option *ngFor="let uom of uomList" [value]="uom.uomID">{{uom.uom}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile *ngIf="showQtyAnalysis">
+                    <mat-form-field appearance="outline" class="width-75per">
+                        <mat-label>Quantity for Analysis</mat-label>
+                        <input matInput placeholder="Quantity for Analysis" (keypress)="allowDecimals($event)"
+                            [(ngModel)]="samplingInfo.qtyAnalysis" onpaste="return false"
+                            [disabled]="btnType == 'Update'">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="width-25per pl-0">
+                        <mat-label>Select UOM</mat-label>
+                        <mat-select [(ngModel)]="samplingInfo.uom"
+                            [disabled]="btnType == 'Update' || cntlShowCondtions('COM_QTY') || (samplingInfo.sampleCollected == 'S' && headerInfo.canShowPack)">
+                            <mat-option *ngFor="let uom of uomList" [value]="uom.uomID">{{uom.uom}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile *ngIf="cntlShowCondtions('RESER_QTY')">
+                    <mat-form-field appearance="outline" class="width-75per">
+                        <mat-label>Reserve Sample Quantity</mat-label>
+                        <input matInput placeholder="Reserve Sample Quantity" (keypress)="allowDecimals($event)"
+                            [(ngModel)]="samplingInfo.reserveSampleQty" onpaste="return false"
+                            [disabled]="btnType == 'Update'">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="width-25per pl-0">
+                        <mat-label>Select UOM</mat-label>
+                        <mat-select [(ngModel)]="samplingInfo.uom"
+                            [disabled]="btnType == 'Update' || cntlShowCondtions('COM_QTY') || showQtyAnalysis || (samplingInfo.sampleCollected == 'S' && headerInfo.canShowPack)">
+                            <mat-option *ngFor="let uom of uomList" [value]="uom.uomID">{{uom.uom}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-grid-tile>
+
+            </mat-grid-list>
+
+            <mat-grid-list cols="1" rowHeight="30px">
+                <mat-grid-tile>
+                    <mat-label class="qc_note-txt pl-1"><b class="dark-heading">Note :</b> Composite/
+                        Reserve/
+                        Quantity for Analysis not allowed decimal value, if batch available quantity in between 1 to 10
+                        kg.</mat-label>
+
+
+                </mat-grid-tile>
+            </mat-grid-list>
+
+            <mat-grid-list cols="2" rowHeight="68px">
+                <!-- <mat-grid-tile>
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Work Book Number</mat-label>
+                        <input matInput placeholder="Work Book Number" maxlength="250"
+                            [(ngModel)]="samplingInfo.workBookNumber" [disabled]="btnType == 'Update'">
+                        <mat-hint align="end">{{ samplingInfo.workBookNumber?.length || 0}} / 250</mat-hint>
+                    </mat-form-field>
+                </mat-grid-tile> -->
+                <mat-grid-tile>
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Sample Received On</mat-label>
+                        <input matInput [(ngModel)]="sampleReceivedOn" [owlDateTime]="dateFrom"
+                            [disabled]="btnType == 'Update' || headerInfo.analysisTypeCode == 'SPEC_OOS'"
+                            [max]="maxDate" [min]="headerInfo.inwardDate" owl-date-time="dateFrom" readonly>
+                        <owl-date-time #dateFrom></owl-date-time>
+                        <mat-icon matTooltip="Calendar" matSuffix [owlDateTimeTrigger]="dateFrom">date_range</mat-icon>
+                    </mat-form-field>
+                </mat-grid-tile>
+            </mat-grid-list>
+        </div>
+
+        <div *ngIf="pageType == 'MNG'">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Deviation/Observations(if any) specify</mat-label>
+                <textarea matInput placeholder="Deviation/Observations(if any) specify" maxlength="500"
+                    [(ngModel)]="samplingInfo.deviation" [disabled]="btnType == 'Update'"></textarea>
+                <mat-hint align="end">{{samplingInfo.deviation?.length || 0}} / 500</mat-hint>
+            </mat-form-field>
+        </div>
+
+        <div class="view-inv pb-2">
+            <ul>
+
+                <li *ngIf="pageType == 'VIEW'">
+                    <mat-label><span>Sample
+                            Collected</span><span>{{formatSmapleCollected(samplingInfo.sampleCollected)}}</span>
+                    </mat-label>
+                </li>
+                <li>
+                    <mat-label><span>Reviewed By</span><span>{{formatString(samplingInfo.reviewedBy)}}</span>
+                    </mat-label>
+                </li>
+                <li>
+                    <mat-label><span>Reviewed On</span><span>{{formatString(samplingInfo.reviewedOn)}}</span>
+                    </mat-label>
+                </li>
+                <li *ngIf="pageType == 'VIEW'" class="w-100 no-border">
+                    <mat-label><span>Deviation/Observations(if any)
+                            specify</span><span>{{formatString(samplingInfo.deviation)}}</span>
+                    </mat-label>
+                </li>
+            </ul>
+        </div>
+
+            <div align="right" class="mt-2 pb-2">
+<!-- 
+                <button type="button" mat-raised-button class="btnbase btn-blue" btnAddNewField
+                    [disabled]="btnType == 'Update'" [obj]="rs232Obj" [mngCustFields]="mngCustField">
+                </button> -->
+
+                <button type="button" mat-raised-button class="btnbase btn-blue" (click)="addOccupancy()">
+                    <i class="{{_global.icnAdd}}" aria-hidden="true" *ngIf="btnType == 'Save' "></i>
+                    <i class="{{_global.icnView}}" aria-hidden="true" *ngIf="btnType == 'Update'"></i>
+                    &nbsp;&nbsp;Occupancy</button>
+
+                <div *ngIf="samplingInfo.sampleCollected == 'S' && headerInfo.canShowPack" class="ml-1 mb-2 d-inline">
+                    <button type="button" mat-raised-button class="btnbase btn-blue" (click)="managePack()"><i
+                            class="{{_global.icnOk}}" aria-hidden="true"></i>&nbsp;Manage Sample Pack</button>
+                </div>
+
+                <button type="button" mat-raised-button class="btnbase btn-blue " (click)="Uploadfiles('SAMCHK')">
+                    <i class="{{_global.icnView}}" *ngIf="pageType == 'MNG' ? btnUpload != 'Upload' : true"
+                        aria-hidden="true"></i>
+                    <i class="{{_global.icnUpload}}" *ngIf="pageType == 'MNG' ? btnUpload == 'Upload' : false"
+                        aria-hidden="true"></i>&nbsp;{{pageType == 'MNG' ? btnUpload : 'View Documents'}}</button>&nbsp;&nbsp;
+                <button type="button" mat-raised-button class="btnbase btn-blue" (click)="saveSamplingInfo('SAVE')"
+                    *ngIf="!samplingInfo.reviewedBy && pageType == 'MNG'">
+                    <i class="{{_global.icnSave}}" *ngIf="btnType == 'Save'" aria-hidden="true"></i>
+                    <i class="{{_global.icnUpdate}}" *ngIf="btnType == 'Update'"
+                        aria-hidden="true"></i>&nbsp;{{btnType}}</button>
+                <button type="button" mat-raised-button class="btnbase btn-blue"
+                    (click)="saveSamplingInfo('SAVE_SEND')"
+                    *ngIf="btnType =='Update' && !samplingInfo.reviewedBy && pageType == 'MNG'" id="btnLoadersSave" btnLoader [isLoaderOn]="isLoaderStart"><i
+                        class="{{_global.icnOk}}" aria-hidden="true"></i>&nbsp;Save & Send</button>
+            </div>
+        
+                    </div>
+                </mat-card-content>
+                </mat-card>
+
+    </div>
+
+    <manage-add-field [obj]="rs232Obj" [sectionCode]="'QCSAMPASYS'" [isViewPage]="pageType == 'VIEW'" #mngCustFields>
+    </manage-add-field>
+    
+</div>

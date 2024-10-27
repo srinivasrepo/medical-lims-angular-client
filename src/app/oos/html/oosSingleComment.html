@@ -1,0 +1,60 @@
+<mat-card class="mat-card-heading">
+    <mat-card-content>
+        <h4 class="cardtitle"> {{phaseTitle}}</h4>
+        <mat-grid-list cols="1" rowHeight="80px" gutterSize="40px" *ngIf="pageType != 'VIEW' && !phaseCompleted">
+            <mat-grid-tile >
+                <mat-form-field appearance="outline" class="full-width mt-2">
+                    <mat-label>Remarks</mat-label>
+                    <textarea matInput placeholder="Remarks" [(ngModel)]="remarks" maxlength="1000"
+                        [disabled]="disableFields"></textarea>
+                    <mat-hint align='end'>{{remarks?.length || 0}} / 1000</mat-hint>
+                </mat-form-field>
+            </mat-grid-tile>
+        </mat-grid-list>
+        <div *ngIf="phaseType == 'OOSP2'" class="mt-2">
+            <mat-label class="cardtitle_dark mr-3 pl-2 ">Sample Validity</mat-label>
+            <mat-radio-group [(ngModel)]="status" [disabled]="btnType =='Update'" class="mat-radio-btn">
+                <mat-radio-button color="primary" value="a"> Sample Valid
+                </mat-radio-button>
+                <mat-radio-button color="primary" value="r">Sample In-valid
+                </mat-radio-button>
+            </mat-radio-group>
+        </div>
+        <div *ngIf="!hideRadio">
+            <mat-grid-list cols='2' rowHeight="40px">
+
+                <mat-label>{{actionList.title}}</mat-label>&nbsp;&nbsp;&nbsp;
+
+                <mat-radio-group [(ngModel)]="validity" [disabled]="disableFields">
+                    <mat-radio-button color="primary" *ngFor="let act of actionList.list" [value]="act.code">
+                        {{act.name}}
+                    </mat-radio-button>
+                </mat-radio-group>
+
+            </mat-grid-list>
+        </div>
+        <div class="view-inv pb-2 mt-1" >
+            <ul>
+                <li class="w-100" *ngIf="pageType == 'VIEW' || phaseCompleted">
+                    <mat-label>
+                        <span>Remarks</span>
+                        <span>{{remarks || 'N/A'}}</span>
+                    </mat-label>
+                </li>
+                <li class="w-100 no-border">
+                    <mat-label><span>Note </span>
+                        <span>If Select "Sample Valid" - Retesting of Same Sample to be Performed.<br>
+                            If Select "Sample In-Valid" - Re-Sampling & Testing to be Performed.</span>
+                    </mat-label>
+                </li>
+            </ul>
+        </div>
+       
+        <div align="right" *ngIf="pageType == 'MNG' && !phaseCompleted" class="mt-2 pb-2">
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="save()" id="btnLoaders" btnLoader [isLoaderOn]="isLoaderStart">
+                <i class="{{_global.icnSave}}" *ngIf="btnType=='Save'" aria-hidden="true"></i>
+                <i class="{{_global.icnUpdate}}" *ngIf="btnType=='Update'"
+                    aria-hidden="true"></i>&nbsp;{{btnType}}</button>
+        </div>
+    </mat-card-content>
+</mat-card>

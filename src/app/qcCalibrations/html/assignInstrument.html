@@ -1,0 +1,72 @@
+<div class="new-popupTitle" mat-dialog-title>
+    <h1 class="colorwhite">{{pageTitle}}</h1>
+    <div class="popup-close">
+        <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+    </div>
+</div>
+
+<div class="mt-2 mb-3 pl-3 pr-3 modal-over" mat-dialog-content>
+
+    <mat-form-field appearance="outline" class="full-width">
+        <mat-label> Assigned Instruments</mat-label>
+        <mat-select name="InstrumentsList" [(ngModel)]="instrObj.instrumentTypeID" (ngModelChange)="changeLimitType()">
+            <mat-option *ngFor="let sta of instrumentAssignedList" [value]="sta.id">{{sta.name}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <div class="mt-2 mb-1 approval-lookup modal-list qc_list_5 pl-1 pr-1" *ngIf="allChecked">
+        <div class=" popgridscroll border-role-per">
+            <div class="roleCheck">
+                <div class="checkAll">
+                    <mat-checkbox (change)="manageAllInstruments($event)">
+                        Select All
+                    </mat-checkbox>
+                </div>
+            </div>
+
+            <ul>
+                <li *ngFor="let obj of qcinstrumentsList">
+                   
+                        <mat-checkbox [(ngModel)]="obj.isSelect">
+                            {{obj.name}}
+                        </mat-checkbox>
+                    
+                </li>
+
+            </ul>
+
+        </div>
+    </div>
+
+
+<!-- 
+    <div class="qc_calib-header mb-3" *ngIf="allChecked">
+
+        <ul class="pl-0">
+            <div>
+
+                <div class="instr_select_all">
+                    <mat-checkbox (change)="manageAllInstruments($event)">
+                        Select All
+                    </mat-checkbox>
+                </div>
+
+                <div class="instr_single_select">
+                    <li *ngFor="let obj of qcinstrumentsList">
+                        <mat-checkbox [(ngModel)]="obj.isSelect">
+                            {{obj.name}}
+                        </mat-checkbox>
+
+                    </li>
+                </div>
+            </div>
+        </ul>
+    </div> -->
+    <div align="right" class="mt-2" *ngIf="allChecked">
+        <button type="submit" mat-raised-button class="btnbase btn-blue" (click)="save()"
+        id="assignInsBtnLoaders" btnLoader [isLoaderOn]="isLoaderStart">
+            <i class="{{_global.icnSave}}" aria-hidden="true"></i>&nbsp;Save</button>&nbsp;
+    </div>
+
+</div>

@@ -1,0 +1,744 @@
+<div class="container" *ngIf="showHidePageType == 'ARDS'">
+    <div id="content">
+        <div id="main-content" class="qc_tab-list">
+
+
+            <mat-chip-list class="mat-chip-list">
+                <div class="mat-chip-list-wrapper">
+                    <mat-chip class="mat-chip mat-primary mat-standard-chip ng-star-inserted"
+                        *ngFor="let item of ardsInvalidationList; let i = index"
+                        (click)="openArdsData(item.invalidationID)">{{item.invalidationCode}}
+                        &nbsp;&nbsp;
+                    </mat-chip>
+                </div>
+            </mat-chip-list>
+            <div *ngIf="invalidationID" class="pb-3">
+                <div class="view-inv add-hr mt-1">
+                    <ul>
+                        <li class="no-border">
+                            <mat-label><span>Reviewed By</span><span> {{invalidationDet.actionBy}}</span></mat-label>
+
+                        </li>
+                        <li class="no-border">
+                            <mat-label><span>Reviewed On</span><span> {{invalidationDet.actionDate}}</span></mat-label>
+                        </li>
+                    </ul>
+                </div>
+                <div *ngIf="invalidationDet.dmsID" align="right" class="mt-2 pb-2">
+                    <button type="button" mat-raised-button class="btnbase btn-blue"
+                        (click)="viewArds(invalidationDet.dmsID)">View ARDS</button>
+                </div>
+
+            </div>
+
+
+            <mat-tab-group #tabGroup (selectedTabChange)="getTabSelectedIndex($event, -1)">
+                <mat-tab *ngFor="let tab of tabList" label="{{tab.tab}}">
+
+                    <mat-accordion *ngIf="tab.tabID > 0 && unknownTabID != tab.tabID">
+
+                        <mat-expansion-panel
+                            *ngIf="tab.sectionSubject == 'Unknown Impurity' || tab.sectionSubject == 'known Impurity'"
+                            (opened)="prepareUnKnownDataList(tab.sectionSubject)">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    Impurity Mapping
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+
+                            <div class="pl-1 pb-2 pr-1 raw_section_impurity">
+
+                                <div
+                                    *ngIf="isShowImpurityAdd || entityCode == 'SPEC_VALID' || analysisMode == 'OFFLINE'">
+                                    <mat-form-field appearance="outline" class="full-width"
+                                        *ngIf="tab.sectionSubject == 'Unknown Impurity' && pageType != 'VIEW' && showFields(tab.sectionSubject)">
+                                        <mat-label>Impurity Name</mat-label>
+                                        <input matInput placeholder="Impurity Name" [(ngModel)]="mngImpBO.impurityName"
+                                            maxlength="250">
+                                    </mat-form-field>
+
+                                    <div align="end"
+                                        *ngIf="tab.sectionSubject == 'Unknown Impurity' && pageType != 'VIEW' && showFields(tab.sectionSubject)">
+                                        <button type="button" mat-raised-button class="btnbase btn-blue"
+                                            (click)="addImpurity()">{{btnImpChange}}</button>
+                                    </div>
+
+
+                                    <form class="mt-2 mb-3 mr-0 ml-0">
+                                        <div id="constrainer" [class]="qc_updatetbl">
+                                            <div class="scrolltable">
+                                                <mat-table class="qc_scrollheader"
+                                                    [dataSource]="unKnownImpDatadataSource">
+
+                                                    <ng-container *ngFor="let column of impHeaders"
+                                                        [matColumnDef]="column.columnDef">
+                                                        <mat-header-cell *matHeaderCellDef class="{{column.class}}">
+                                                            {{ column.header }}
+                                                        </mat-header-cell>
+                                                    </ng-container>
+                                                    <mat-header-row *matHeaderRowDef="impHeaderDisplayCol;">
+                                                    </mat-header-row>
+                                                </mat-table>
+
+
+
+
+                                                <div class="qc_scrollbody">
+                                                    <mat-table class="qc_sticky_left" style="width: 100%;"
+                                                        [dataSource]="unKnownImpDatadataSource">
+
+                                                        <ng-container *ngFor="let column of impHeaders"
+                                                            [matColumnDef]="column.columnDef">
+                                                            <mat-cell *matCellDef="let row; let i = index;"
+                                                                class="{{column.class}}">
+                                                                <span *ngIf="column.columnDef == 'injectionName' ">
+                                                                    {{formatString(column.cell(row), column.columnDef,
+                                                                    row, column.columnID)}}
+                                                                </span>
+                                                                <i *ngIf="column.columnDef == 'injectionName' && tab.sectionSubject == 'Unknown Impurity' && pageType == 'MNG' && showFields(tab.sectionSubject)"
+                                                                    class="{{_global.icnDelete}}"
+                                                                    (click)="deleteImpurity(row.impurityID)"></i>
+                                                            </mat-cell>
+                                                        </ng-container>
+                                                        <mat-row *matRowDef="let row; columns: impHeaderDisplayCol;">
+                                                        </mat-row>
+
+                                                    </mat-table>
+
+                                                    <mat-table class="qc_sticky_right"
+                                                        [dataSource]="unKnownImpDatadataSource">
+
+                                                        <ng-container *ngFor="let column of impHeaders"
+                                                            [matColumnDef]="column.columnDef">
+                                                            <mat-cell *matCellDef="let row; let i = index;"
+                                                                class="{{column.class}}">
+                                                                <span
+                                                                    *ngIf="column.columnDef !=  'injectionName' || (entityCode != 'SPEC_VALID' && analysisMode == 'ONLINE') || (isShowImpurityAdd && (entityCode == 'SPEC_VALID' || analysisMode == 'OFFLINE'))">
+                                                                    {{formatString(column.cell(row), column.columnDef,
+                                                                    row, column.columnID)}}
+                                                                </span>
+
+                                                                <!-- <mat-grid-list cols="2" rowHeight="68px"
+                                                                *ngIf=" !isShowImpurityAdd && entityCode == 'SPEC_VALID'">
+                                                                <mat-grid-tile >
+                                                                    <mat-form-field appearance="outline"
+                                                                        class="full-width pl-0 pr-0">
+                                                                        <mat-label>Impurity Area</mat-label>
+                                                                        <input matInput placeholder="Impurity Area"
+                                                                            (keypress)="allowNumber($event)"
+                                                                            [ngModel]="getAddValue(row.impurityID, column.columnID, 'AREA')"
+                                                                            (blur)="addValue(row.impurityID, column.columnID, 'AREA', $event.target.value)"
+                                                                            [ngModelOptions]="{standalone: true}">
+                                                                    </mat-form-field>
+                                                                </mat-grid-tile>
+                                                                <mat-grid-tile *ngIf="fieldIsShow('PAREA')">
+                                                                    <mat-form-field appearance="outline"
+                                                                        class="full-width pl-0 pr-0">
+                                                                        <mat-label>Impurity P Area</mat-label>
+                                                                        <input matInput placeholder="Impurity P Area"
+                                                                            (keypress)="allowNumber($event)"
+                                                                            [ngModel]="getAddValue(row.impurityID, column.columnID, 'P_AREA')"
+                                                                            (blur)="addValue(row.impurityID, column.columnID, 'P_AREA', $event.target.value)"
+                                                                            [ngModelOptions]="{standalone: true}">
+                                                                    </mat-form-field>
+                                                                </mat-grid-tile>
+                                                            </mat-grid-list> -->
+                                                                <span class="ml-2"
+                                                                    *ngIf="column.columnDef != 'injectionName' && !isShowImpurityAdd && (entityCode == 'SPEC_VALID' || analysisMode == 'OFFLINE') && showFields(tab.sectionSubject)">
+                                                                    <span *ngIf="fieldIsShow('AREA')">
+                                                                        <mat-form-field appearance="outline"
+                                                                            class="full-width pl-0 pr-0">
+                                                                            <mat-label>Impurity Area</mat-label>
+                                                                            <input matInput placeholder="Impurity Area"
+                                                                                (keypress)="allowNumber($event, 'AREA')"
+                                                                                [ngModel]="getAddValue(row.impurityID, column.columnID, 'AREA')"
+                                                                                (blur)="addValue(row.impurityID, column.columnID, 'AREA', $event)"
+                                                                                [ngModelOptions]="{standalone: true}">
+                                                                        </mat-form-field>
+                                                                    </span>
+                                                                    <span *ngIf="fieldIsShow('PAREA')">
+                                                                        <mat-form-field appearance="outline"
+                                                                            class="full-width pl-0 pr-0">
+                                                                            <mat-label>Impurity P Area</mat-label>
+                                                                            <input matInput
+                                                                                placeholder="Impurity P Area"
+                                                                                (keypress)="allowNumber($event, 'P_AREA')"
+                                                                                [ngModel]="getAddValue(row.impurityID, column.columnID, 'P_AREA')"
+                                                                                (blur)="addValue(row.impurityID, column.columnID, 'P_AREA', $event)"
+                                                                                [ngModelOptions]="{standalone: true}">
+                                                                        </mat-form-field>
+                                                                    </span>
+                                                                    <span>
+                                                                        <mat-form-field appearance="outline"
+                                                                            class="full-width pl-0 pr-0">
+                                                                            <mat-label>RT Ratio</mat-label>
+                                                                            <input matInput placeholder="RT Ratio"
+                                                                                (keypress)="allowNumber($event, 'RT_RATIO')"
+                                                                                [ngModel]="getAddValue(row.impurityID, column.columnID, 'RT_RATIO')"
+                                                                                (blur)="addValue(row.impurityID, column.columnID, 'RT_RATIO', $event)"
+                                                                                [ngModelOptions]="{standalone: true}">
+                                                                        </mat-form-field>
+                                                                    </span>
+                                                                </span>
+                                                                <!-- <mat-grid-list cols="1" rowHeight="68px"
+                                                                *ngIf="!isShowImpurityAdd && entityCode == 'SPEC_VALID'">
+                                                                <mat-grid-tile *ngIf="fieldIsShow('AREA')">
+                                                                    <mat-form-field appearance="outline"
+                                                                        class="full-width pl-0 pr-0">
+                                                                        <mat-label>Impurity Area</mat-label>
+                                                                        <input matInput placeholder="Impurity Area"
+                                                                            (keypress)="allowNumber($event)"
+                                                                            [ngModel]="getAddValue(row.impurityID, column.columnID, 'AREA')"
+                                                                            (blur)="addValue(row.impurityID, column.columnID, 'AREA', $event.target.value)"
+                                                                            [ngModelOptions]="{standalone: true}">
+                                                                    </mat-form-field>
+                                                                </mat-grid-tile>
+                                                                <mat-grid-tile *ngIf="fieldIsShow('PAREA')">
+                                                                    <mat-form-field appearance="outline"
+                                                                        class="full-width pl-0 pr-0">
+                                                                        <mat-label>Impurity P Area</mat-label>
+                                                                        <input matInput placeholder="Impurity P Area"
+                                                                            (keypress)="allowNumber($event)"
+                                                                            [ngModel]="getAddValue(row.impurityID, column.columnID, 'P_AREA')"
+                                                                            (blur)="addValue(row.impurityID, column.columnID, 'P_AREA', $event.target.value)"
+                                                                            [ngModelOptions]="{standalone: true}">
+                                                                    </mat-form-field>
+                                                                </mat-grid-tile>
+                                                            </mat-grid-list> -->
+                                                            </mat-cell>
+                                                            <ng-container
+                                                                *ngIf="entityCode != 'SPEC_VALID' && analysisMode == 'ONLINE' && pageType != 'VIEW'">
+                                                                <mat-footer-cell *matFooterCellDef
+                                                                    class="{{column.class}}">
+                                                                    <button type="button" mat-raised-button
+                                                                        *ngIf="column.columnDef != 'injectionName' && showFields(tab.sectionSubject)"
+                                                                        class="btnbase btn-blue ml-0 mr-0 btn-sm"
+                                                                        (click)="assignImpurity(column.columnID)">
+                                                                        Assign </button>
+                                                                </mat-footer-cell>
+                                                            </ng-container>
+
+                                                        </ng-container>
+
+                                                        <ng-container matColumnDef="actions" stickyEnd>
+
+                                                            <mat-cell *matCellDef="let row;"
+                                                                style="min-width: 150px; flex-direction: row-reverse; text-align: right;">
+                                                                <button type="button" mat-raised-button
+                                                                    class="btnbase btn-blue"
+                                                                    (click)="assignImpurity(row)">
+                                                                    Assign </button>
+                                                            </mat-cell>
+                                                        </ng-container>
+
+
+
+                                                        <mat-row *matRowDef="let row; columns: impHeaderDisplayCol;">
+                                                        </mat-row>
+                                                        <div
+                                                            *ngIf="entityCode != 'SPEC_VALID' && analysisMode == 'ONLINE' && pageType != 'VIEW'">
+                                                            <mat-footer-row
+                                                                *matFooterRowDef="impHeaderDisplayCol; sticky: true"
+                                                                style="margin-left: 10px;">
+                                                            </mat-footer-row>
+                                                        </div>
+                                                    </mat-table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--<div class="addx-scroll">
+                                            <div class="qc_n-table ">
+
+                                                <mat-table class="qcf_scroll" #table style="height: 300px;"
+                                                    [dataSource]="unKnownImpDatadataSource">
+
+                                                    <ng-container *ngFor="let column of impHeaders"
+                                                        [matColumnDef]="column.columnDef"
+                                                        [sticky]="column.columnDef == 'injectionName'">
+                                                        <mat-header-cell *matHeaderCellDef class="{{column.class}}">
+                                                            {{ column.header }}
+                                                        </mat-header-cell>
+
+                                                        <mat-cell *matCellDef="let row; let i = index;"
+                                                            class="{{column.class}}">
+                                                            <span
+                                                                *ngIf="column.columnDef == 'injectionName' || entityCode != 'SPEC_VALID' || (isShowImpurityAdd && entityCode == 'SPEC_VALID')">
+                                                                {{formatString(column.cell(row), column.columnDef, row, column.columnID)}}
+                                                            </span>
+                                                            <i *ngIf="column.columnDef == 'injectionName' && tab.sectionSubject == 'Unknown Impurity' && pageType == 'MNG'"
+                                                                class="{{_global.icnDelete}}"
+                                                                (click)="deleteImpurity(row.impurityID)"></i>
+                                                            <mat-grid-list cols="1" rowHeight="68px"
+                                                                *ngIf="column.columnDef != 'injectionName' && !isShowImpurityAdd && entityCode == 'SPEC_VALID'">
+                                                                <mat-grid-tile *ngIf="fieldIsShow('AREA')">
+                                                                    <mat-form-field appearance="outline"
+                                                                        class="full-width pl-0 pr-0">
+                                                                        <mat-label>Impurity Area</mat-label>
+                                                                        <input matInput placeholder="Impurity Area"
+                                                                            (keypress)="allowNumber($event)"
+                                                                            [ngModel]="getAddValue(row.impurityID, column.columnID, 'AREA')"
+                                                                            (blur)="addValue(row.impurityID, column.columnID, 'AREA', $event.target.value)"
+                                                                            [ngModelOptions]="{standalone: true}">
+                                                                    </mat-form-field>
+                                                                </mat-grid-tile>
+                                                                <mat-grid-tile *ngIf="fieldIsShow('PAREA')">
+                                                                    <mat-form-field appearance="outline"
+                                                                        class="full-width pl-0 pr-0">
+                                                                        <mat-label>Impurity P Area</mat-label>
+                                                                        <input matInput placeholder="Impurity P Area"
+                                                                            (keypress)="allowNumber($event)"
+                                                                            [ngModel]="getAddValue(row.impurityID, column.columnID, 'P_AREA')"
+                                                                            (blur)="addValue(row.impurityID, column.columnID, 'P_AREA', $event.target.value)"
+                                                                            [ngModelOptions]="{standalone: true}">
+                                                                    </mat-form-field>
+                                                                </mat-grid-tile>
+                                                            </mat-grid-list>
+                                                        </mat-cell>
+                                                        <ng-container *ngIf="entityCode != 'SPEC_VALID'">
+                                                            <mat-footer-cell *matFooterCellDef class="{{column.class}}">
+                                                                <button type="button" mat-raised-button
+                                                                    *ngIf="column.columnDef != 'injectionName'"
+                                                                    class="btnbase btn-blue"
+                                                                    (click)="assignImpurity(column.columnID)">
+                                                                    Assign </button>
+                                                            </mat-footer-cell>
+                                                        </ng-container>
+
+                                                    </ng-container>
+
+                                                    <ng-container matColumnDef="actions" stickyEnd>
+                                                        <mat-header-cell style="flex-direction: row-reverse;"
+                                                            *matHeaderCellDef style="min-width: 150px;">
+                                                        </mat-header-cell>
+                                                        <mat-cell *matCellDef="let row;"
+                                                            style="min-width: 150px; flex-direction: row-reverse; text-align: right;">
+                                                            <button type="button" mat-raised-button
+                                                                class="btnbase btn-blue" (click)="assignImpurity(row)">
+                                                                Assign </button>
+                                                        </mat-cell>
+                                                    </ng-container>
+
+                                                    <mat-header-row *matHeaderRowDef="impHeaderDisplayCol; sticky: true"
+                                                        style="display: table-row !important;">
+                                                    </mat-header-row>
+                                                 
+                                                    <mat-row *matRowDef="let row; columns: impHeaderDisplayCol;">
+                                                    </mat-row>
+                                                    <div *ngIf="entityCode != 'SPEC_VALID'">
+                                                        <mat-footer-row
+                                                            *matFooterRowDef="impHeaderDisplayCol; sticky: true">
+                                                        </mat-footer-row>
+                                                    </div>
+                                                </mat-table>
+                                            </div>
+                                        </div> -->
+                                    </form>
+                                    <div align="right">
+                                        <button type="button" mat-raised-button class="btnbase btn-blue"
+                                            *ngIf="(entityCode == 'SPEC_VALID' || analysisMode == 'OFFLINE') && showFields(tab.sectionSubject) && pageType != 'VIEW'"
+                                            (click)="saveImpData()"><i class="fas fa-save"></i> &nbsp;
+                                            {{btnSaveImp}}</button>
+
+                                        <button type="button"
+                                            *ngIf="!isShowImpurityAdd && pageType != 'VIEW' && (entityCode == 'SPEC_VALID' || analysisMode == 'OFFLINE')"
+                                            mat-raised-button class="btnbase btn-blue" (click)="cancel()"><i
+                                                class="fas fa-times-circle"></i> &nbsp;Cancel</button>
+                                        <button type="button" mat-raised-button class="btnbase btn-blue"
+                                            *ngIf="pageType != 'VIEW'" (click)="confirmImp(tab.sectionSubject)">
+                                            <i class="{{_global.icnConfirm}}"></i>
+                                            &nbsp;{{getBtnType(tab.sectionSubject)}}
+                                        </button>
+                                    </div>
+
+                                </div>
+
+
+                                <div *ngIf="!isShowImpurityAdd && (entityCode != 'SPEC_VALID' && analysisMode == 'ONLINE')"
+                                    class="view-inv">
+                                    <ul>
+                                        <li>
+                                            <mat-label>
+                                                <span> Injection Name </span>
+                                                <span> {{selectedInjTitle}} </span>
+                                            </mat-label>
+                                        </li>
+
+                                    </ul>
+
+                                    <button mat-mini-fab class="menubtn mat-elevation-z3"
+                                        style="position: absolute;top: 56px;right: 38px;"
+                                        (click)="setIsShowImpurityAdd()" matTooltip="Back">
+                                        <i class="{{_global.icnArrowBack}}"></i>
+                                    </button>
+
+                                    <!-- 
+                                    <button mat-raised-button class="btnbase btn-blue ml-0" matTooltip="Back"
+                                        (click)="setIsShowImpurityAdd()">
+                                        <i class="{{_global.icnArrowBack}}"></i>&nbsp; Back</button> -->
+
+                                    <lims-lookup [info]="sdmsInfo" #sdmsData [disableBtn]="btnSdmsFile == 'Change'"
+                                        (onSelect)="getSelectedSDMSDetails($event)">
+                                    </lims-lookup>
+
+                                    <div align="end">
+                                        <button type="button" mat-raised-button class="btnbase btn-blue"
+                                            (click)="changeSDMSFile()">{{btnSdmsFile}}</button>
+                                    </div>
+
+
+                                    <div *ngIf="btnSdmsFile == 'Change'">
+                                        <mat-grid-list cols="2" rowHeight="90px">
+                                            <mat-grid-tile *ngFor="let data of getImpurityList()">
+                                                <mat-form-field appearance="outline" class=" full-width">
+                                                    <mat-label>{{data.impurityName}}</mat-label>
+                                                    <mat-select placeholder="Peak Values" name="{{data.impurityName}}"
+                                                        [(ngModel)]="data.peakValue">
+                                                        <mat-option *ngFor='let item of peakDataList' [value]='item'>
+                                                            {{item}}</mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </mat-grid-tile>
+                                        </mat-grid-list>
+
+                                        <div align="end">
+                                            <button type="button" mat-raised-button class="btnbase btn-blue"
+                                                (click)="saveSDMSFileDetails()">Save</button>
+                                        </div>
+
+                                    </div>
+
+
+
+                                    <!-- <ul *ngIf="btnSdmsFile == 'Change'" class="">
+                                        <li *ngFor="let data of getUnKnowImpData.impList">
+                                            <div class="div_style">{{data.impurityName}}</div>
+                                            <div class="div_style">
+                                                <mat-form-field appearance="outline" class=" full-width">
+                                                    <mat-label>Peak Values</mat-label>
+                                                    <mat-select placeholder="Peak Values" name="{{data.impurityName}}"
+                                                        [(ngModel)]="data.peakValue">
+                                                        <mat-option *ngFor='let item of peakDataList' [value]='item'>
+                                                            {{item}}</mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </div>
+                                        </li>
+                                    </ul> -->
+
+                                </div>
+
+                            </div>
+
+
+                        </mat-expansion-panel>
+
+                        <mat-expansion-panel *ngFor="let sec of getSections(tab.tabID); let j=index;">
+
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    {{sec.section}}
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+
+                            <div align="right"
+                                *ngIf="pageType=='MNG' || (pageType == 'UPD' && sourceCode != 'CONT_WISE_ANA')">
+                                <button type="button" mat-raised-button class="btnbase btn-blue mr-0 ml-0"
+                                    matTooltip="Mapping To SDMS" (click)="mappingSDMS()"
+                                    *ngIf="showHidePageType == 'ARDS' && !isInvalidated && occSub">
+                                    <i class="{{_global.icnMap}}" aria-hidden="true"></i> &nbsp; Mapping To SDMS
+                                </button>
+                            </div>
+                            <div class="add_sroll_2 pr-1 mt-1">
+                                <mat-grid-list cols="2" gutterSize="30px" rowHeight="100px">
+                                    <mat-grid-tile
+                                        *ngFor="let data of getSectionDetails(sec.sectionID, sec.tabID); let i=index">
+                                        <div class="section-lst">
+                                            <ul class="pxy-0" style="position: relative; top: 0px;">
+                                                <li style="margin-top: 0px;">
+                                                    <div class="row">
+                                                        <mat-label class="col-9">{{data.inputDescription}}</mat-label>
+                                                        <div class="col-3 pr-0"
+                                                            *ngIf="pageType != 'VIEW' && !data.isDisable &&  !isInvalidated  && (entityCode == 'SPEC_VALID' || entityCode == 'CALIB_VALIDATION' || occSub)">
+                                                            <div align="right">
+                                                                <span class="formula-F2"
+                                                                    [ngClass]="{'formula-assign' : data.formulaResultFlag && data.formulaResultFlag == 'F2'}"
+                                                                    *ngIf="!isInvalidated && data.skipType != 'SKIP' && testType == 'R'">
+                                                                    <i
+                                                                        (click)="manageIsFinalFormula(data.detailID, 'F2', data)">F2</i>
+                                                                </span>
+                                                                <span class="formula-F1"
+                                                                    [ngClass]="{'formula-assign' : data.formulaResultFlag && data.formulaResultFlag == 'F1'}"
+                                                                    *ngIf="!isInvalidated && data.skipType != 'SKIP'">
+                                                                    <i
+                                                                        (click)="manageIsFinalFormula(data.detailID, 'F1', data)">F1</i>
+                                                                </span>
+                                                                <span class="formula-i">
+
+                                                                    <i class="fas fa-info-circle"
+                                                                        [matTooltip]="data.displayToolTip"
+                                                                        matTooltipClass="section-tool"></i>
+                                                                </span>
+
+                                                                <span class="formula-i"
+                                                                    *ngIf="getDynmicValueTooltip('SHOW', data.resultID)">
+                                                                    <i class="fab fa-dochub"
+                                                                        matTooltip="{{getDynmicValueTooltip('VALUE', data.resultID)}}"
+                                                                        matTooltipClass="section-tool"></i>
+                                                                </span>
+                                                                <span
+                                                                    *ngIf="isInvalidated ? !isInvalidated : !data.isDisable && data.inputType != 'DFRMLA' && ( data.inputType !='FRMLA' || (data.inputType =='FRMLA' && data.formulaType != 'PREP'))">
+                                                                    <a href="Javascript:" [matMenuTriggerFor]="menu"
+                                                                        class="qc_formula-action" matTooltip="Actions">
+                                                                        <i class="fas fa-ellipsis-v"></i>
+                                                                    </a>
+
+
+                                                                    <mat-menu #menu="matMenu">
+                                                                        <a href="Javascript:" mat-menu-item
+                                                                            (click)="skip(data, 'SKIP')">
+                                                                            <i class="fas fa-forward"
+                                                                                style="margin-right: 5px;"></i>
+                                                                            Skip
+                                                                        </a>
+                                                                        <a href="Javascript:" mat-menu-item
+                                                                            (click)="skip(data, 'ND')">
+                                                                            <i class="fas fa-ban"
+                                                                                style="margin-right: 5px;"></i>
+                                                                            Not Detected
+                                                                        </a>
+                                                                        <a href="Javascript:" mat-menu-item
+                                                                            (click)="skip(data, 'DG')">
+                                                                            <i class="fas fa-adjust"
+                                                                                style="margin-right: 5px;"></i>
+                                                                            Disregard
+                                                                        </a>
+                                                                    </mat-menu>
+                                                                </span>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li
+                                                    *ngIf="pageType != 'VIEW' &&  !isInvalidated  && !data.isDisable && (entityCode == 'SPEC_VALID' || entityCode == 'CALIB_VALIDATION' || occSub)">
+
+                                                    <mat-form-field appearance="outline" id="SEC-{{data.detailID}}"
+                                                        class="{{getClass(data)}}" grid_mouse_hover
+                                                        [checkBoxID]="data.detailID" [testType]="testType"
+                                                        [formulaResultFlag]="data.formulaResultFlag" rs232
+                                                        [mngObj]="prepareRs232(data.inputDescription, data, 'prep' + i)"
+                                                        (emitValue)="getRS232Values($event, data, j,i)"
+                                                        [pageAction]="'Save'"
+                                                        [condition]="data.inputType == 'RS232' && analysisMode == 'ONLINE'"
+                                                        [className]="form_rs232_icon_ardsExec">
+                                                        <input matInput placeholder="Value" [(ngModel)]="data.value"
+                                                            id="{{j}}{{i}}" style="min-width: 50%; max-width:50%"
+                                                            (keypress)="aviodSpaces($event, data.isAccCriteriaApp)"
+                                                            (blur)="saveValue(data, j,i)"
+                                                            [readonly]="data.inputType == 'FRMLA' || data.inputType == 'DFRMLA'"
+                                                            [disabled]="isInvalidated ? isInvalidated : data.inputType == 'DEVICE' ? (analysisMode == 'ONLINE' || data.isDisable) : ((data.inputType == 'MEDICALLIMS' && entityCode != 'SPEC_VALID' && entityCode != 'CALIB_VALIDATION') || (data.inputType != 'FRMLA' && data.inputType != 'DFRMLA' && data.isDisable))"
+                                                            maxlength="256">
+                                                        <!-- [disabled]="isInvalidated ? isInvalidated : (data.inputType == 'DEVICE') ? ((analysisMode == 'ONLINE' && isRs232Mode) || data.isDisable) : (data.inputType == 'MEDICALLIMS' || (data.inputType != 'FRMLA' && data.inputType != 'DFRMLA' && data.isDisable))" -->
+                                                        <ul class="qc_hover_btn">
+                                                            <li>
+                                                                <button type="button" mat-raised-button
+                                                                    *ngIf="isInvalidated ? !isInvalidated : data.inputType == 'FRMLA' || data.inputType == 'DFRMLA'"
+                                                                    class="qc_btn-exe" [disabled]="isInvalidated"
+                                                                    (click)="formulaEvaluate(data.detailID, data.updateFlag, data.inputType )">
+                                                                    <i class="{{_global.icnGo}}"></i></button>
+
+                                                                <i *ngIf="data.passOrFail == 'Pass'"
+                                                                    style="position: absolute; top: 2px; left: 9px;color: green;"
+                                                                    class="{{_global.icnConfirm}}"></i>
+
+                                                                <i *ngIf="data.passOrFail == 'Fail'"
+                                                                    style="position: absolute; top: 2px; left: 9px;color: red;"
+                                                                    class="{{_global.icnCancel}}"></i>
+                                                            </li>
+
+                                                            <li> <span *ngIf="data.skipType && data.skipType != 'REG'"
+                                                                    class="edit_sdmsInput"
+                                                                    matTooltip="{{getTooltip(data.skipType)}}">
+                                                                    <!-- <i>{{data.skipType}}</i> -->
+                                                                    <i class="fas fa-forward"
+                                                                        *ngIf="data.skipType == 'SKIP'"></i>
+                                                                    <i class="fas fa-ban"
+                                                                        *ngIf="data.skipType  == 'ND'"></i>
+                                                                    <i class="fas fa-adjust"
+                                                                        *ngIf="data.skipType  == 'DG'"></i>
+                                                                </span>
+                                                            </li>
+                                                            <!-- <li>
+                                                                <span class="formula-F1" id="F1-{{data.detailID}}"
+                                                                    *ngIf="!isInvalidated && data.skipType != 'SKIP' && data.skipType != 'ND'">
+                                                                    <i
+                                                                        (click)="manageIsFinalFormula(data.detailID, 'F1', data)">F1</i>
+                                                                </span>
+                                                            </li>
+                                                            <li>
+                                                                <span class="formula-F2" id="F2-{{data.detailID}}"
+                                                                    *ngIf="!isInvalidated && data.skipType != 'SKIP' && data.skipType != 'ND'">
+                                                                    <i
+                                                                        (click)="manageIsFinalFormula(data.detailID, 'F2', data)">F2</i>
+                                                                </span>
+                                                            </li> -->
+
+                                                        </ul>
+
+                                                        <mat-hint style="margin-top: 11px;" align="end">
+                                                            {{data.value?.length || 0}} / 256</mat-hint>
+                                                    </mat-form-field>
+
+                                                </li>
+                                                <li style=" border-bottom:1px solid #ddd;  padding-bottom: 5px;"
+                                                    *ngIf="isInvalidated  || data.isDisable|| (entityCode != 'SPEC_VALID' && entityCode != 'CALIB_VALIDATION' && !occSub) || pageType == 'VIEW'">
+
+
+                                                    <div class="qc_toprightbtn">
+                                                        <div align="right">
+
+                                                            <span rs232 id="span_{{data.detailID}}"
+                                                                [mngObj]="prepareRs232(data.inputDescription, data, data.inputDescription + i)"
+                                                                (emitValue)="getRS232Values($event, data, j,i)"
+                                                                [pageAction]="'Save'"
+                                                                [condition]="data.inputType == 'RS232' && analysisMode == 'ONLINE'">
+                                                                <!-- [condition]="data.inputType == 'RS232'" -->
+                                                            </span>
+
+                                                            <span class="formula-F2"
+                                                                [ngClass]="{'formula-assign' : data.formulaResultFlag && data.formulaResultFlag == 'F2'}"
+                                                                *ngIf="isIconDispay('F2', data)">
+                                                                <i
+                                                                    (click)="manageIsFinalFormula(data.detailID, 'F2', data)">F2</i>
+                                                            </span>
+                                                            <span class="formula-F1"
+                                                                [ngClass]="{'formula-assign' : data.formulaResultFlag && data.formulaResultFlag == 'F1'}"
+                                                                *ngIf="isIconDispay('F1', data)">
+                                                                <i
+                                                                    (click)="manageIsFinalFormula(data.detailID, 'F1', data)">F1</i>
+                                                            </span>
+
+                                                            <span class="formula-i">
+                                                                <i class="fas fa-info-circle"
+                                                                    [matTooltip]="data.displayToolTip"
+                                                                    matTooltipClass="section-tool"></i>
+                                                            </span>
+                                                            <span class="formula-i"
+                                                                *ngIf="getDynmicValueTooltip('SHOW', data.resultID)">
+                                                                <i class="fab fa-dochub"
+                                                                    matTooltip="{{getDynmicValueTooltip('VALUE', data.resultID)}}"
+                                                                    matTooltipClass="section-tool"></i>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mt-15 pb-5px">
+                                                        <div class="col-10 pl-0">
+                                                            <mat-label class="{{getCls(data)}}">{{data.value}}
+
+                                                                <i *ngIf="data.passOrFail == 'Pass'"
+                                                                    style="position: absolute; top: 3px; right: 1px;color: green;"
+                                                                    class="{{_global.icnConfirm}}"></i>
+
+                                                                <i *ngIf="data.passOrFail == 'Fail'"
+                                                                    style="position: absolute; top: 3px; right: 1px;color: red;"
+                                                                    class="{{_global.icnCancel}}"></i>
+                                                            </mat-label>
+                                                        </div>
+                                                        <div class="col-2 pr-0">
+                                                            <div align="right">
+                                                                <span
+                                                                    *ngIf="isInvalidated ? !isInvalidated : (data.inputType == 'CONST' || (data.inputType == 'MEDICALLIMS' && entityCode != 'SPEC_VALID' && entityCode != 'CALIB_VALIDATION')) ? false : (data.inputType == 'DEVICE' || data.inputType == 'RS232') ?  analysisMode != 'ONLINE' : data.isDisable && ((pageType == 'UPD' && sourceCode != 'CONT_WISE_ANA') || pageType == 'MNG')"
+                                                                    class="edit_sdmsInput_2">
+                                                                    <i class="{{_global.icnEdit}}"
+                                                                        (click)="edit(data,i)"></i>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </mat-grid-tile>
+                                </mat-grid-list>
+                            </div>
+
+                        </mat-expansion-panel>
+
+                        <mat-expansion-panel
+                            *ngIf="tab.sectionSubject == 'Unknown Impurity' || tab.sectionSubject == 'known Impurity'">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    Table Result Sets
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <mat-grid-list cols="2" gutterSize="30px" rowHeight="100px">
+                                <mat-grid-tile *ngFor="let data of getTableResultSets(tab.sectionSubject); let i=index">
+                                    <div class="section-lst">
+                                        <ul class="pxy-0" style="position: relative; top: 0px;">
+                                            <li style="margin-top: 0px;">
+                                                <div class="row">
+                                                    <mat-label class="col-9">{{data.title}}</mat-label>
+                                                    <button type="button" mat-raised-button *ngIf="!isInvalidated"
+                                                        class="qc_btn-exe" [disabled]="isInvalidated"
+                                                        (click)="execTableResult(data.resultSetID)">
+                                                        <i class="{{_global.icnGo}}"></i></button>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </mat-grid-tile>
+                            </mat-grid-list>
+                        </mat-expansion-panel>
+
+                        <mat-expansion-panel>
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    Review
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <div align="right" *ngIf="hasReviewCap && pageType != 'VIEW' && !isInvalidated">
+                                <button type="button" mat-raised-button class="btnbase btn-blue"
+                                    (click)="addReview(tab.tabID)"><i class="fas fa-pencil-alt"></i> &nbsp; Add
+                                    Review</button>
+                            </div>
+                            <div>
+                                <lims-grid [headers]="headersData" [dataSource]="getDataSource(tab.tabID)"></lims-grid>
+                            </div>
+                        </mat-expansion-panel>
+                    </mat-accordion>
+
+                    <div class="qc_heading_spce mt-0 " *ngIf="tab.tabID == 0">
+                        <mat-card class="mat-card-heading">
+                            <mat-card-content>
+                                <h4 class="cardtitle"> Details of Lab Chemicals</h4>
+                                <div class="px-5">
+                                    <div class="py-m-0">
+                                        <div class="mt-2 pl-1 pb-2 pr-1 qc_mobp-mstable">
+                                            <mng-solv [pageAction]="pageAction" [sourceType]="getSourceType()"
+                                                [encEntActID]="samAnaTestID" [entitySourceCode]="entityCode"
+                                                [sourceCode]="sourceCode" [initTime]="testInitTime"
+                                                [dataSource]="dataSourceSolvents" [MatID]="headerInfo.matID"
+                                                [AnalysisTypeCode]="headerInfo.analysisTypeCode"
+                                                (updateData)="updateInitTime($event)" [invalidationID]="invalidationID"
+                                                [sampleAnlysis]="sampleAnalysisLabObj" [requestCode]="refNo"
+                                                [analysisMode]="analysisMode"
+                                                [showDiscardBtn]="pageType=='UPD'&&updTestStatus=='APP'">
+                                            </mng-solv>
+                                        </div>
+                                    </div>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="showHidePageType == 'MAPPING_ARDS'">
+    <mapping-inputs [entityCode]="entityCode" [encSamAnalysisTestID]="samAnaTestID" [sourceCode]="sourceCode"
+        [pageType]="pageType">
+    </mapping-inputs>
+</div>

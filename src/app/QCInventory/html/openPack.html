@@ -1,0 +1,41 @@
+<div class="new-popupTitle" mat-dialog-title>
+    <h1 class="colorwhite">{{pageTitle}}</h1>
+    <div class="popup-close">
+        <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="openPackClose()"></i>
+    </div>
+</div>
+<div class="mt-3 ml-3 mr-3 mb-3" mat-dialog-content>
+    <mat-label><span class="bold">Pack No. </span>: {{packNo}}</mat-label>
+    <mat-grid-list class="mt-2" cols="2" rowHeight="60px" *ngIf="categoryCode != 'WATER_MAT'">
+        <mat-grid-tile *ngIf="subCategoryCode != 'STANDARDS'">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Validity</mat-label>
+                <mat-select [(ngModel)]="openPackObj.validityPeriodID">
+                    <mat-option *ngFor="let valdLst of validityList" [value]="valdLst.id">{{valdLst.name}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan] = "subCategoryCode == 'STANDARDS' ? 2 : 1" >
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Status</mat-label>
+                <mat-select [(ngModel)]="openPackObj.statusCode">
+                    <mat-option value="APP">APPROVED</mat-option>
+                    <mat-option value="REJ">REJECTED</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-grid-tile>
+    </mat-grid-list>
+    <div>
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Remarks</mat-label>
+            <textarea matInput #input [(ngModel)]="openPackObj.remarks" maxlength="250"
+                placeholder="enter remarks"></textarea>
+            <mat-hint align="end">{{input.value?.length || 0}}/250</mat-hint>
+        </mat-form-field>
+    </div>
+    <div align="right">
+        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="openPack()"
+        id="openPack" btnLoader [isLoaderOn]="isLoaderStart">
+            <i class="{{_global.icnAdd}}" aria-hidden="true"></i>&nbsp;Open</button>
+    </div>
+</div>

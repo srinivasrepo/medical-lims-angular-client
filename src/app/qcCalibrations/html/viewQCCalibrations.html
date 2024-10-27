@@ -1,0 +1,87 @@
+<page-head [pageTitle]="getHeaderInfo('TITLE')" viewBack="'true'" [backUrl]="getHeaderInfo('BACKURL')"
+    [status]="getHeaderInfo('STATUS')" [refNo]="getHeaderInfo('REFNUM')" [viewHistoryVisible]="true"
+    [viewHistory]="viewHistory" [entityCode]="entityCode"></page-head>
+
+
+
+
+<div class="matcard-custom-search">
+    <div class="qc_heading_spce">
+        <mat-card class="mat-card-heading">
+            <mat-card-content>
+                <h4 class="cardtitle">Details of Parameter Set</h4>
+    <div class="view-inv ">
+        <ul>
+            <li class="w-100">
+                <mat-label>
+                    <span>Title</span>
+                    <span>{{qcCalibBO.title}}</span>
+                </mat-label>
+            </li>
+            <li>
+                <mat-label>
+                    <span>Manual Reference Number</span>
+                    <span>{{qcCalibBO.manualReferenceNumber || 'N / A'}}</span>
+                </mat-label>
+            </li>
+            <li>
+                <mat-label>
+                    <span>Instrument Type</span>
+                    <span>{{qcCalibBO.instrumentTypeDesc}}</span>
+                </mat-label>
+            </li>
+            <li class="no-border">
+                <mat-label>
+                    <span>Instrument ID's</span>
+                    <span>{{qcCalibBO.instrumentName || 'N / A'}}</span>
+                </mat-label>
+            </li>
+            <div *ngIf="qcCalibBO.obsoluteComments">
+            <li class="no-border" >
+                <mat-label>
+                    <span>Obsolete Comments</span>
+                    <span>{{qcCalibBO.obsoluteComments}}</span>
+                </mat-label>
+            </li>
+            <li class="no-border">
+                <mat-label>
+                    <span>Obsoleted By</span>
+                    <span>{{qcCalibBO.actionBy || 'N / A'}}</span>
+                </mat-label>
+            </li>
+            <li class="no-border">
+                <mat-label>
+                    <span>Obsoleted On</span>
+                    <span>{{qcCalibBO.actionOn || 'N / A'}}</span>
+                </mat-label>
+            </li>
+        </div>
+
+        </ul>
+
+    </div>
+
+    <div align="right" class="pb-2 mt-2 pr-1">
+        <button type="button" mat-raised-button class="btnbase btn-blue mr-0" (click)="Uploadfiles('HEADER_UPLOAD')">
+            <i class="{{getHeaderInfo('UPLOAD')}}" aria-hidden="true"></i>&nbsp;View Documents</button>
+    </div>
+    </mat-card-content>
+    </mat-card>
+    </div>
+
+    <div class="mt-4 pl-1 pr-1 view-calib-grid qc_calib-table">
+        <app-calib-grid [columns]="headersData" [dataSource]="dataSource" [actions]="actions"
+            (onActionClicked)="onActionClicked($event, 'MAIN')" [actionPage]="pageType">
+        </app-calib-grid>
+
+        <div class="full-width px-in-0 mt-2" *ngIf="pageType == 'ASSIGN_STP'">
+            <lims-lookup [info]="templateInfo" #template></lims-lookup>
+        </div>
+    </div>
+    <div align="right" class="mb-1 mt-3" *ngIf="pageType != 'VIEW'">
+        <button type="button" mat-raised-button class="btnbase btn-green mr-0" (click)='save()'>
+            <i class="{{getHeaderInfo('SAVE_ICON')}}" aria-hidden="true"></i>&nbsp;Save</button>
+    </div>
+
+
+</div>

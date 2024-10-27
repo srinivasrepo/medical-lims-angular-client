@@ -1,0 +1,57 @@
+<page-head [pageTitle]="pageTitle"  viewBack="true" [backUrl]="backUrl"></page-head>
+
+<mat-card class="mat-card-c div-content mb-4 mt-1rem qc_mobp-main-tab">
+    <mat-card-content>
+        <div class="qc_heading_spce">
+            <mat-card class="mat-card-heading">
+                <mat-card-content>
+                    <h4 class="cardtitle">Container Wise Materials Details</h4>
+                    <div class="pl-2 pr-2 mt-2">
+        <mat-cat [materialInfo]="materialInfo" [entityCode]="entityCode" (selectedMaterial)="materialData($event)"
+            #materialCategory>
+        </mat-cat>
+        <mat-grid-list cols='2' rowHeight="68px">
+            <mat-grid-tile>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Analysis Type</mat-label>
+                    <mat-select [(ngModel)]="manageObj.analysisTypeID">
+                        <mat-option *ngFor="let typ of analysisTypeList" [value]="typ.analysisTypeID">
+                            {{typ.analysisType}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Sample Source</mat-label>
+                    <mat-select [(ngModel)]="manageObj.sampleSourceCode">
+                        <mat-option *ngFor="let typ of sourceList" [value]="typ.sourceCode">
+                            {{typ.sourceValue}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-grid-tile>
+        </mat-grid-list>
+
+        <div align="right" class="pb-2 mt-2">
+
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="addMaterials('SEARCH')">
+                <i class="{{_global.icnSearch}}" aria-hidden="true"></i>&nbsp;Search</button>
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="addMaterials('ADD')">
+                <i class="{{_global.icnAdd}}" aria-hidden="true"></i>ADD</button>
+        </div>
+
+        <div class="pl-1 pr-1">
+            <lims-grid [headers]="headers" [dataSource]="dataSource" [actions]="actions" [removeAction]="removeAction"
+                (onActionClicked)="onActionClicked($event)"></lims-grid>
+
+            <lims-paging (onPageIndexClicked)="onPage($event)" [totalRecords]="totalNoOfRows"
+                [currentSelectedIndex]="manageObj.pageIndex"></lims-paging>
+        </div>
+        </div>
+        </mat-card-content>
+            </mat-card>
+        </div>
+
+    </mat-card-content>
+</mat-card>

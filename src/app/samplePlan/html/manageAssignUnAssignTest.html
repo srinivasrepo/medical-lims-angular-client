@@ -1,0 +1,87 @@
+<div>
+    <div class="new-popupTitle" mat-dialog-title>
+        <h1 class="colorwhite">Manage / Assign Tasks</h1>
+        <div class="popup-close">
+            <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+            <!-- <i class="material-icons" matTooltip="Close" (click)="close()">close</i> -->
+        </div>
+    </div>
+
+    <div class="analyst_occu modalFull_height pr-3 pl-3 pb-3" mat-dialog-content>
+        <form id="form_assignTaskID">
+            <mat-grid-list
+                cols="{{taskAssignBo.activityCode == 'SAMPLAN_MAN_ACTIVITI' || !(objAssignedBo.encPlanID) ? 3 : 2}}"
+                rowHeight="68px">
+                <mat-grid-tile>
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label> Activity Type</mat-label>
+                        <mat-select placeholder="Activity Type" [(ngModel)]="taskAssignBo.activityCode"
+                            name="activityID" (ngModelChange)="changeActivity()">
+                            <mat-option *ngFor="let catCode of catCodeList" [value]="catCode.catItemCode">
+                                {{catCode.catItem}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <div class="full-width" *ngIf="taskAssignBo.activityCode">
+                        <lims-lookup [info]="samplesInfo" #samples></lims-lookup>
+                    </div>
+                </mat-grid-tile>
+
+                <mat-grid-tile
+                    *ngIf="taskAssignBo.activityCode ? (taskAssignBo.activityCode == 'SAMPLAN_MAN_ACTIVITI' || !(objAssignedBo.encPlanID)) ? 3 : false : false">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Analyst Occupancy</mat-label>
+                        <input matInput placeholder="Analyst Occupancy in Minutes" name="occupancyMinutes"
+                            [(ngModel)]="taskAssignBo.occupancyMin" (keypress)="allowNumbers($event)" autocomplete="off"
+                            maxlength="4">
+                        <mat-hint align="end">{{taskAssignBo.occupancyMin?.length || 0}} / 4</mat-hint>
+                    </mat-form-field>
+                </mat-grid-tile>
+
+                <mat-grid-tile *ngIf="taskAssignBo.activityCode == 'SAMPLAN_MAN_ACTIVITI'">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Reference Number</mat-label>
+                        <input type="text" matInput [(ngModel)]="taskAssignBo.refNumber" name="refNumber"
+                            maxlength="50">
+                        <mat-hint align="end">{{taskAssignBo.refNumber?.length || 0}} / 50</mat-hint>
+                    </mat-form-field>
+                </mat-grid-tile>
+
+                <mat-grid-tile [colspan]="2" *ngIf="taskAssignBo.activityCode == 'SAMPLAN_MAN_ACTIVITI'">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Product/Material Name</mat-label>
+                        <input type="text" matInput [(ngModel)]="taskAssignBo.materialName" name="materialName"
+                            maxlength="250">
+                        <mat-hint align="end">{{taskAssignBo.materialName?.length || 0}} / 250</mat-hint>
+                    </mat-form-field>
+                </mat-grid-tile>
+
+                <mat-grid-tile [colspan]="3" *ngIf="taskAssignBo.activityCode == 'SAMPLAN_MAN_ACTIVITI'">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Description</mat-label>
+                        <input type="text" matInput [(ngModel)]="taskAssignBo.activityDesc" name="description"
+                            maxlength="250">
+                        <mat-hint align="end">{{taskAssignBo.activityDesc?.length || 0}} / 250</mat-hint>
+                    </mat-form-field>
+                </mat-grid-tile>
+            </mat-grid-list>
+
+            <div align="right" class="mt-1 pb-2">
+                <button type="button" mat-raised-button class="btnbase btn-blue" (click)="assignUserTask()"
+                    id="assignPlan" btnLoader [isLoaderOn]="isLoaderStart">
+                    <i class="{{_global.icnAdd}}" aria-hidden="true"></i>&nbsp;Assign</button>
+            </div>
+
+            <div class="add_scroll">
+                <lims-grid (onActionClicked)="onActionClicked($event)" [headers]="headersData"
+                    [dataSource]="getUserPlanTestDataSource" [actions]="actions" [removeAction]="removeActions"></lims-grid>
+            </div>
+
+
+
+        </form>
+
+    </div>
+</div>

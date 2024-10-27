@@ -1,0 +1,188 @@
+<page-head [pageTitle]="pageTitle" [backUrl]="backUrl" viewBack="true" [viewHistory]="viewHistory"
+    viewHistoryVisible="true" [status]="status" [refNo]="refNo" [entityCode]="entityCode" showRpts="true" 
+    [encRptEntActID]="encQualificationID"></page-head>
+
+
+    <mat-card class="mat-card-c div-content mb-4 mt-1rem qc_mobp-main-tab">
+        <mat-card-content>
+        <mat-tab-group #mbTab mat-align-tabs="center" class="qc_mobp-main-tab">
+            <mat-tab label="Request">
+                <div class="qc_heading_spce">
+                    <mat-card class="mat-card-heading">
+                        <mat-card-content>
+                            <h4 class="cardtitle">Initiation Details</h4>
+                <div class="view-inv">
+                    <ul>
+                       
+                        <li>
+                            <mat-label>
+                                <span>Request Type </span>
+                                <span> {{formatString(qualificationRequest.requestType)}}</span>
+                            </mat-label>
+                        </li>
+                        <li>
+                            <mat-label>
+                                <span>Analyst Name </span>
+                                <span> {{formatString(qualificationRequest.analystName)}}</span>
+                            </mat-label>
+                        </li>
+                        <li>
+                            <mat-label>
+                                <span>Activity Type </span>
+                                <span> {{formatString(qualificationRequest.qualificationType)}}</span>
+                            </mat-label>
+                        </li>
+                        <li>
+                            <mat-label>
+                                <span>Type</span>
+                                <span>{{formatString(qualificationRequest.type)}}</span>
+                            </mat-label>
+                        </li>
+                        <li class="w-100">
+                            <mat-label>
+                                <span>
+                                    {{ qualificationRequest.requestTypeCode == 'SAMPLE_ANALYSIS' ? 'Material Name' : 'Solution Name' }}</span>
+                                <span> {{formatString(qualificationRequest.material)}}</span>
+                            </mat-label>
+                        </li>
+                        <li *ngIf="qualificationRequest.requestTypeCode == 'SAMPLE_ANALYSIS'">
+                            <mat-label>
+                                <span>Analysis Type</span>
+                                <span> {{formatString(qualificationRequest.analysisType)}}</span>
+                            </mat-label>
+                        </li>
+                        <li *ngIf="qualificationRequest.requestTypeCode == 'SAMPLE_ANALYSIS'">
+                            <mat-label>
+                                <span>Material Category</span>
+                                <span>{{formatString(qualificationRequest.category)}}</span>
+                            </mat-label>
+                        </li>
+                        <li *ngIf="qualificationRequest.requestTypeCode == 'SAMPLE_ANALYSIS'">
+                            <mat-label>
+                                <span>Technique </span>
+                                <span> {{formatString(qualificationRequest.technique)}}</span>
+                            </mat-label>
+                        </li>
+                        <li *ngIf="qualificationRequest.reQualificationPurpose">
+                            <mat-label>
+                                <span>Requalification Purpose</span>
+                                <span> {{formatString(qualificationRequest.reQualificationPurpose)}}</span>
+                            </mat-label>
+                        </li>
+                        <li *ngIf="qualificationRequest.reQualificationPurpose">
+                            <mat-label>
+                                <span>Reference No.</span>
+                                <span>{{formatString(qualificationRequest.referenceNo)}}</span>
+                            </mat-label>
+                        </li>
+                        <li *ngIf="this.showArNum && qualificationRequest.requestTypeCode == 'SAMPLE_ANALYSIS'">
+                            <mat-label>
+                                <span>AR Number</span>
+                                <span> {{formatString(qualificationRequest.arNumber)}}</span>
+                            </mat-label>
+                        </li>
+                    </ul>
+                </div>
+                <div align="right" class="pb-2 mt-2 pr-1">
+                    <button type="button" mat-raised-button class="btnbase btn-blue"
+                        (click)="uploadFile('ANALYST_QUA_REQ')">
+                        <i class="{{_global.icnViewFiles}}" aria-hidden="true"> </i> &nbsp; View Documents</button>
+                </div>
+                </mat-card-content>
+                </mat-card>
+                </div>
+
+                <!-- <div align="left" class="mb-1 mt-3 ">
+           
+            <h3 class="dark-heading font-size-16">Acceptance Criteria</h3>
+
+            <ul class="qc_list-ul">
+                <li *ngFor="let x of accptCriteria"> {{x.acceptanceCriteria}} </li>
+            </ul>
+        </div> -->
+            </mat-tab>
+            <mat-tab label="Evaluation">
+                <div class="qc_heading_spce">
+                    <mat-card class="mat-card-heading">
+                        <mat-card-content>
+                            <h4 class="cardtitle">Evaluation  Details</h4>
+                            <div class="pl-2 pr-2">
+
+                <div class="qc_table-analyst-q mt-2">
+
+                    <lims-grid *ngIf="qualificationRequest.requestTypeCode == 'SAMPLE_ANALYSIS'" [dataSource]="analyDataSource" [headers]="analyHeader"
+                        (onActionClicked)="onActionClicked($event)" [actions]="actions"></lims-grid>
+                </div>
+                <div class="px-5 mt-3" *ngIf="qualificationRequest.requestTypeCode != 'SAMPLE_ANALYSIS'">
+                    <mat-grid-list cols="5" rowHeight="45px" class="oos-sum-grid fst-child">
+                        <mat-grid-tile class="oos-sum-head" colspan="2">Batch Number</mat-grid-tile>
+                        <mat-grid-tile class="oos-sum-head" colspan="2"> Status</mat-grid-tile>
+                        <mat-grid-tile class="oos-sum-head">Action</mat-grid-tile>
+                        <mat-grid-tile colspan="2" class="fst-child">{{qualificationRequest.batchNumber}}</mat-grid-tile>
+                        <mat-grid-tile colspan="2">{{qualificationRequest.batchStatus}}</mat-grid-tile>
+                        <mat-grid-tile>
+                            <i class="{{_global.icnViewFiles}}" (click)='showVolSolReport()'
+                            aria-hidden="true"></i>
+                        </mat-grid-tile>
+                    </mat-grid-list>
+                </div>
+                <div class="addx-scroll mt-3">
+
+                <lims-grid [dataSource]="dataSource" [headers]="headersData"></lims-grid>
+            </div>
+            </div>
+           
+
+                <div class="view-inv mt-2">
+                    <ul>
+                        <li class="w-100">
+                            <mat-label>
+                                <span>Remarks</span>
+                                <span> {{formatString(qualificationRequest.remarks)}}</span>
+                            </mat-label>
+                        </li>
+                        <li class="w-100" *ngIf="qualificationRequest.justification">
+                            <mat-label>
+                                <span>Justification</span>
+                                <span> {{formatString(qualificationRequest.justification)}}</span>
+                            </mat-label>
+                        </li>
+                        <li *ngIf="qualificationRequest.disQualifyComments" class="w-100">
+                            <mat-label>
+                                <span>Dis-Qualified Comments</span>
+                                <span> {{formatString(qualificationRequest.disQualifyComments)}}</span>
+                            </mat-label>
+                        </li>
+                        <li class="w-100 no-border">
+                            <mat-label>
+                                <span>Conclusion</span>
+                                <span> {{formatString(qualificationRequest.conclusion)}}</span>
+                            </mat-label>
+                        </li>
+                        
+                    </ul>
+                </div>
+
+
+
+                <div class="ml-1 mt-2" *ngIf="qualificationRequest.conculsionCode == 'DISQUAL_OUTSPEC'">
+                    <mat-label class="cardtitle_dark mr-3">Analyst Qualification Checklist :</mat-label> 
+                    <button type="button" mat-raised-button class="btnbase btn-blue" (click)="viewCheckList()">
+                        <i class="{{_global.icnMaster}}" aria-hidden="true"></i>&nbsp;Checklist</button>
+
+                </div>
+
+                <div align="right" class="mt-2 pb-2 pr-1"> 
+                    <button type="button" mat-raised-button class="btnbase btn-blue "
+                        (click)="uploadFile('ANALYST_QUA_EVA')">
+                        <i class="{{_global.icnViewFiles}}" aria-hidden="true"> </i> &nbsp; View Documents</button>
+                </div>
+                </mat-card-content>
+                </mat-card>
+                </div>
+
+
+            </mat-tab>
+        </mat-tab-group>
+    </mat-card-content>
+</mat-card>

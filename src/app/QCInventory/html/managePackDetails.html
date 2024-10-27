@@ -1,0 +1,102 @@
+<div class="modal_content">
+    <div class="new-popupTitle" mat-dialog-title>
+        <h1>{{ title }}</h1>
+        <div class="popup-close">
+            <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+        </div>
+    </div>
+
+    <div class="mt-3 mb-3 pl-3 pr-3" mat-dialog-content>
+        <div *ngIf="pageType == 'MANAGE'">
+            <mat-grid-list cols="2" rowHeight="68px" >
+                <mat-grid-tile>
+            <mat-form-field appearance="outline" class="full-width pl-0">
+                <mat-label>No. of Packs</mat-label>
+                <input matInput placeholder="No. of Packs" (keypress)="allowNumbers($event)" [(ngModel)]="noofPacks"
+                    onpaste="return false" autocomplete=off [disabled]="packBtn == 'Change'" maxlength="3">
+            </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile>
+            <mat-form-field appearance="outline" class="searchLookUpTxt full-width pr-0">
+                <mat-label>Each Pack Quantity</mat-label>
+                <input matInput placeholder="Each Pack Quantity" (keypress)="allowdecimal($event)" [(ngModel)]="eachPackQuantity"
+                    autocomplete=off [disabled]="packBtn == 'Change'">
+                    <!-- <span>{{uom}}</span> -->
+            </mat-form-field> 
+        </mat-grid-tile>
+            </mat-grid-list>
+            <div align="right" class="mb-2">
+            <button type="button" mat-raised-button class="btnbase btn-blue mr-0" (click)="addPacks()" [disabled]="saveBtn == 'Update'">
+                <i class="{{_global.icnGo}}" *ngIf="packBtn == 'Go'" aria-hidden="true"></i>
+                <i class="{{_global.icnChange}}" *ngIf="packBtn == 'Change'" aria-hidden="true"></i>&nbsp;
+                &nbsp;{{packBtn}}</button>
+            </div>
+               
+        </div>
+        <div *ngIf="pageType == 'VIEW'">
+            <mat-label class="cardtitle_dark mr-3">No. of Packs &nbsp;: <span class="qc_viewradio pl-2">  {{noofPacks || 'N / A'}}</span></mat-label>
+        </div>
+        <div [ngClass]="{'hide' : packBtn != 'Change'}">
+            <lims-grid [headers]="headers" [dataSource]="dataSource" (onDataChange)="onDataChange($event)" #grid>
+            </lims-grid>
+        </div>
+
+
+
+        <div class="view-inv add-hr mt-2 "> 
+            <ul>
+                <li>
+                    <mat-label>
+                        <span>Actual Batch Qty.</span>
+                        <span>{{actBatchQty}} {{uom}}</span>
+                    </mat-label>
+                </li>
+                <li>
+                    <mat-label>
+                        <span>Assigned Batch Qty.</span>
+                        <span>{{assignQty || 'N / A'}} {{uom}}</span>
+                    </mat-label>
+                </li>
+
+                <li>
+                    <mat-label>
+                        <span>Batch Number</span>
+                        <span>{{batchNo}}</span>
+                    </mat-label>
+                </li>
+                <li>
+                    <mat-label>
+                        <span>Chemical Type</span>
+                        <span>{{natureOfChemical || 'N / A'}}</span>
+                    </mat-label>
+                </li>
+                <li class="w-100 no-border">
+                    <mat-label>
+                        <span>Chemical Name</span>
+                        <span>{{material}}</span>
+                    </mat-label>
+                </li>
+
+
+            </ul>
+
+        </div>
+
+        <div *ngIf="!natureOfChemical && pageType == 'MANAGE'" class="mt-3">
+            <mat-form-field appearance="outline" class="full-width pl-0 pr-0">
+                <mat-select [(ngModel)]="natureType" placeholder="Chemical Type" [disabled]="saveBtn == 'Update'">
+                    <mat-option *ngFor="let cat of getCatItemList('NATURE_OF_CHEMICAL')" [value]="cat.catItemID">
+                        {{cat.catItem}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div align="right" class="mt-3">
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="save()"
+                *ngIf="packBtn == 'Change' && pageType == 'MANAGE'" id="mngPackDetails" btnLoader [isLoaderOn]="isLoaderStart">
+                <i class="{{_global.icnSave}}" *ngIf="saveBtn == 'Save'" aria-hidden="true"></i>
+                <i class="{{_global.icnUpdate}}" *ngIf="saveBtn == 'Update'" aria-hidden="true"></i>
+                &nbsp;&nbsp;{{saveBtn}}
+            </button>
+        </div>
+    </div>
+</div>

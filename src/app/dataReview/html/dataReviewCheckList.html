@@ -1,0 +1,138 @@
+<div class="qc_heading_spce">
+    <mat-card class="mat-card-heading">
+        <mat-card-content>
+            <h4 class="cardtitle"> Review Details</h4>
+
+            <div class="view-inv">
+                <ul>
+                    <li class="w-100" *ngIf="selectedPacks">
+                        <mat-label>
+                            <span>Selected Packs</span>
+                            <span> {{selectedPacks || 'N / A'}}</span>
+                        </mat-label>
+                    </li>
+                    <li  *ngIf="manageReviewObj.entityCode == 'DATA_REVIEW' && (saveBtn == 'Update' || hideView)">
+                        <mat-label>
+                            <span>Application Software</span>
+                            <span> {{manageReviewObj.applicationSoftware || 'N / A'}}</span>
+                        </mat-label>
+                    </li>
+                    <li  *ngIf="manageReviewObj.entityCode == 'DATA_REVIEW' && (saveBtn == 'Update' || hideView)">
+                        <mat-label>
+                            <span>Sequence No./Data file No's.</span>
+                            <span> {{manageReviewObj.dataFileNo || 'N / A'}}</span>
+                        </mat-label>
+                    </li>
+                </ul>
+            </div>
+            <div class="mt-2 pl-1 pr-1" *ngIf="manageReviewObj.entityCode == 'DATA_REVIEW' && saveBtn == 'Save' && !hideView">
+                <mat-grid-list cols="2" rowHeight="68px">
+                    <mat-grid-tile>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Application Software</mat-label>
+                    <input type='text' matInput [(ngModel)]="manageReviewObj.applicationSoftware" maxlength="50">
+                    <mat-hint align="end">{{manageReviewObj.applicationSoftware?.length || 0}}/50</mat-hint>
+                </mat-form-field>
+            </mat-grid-tile>
+                <mat-grid-tile>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Sequence No./Data file No's.</mat-label>
+                    <input type='text' matInput [(ngModel)]="manageReviewObj.dataFileNo" maxlength="50">
+                    <mat-hint align="end">{{manageReviewObj.dataFileNo?.length || 0}}/50</mat-hint>
+                </mat-form-field>
+            </mat-grid-tile>
+            </mat-grid-list>
+            </div>
+            <div class="mt-1 qc_n-table  pl-2 pr-1 add_scroll">
+                <div class="add_scroll pr-1">
+                <lims-grid [dataSource]="dataSource" [headers]="headers" [actions]="actions"
+                    (onActionClicked)="onActionCLicked($event)"></lims-grid>
+                </div>
+            </div>
+            <div *ngIf="manageReviewObj.entityCode == 'ANA_DATA_REVIEW'" class="mt-1">
+                <mat-form-field appearance="outline" class="full-width" *ngIf="saveBtn == 'Save' && !hideView">
+                    <mat-label>Type of Checklist Control</mat-label>
+                    <mat-select [(ngModel)]="checklistTypeID" disabled>
+                        <mat-option *ngFor="let item of getCatItemList('CHK_CTRL_TYPE')" [value]="item.catItemID">{{item.catItem}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <div class="view-inv" *ngIf="saveBtn == 'Update' || hideView">
+                    <ul>
+                        <li class="w-100">
+                            <mat-label>
+                                <span>Type of Checklist Control</span>
+                                <span> {{checklistType || 'N / A'}}</span>
+                            </mat-label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div *ngIf="saveBtn == 'Save' && !hideView" class="mt-2 pl-1 pr-1">
+                <mat-grid-list cols='1' rowHeight="120px">
+                    <mat-grid-tile *ngIf="manageReviewObj.entityCode == 'DATA_REVIEW'">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label> Any other observations</mat-label>
+                            <textarea matInput [(ngModel)]="manageReviewObj.observations" maxlength="1000" rows="4"></textarea>
+                            <mat-hint align="end">{{manageReviewObj.observations?.length || 0}} / 1000</mat-hint>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile *ngIf="manageReviewObj.entityCode == 'DATA_REVIEW'">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Recommendation (If Any)</mat-label>
+                            <textarea matInput [(ngModel)]="manageReviewObj.recommendations" maxlength="1000" rows="4"></textarea>
+                            <mat-hint align="end">{{manageReviewObj.recommendations?.length || 0}} / 1000</mat-hint>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile *ngIf="manageReviewObj.entityCode == 'ANA_DATA_REVIEW'">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Remarks</mat-label>
+                            <textarea matInput [(ngModel)]="manageReviewObj.remarks" maxlength="1000" rows="4"></textarea>
+                            <mat-hint align="end">{{manageReviewObj.remarks?.length || 0}} / 1000</mat-hint>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <!-- <mat-grid-tile *ngIf="manageReviewObj.entityCode == 'ANA_DATA_REVIEW'">
+                        <mat-label>QA Checklist</mat-label>
+                        <button type="button" mat-raised-button class="btnbase btn-green" (click)="saveChecklist()"><i
+                                class="{{_global.icnList}}"></i>&nbsp;Final
+                            Checklist</button>
+                    </mat-grid-tile> -->
+                </mat-grid-list>
+            </div>
+
+            <div class="view-inv mt-1 pb-2" *ngIf="saveBtn == 'Update' || hideView">
+                <ul>
+                    <li class="w-100" *ngIf="manageReviewObj.entityCode == 'DATA_REVIEW'">
+                        <mat-label>
+                            <span>Any other observations</span>
+                            <span> {{manageReviewObj.observations || 'N / A'}}</span>
+                        </mat-label>
+                    </li>
+                    <li class="w-100" *ngIf="manageReviewObj.entityCode == 'DATA_REVIEW'">
+                        <mat-label>
+                            <span>Recommendation (If Any)</span>
+                            <span> {{manageReviewObj.recommendations|| 'N / A'}}</span>
+                        </mat-label>
+                    </li>
+                    <li class="w-100" *ngIf="manageReviewObj.entityCode == 'ANA_DATA_REVIEW'">
+                        <mat-label>
+                            <span>Remarks</span>
+                            <span> {{manageReviewObj.remarks || 'N / A'}}</span>
+                        </mat-label>
+                    </li>
+                </ul>
+                <!-- <div *ngIf="manageReviewObj.entityCode == 'ANA_DATA_REVIEW'">
+                    <mat-label>QA Checklist</mat-label>
+                    <button type="button" mat-raised-button class="btnbase btn-green" (click)="saveChecklist()"><i
+                            class="{{_global.icnList}}"></i>&nbsp;Final
+                        Checklist</button>
+                </div> -->
+            </div>
+            <div align="right" class="pb-2 mt-2 pr-1">
+
+                <button type="button" mat-raised-button class="btnbase btn-blue" (click)="saveDataReview()"
+                    *ngIf="!hideView"><i class="{{_global.icnSave}}" *ngIf="saveBtn !='Update'"  id="btnLoadersCheckList" btnLoader [isLoaderOn]="isLoaderStart"></i>
+                    <i class="{{_global.icnUpdate}}" *ngIf="saveBtn=='Update'" aria-hidden="true"></i>&nbsp;{{saveBtn}}</button>
+            </div>
+            </mat-card-content>
+            </mat-card>
+</div>

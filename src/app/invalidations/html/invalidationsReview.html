@@ -1,0 +1,114 @@
+<div class="qc_heading_spce">
+    <mat-card class="mat-card-heading">
+        <mat-card-content>
+            <h4 class="cardtitle"> Review Details</h4>
+            <div class="pl-2 pr-2 mt-2">
+
+    <div class="col-2 float-left qc_check-list pl-1 pr-0">
+        <h5 class="cardtitle_md mb-2 mt-1">Root Cause :</h5>
+        <span *ngFor="let root of rootCauseList">
+            <mat-checkbox [(ngModel)]="root.isSelect" [disabled]="disable || appBO.isFinalApp">{{root.catItem}}
+            </mat-checkbox>
+        </span>
+    </div>
+    <div class="col-10 float-left pl-1 pr-0">
+        <mat-grid-list cols="1" rowHeight="68px">
+            <mat-grid-tile>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Is the Re-Analysis Result is Valid</mat-label>
+                    <mat-select placeholder="Is the Re-Analysis Result is Valid" [(ngModel)]="reAnalysisResult"
+                        [disabled]="disable || appBO.isFinalApp">
+                        <mat-option value="YES">Yes</mat-option>
+                        <mat-option value="NO">No</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-grid-tile>
+        </mat-grid-list>
+        <mat-grid-list cols="2" rowHeight="120px">
+            <mat-grid-tile colspan="2" *ngIf="isOtherRootCause()"  >
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Other Root Cause</mat-label>
+                    <textarea matInput rows="5" placeholder="Other Root Cause" class="textarea_size_fix"
+                        [(ngModel)]="otherRootCause" [disabled]="disable || appBO.isFinalApp" 
+                        maxlength="250"></textarea>
+                    <mat-hint align="end">{{otherRootCause?.length || 0}}/250</mat-hint>
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile  colspan="2" *ngIf="reAnalysisResult == 'NO'">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Actions Recommended</mat-label>
+                    <textarea matInput rows="5" placeholder="Actions Recommended" class="textarea_size_fix"
+                        [(ngModel)]="ifNoActions" [disabled]="disable || appBO.isFinalApp" maxlength="50000"></textarea>
+                    <mat-hint align="end">{{ifNoActions?.length || 0}}/50000</mat-hint>
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile  colspan="2" >
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Implementation Summary</mat-label>
+                    <textarea rows="5" matInput class="textarea_size_fix" placeholder="Implementation Summary"
+                        [(ngModel)]="summary" [disabled]="disable || appBO.isFinalApp" maxlength="50000"></textarea>
+                    <mat-hint align="end">{{summary?.length || 0}}/50000</mat-hint>
+                </mat-form-field>
+            </mat-grid-tile>
+        </mat-grid-list>
+        <mat-grid-list cols="2" rowHeight="100px">
+            <mat-grid-tile *ngIf="catCode != 'INVALID_NON-QUALITY'"  >
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Initial Analysis SST Results</mat-label>
+                    <textarea matInput placeholder="Initial Analysis SST Results" class="textarea_size_fix" rows="3"
+                        [(ngModel)]="initSstRes" maxlength="5000" [disabled]="disable || appBO.isFinalApp"></textarea>
+                    <mat-hint align="end">{{initSstRes?.length || 0}}/5000</mat-hint>
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile *ngIf="catCode != 'INVALID_NON-QUALITY'"  >
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Initial Analysis Results</mat-label>
+                    <textarea matInput placeholder="Initial Analysis Results" [(ngModel)]="initRes" rows="3"
+                        class="textarea_size_fix" maxlength="5000" [disabled]="disable || appBO.isFinalApp"></textarea>
+                    <mat-hint align="end">{{initRes?.length || 0}}/5000</mat-hint>
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile   *ngIf="catCode != 'INVALID_NON-QUALITY'">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Re-Analysis SST Results</mat-label>
+                    <textarea matInput placeholder="Re-Analysis SST Results" [(ngModel)]="reSstRes" maxlength="5000" rows="3"
+                        class="textarea_size_fix" [disabled]="disable || appBO.isFinalApp"></textarea>
+                    <mat-hint align="end">{{reSstRes?.length || 0}}/5000</mat-hint>
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile   *ngIf="catCode != 'INVALID_NON-QUALITY'">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Re-Analysis Results</mat-label>
+                    <textarea matInput placeholder="Re-Analysis Results" [(ngModel)]="reAnalyRes" maxlength="5000" rows="3"
+                        class="textarea_size_fix" [disabled]="disable || appBO.isFinalApp"></textarea>
+                    <mat-hint align="end">{{reAnalyRes?.length || 0}}/5000</mat-hint>
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile *ngIf="appBO.isFinalApp || qaRemarks"  >
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>QA Remarks</mat-label>
+                    <textarea matInput placeholder="QA Remarks" [(ngModel)]="qaRemarks" maxlength="8000" rows="3"
+                        class="textarea_size_fix" [disabled]="disable || !appBO.isFinalApp"></textarea>
+                    <mat-hint align="end">{{qaRemarks?.length || 0}}/8000</mat-hint>
+                </mat-form-field>
+            </mat-grid-tile>
+        </mat-grid-list>
+    </div>
+    <div align="right" class="pb-2 mt-2">
+        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="uploadFiles()"> <i
+                class="{{_global.icnUpload}}" *ngIf="btnType == 'Save'" aria-hidden="true"></i>
+            <i class="{{_global.icnViewFiles}}" *ngIf="btnType == 'Update'" aria-hidden="true"></i>&nbsp;{{btnUpload}}
+        </button>
+        <button type="button" mat-raised-button class="btnbase btn-blue" [disabled]="appLevel < 2"
+            (click)="saveReview()" id="btnLoaders" btnLoader [isLoaderOn]="isLoaderStart">
+            <i class="{{_global.icnSave}}" *ngIf="btnType == 'Save'" aria-hidden="true"></i>
+            <i class="{{_global.icnUpdate}}" *ngIf="btnType == 'Update'"
+                aria-hidden="true"></i>&nbsp;{{btnType}}</button>
+        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="clear()"
+            [disabled]="btnType == 'Update'">
+            <i class="{{_global.icnCancel}}" aria-hidden="true"></i>&nbsp;Clear</button>
+    </div>
+</div>
+</mat-card-content>
+</mat-card>
+</div>

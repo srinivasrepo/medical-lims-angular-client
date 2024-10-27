@@ -1,0 +1,75 @@
+<div class="new-popupTitle" mat-dialog-title>
+    <h1>{{pageTitle}}</h1>
+    <div class="popup-close">
+        <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+    </div>
+</div>
+<div class="mt-3 mb-3 pl-3 pr-3 modal_body modal_body_3 mat-dialog-content">
+    <div>
+        <mat-tab-group #tableTab mat-align-tabs="center" class="ana-tab" [selectedIndex]="selectedTab">
+            <mat-tab label="Dependent Inputs">
+                <mat-table [dataSource]="table1DataSource" class="mt-2">
+                    <ng-container *ngFor="let column of table1Header; let i = index" [matColumnDef]="column.columnDef">
+                        <mat-header-cell *matHeaderCellDef class="{{column.width}}">
+                            {{ column.header }}
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let row; let i = dataIndex;" class="{{column.width}}">
+                            {{ row[column.columnDef] }}
+                        </mat-cell>
+                    </ng-container>
+                    <mat-header-row *matHeaderRowDef="displayedTable1Columns; sticky: true"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedTable1Columns;"></mat-row>
+                </mat-table>
+            </mat-tab>
+            <mat-tab label="System Formulas">
+                <div>
+                    <mat-table [dataSource]="table2DataSource" class="mt-2">
+                        <ng-container *ngFor="let column of table2Header; let i = index"
+                            [matColumnDef]="column.columnDef">
+                            <mat-header-cell *matHeaderCellDef class="{{column.width}}">
+                                {{ column.header }}
+                            </mat-header-cell>
+                            <mat-cell *matCellDef="let row; let i = index;" class="{{column.width}}">
+                                <mat-label *ngIf="column.columnDef != 'type'"> {{ row[column.columnDef] }}</mat-label>
+                                <span *ngIf="column.columnDef == 'description'">
+                                    <span class="formula-F2"
+                                        [ngClass]="{'formula-assign' : row.formulaResultFlag && row.formulaResultFlag == 'F2'}"
+                                        *ngIf="row.type != 'SKIP' && testType == 'R'">
+                                        <i (click)="manageIsFinalFormula(row.detailID, 'F2', row)"
+                                            style="color: #fff;">F2</i>
+                                    </span>
+                                    <span class="formula-F1"
+                                        [ngClass]="{'formula-assign' : row.formulaResultFlag && row.formulaResultFlag == 'F1'}"
+                                        *ngIf="row.type != 'SKIP'">
+                                        <i (click)="manageIsFinalFormula(row.detailID, 'F1', row)"
+                                            style="color: #fff;">F1</i>
+                                    </span>
+                                </span>
+                                <span *ngIf="column.columnDef == 'inputValue' && row.status == 'Under Process'">
+                                    <mat-spinner diameter="30" strokeWidth="5"></mat-spinner>
+                                </span>
+                                <mat-form-field appearance="outline" *ngIf="column.columnDef == 'type'">
+                                    <mat-label>Type</mat-label>
+                                    <mat-select placeholder="Type" [(ngModel)]="row.type"
+                                        (ngModelChange)="typeChange(row)" [disabled]="btnSaveType == 'Update'">
+                                        <mat-option value="REG">Regular</mat-option>
+                                        <mat-option value="SKIP">Skip</mat-option>
+                                        <mat-option value="ND">Not Detected</mat-option>
+                                        <mat-option value="DR">Disregard</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </mat-cell>
+                        </ng-container>
+                        <mat-header-row *matHeaderRowDef="displayedTable2Columns; sticky: true"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedTable2Columns;"></mat-row>
+                    </mat-table>
+                </div>
+                <div align="right" style="margin-top: 20px;" *ngIf="table2DataSource && table2DataSource.data && table2DataSource.data.length > 0 && showExecBtn && pageType != 'VIEW'">
+                    <button type="button" mat-raised-button class="btnbase btn-blue" (click)="startExecute()">
+                        <i class="{{_global.icnGo}}" aria-hidden="true"></i> Execute</button>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+
+</div>

@@ -1,0 +1,27 @@
+<div>
+
+    <div class="new-popupTitle" mat-dialog-title>
+        <h1 class="colorwhite">Analyst Occupancy</h1>
+        <div class="popup-close">
+            <!-- <i class="material-icons" matTooltip="Close" (click)="close()">close</i> -->
+            <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+        </div>
+    </div>
+
+    <div class="ml-2 mr-2 mb-2 popupgrid analyst_occu modalFull_height" mat-dialog-content>
+        <div *ngFor="let occu of analystOccuActivities" class="mt-0">
+            <div *ngIf="analystOccuActivities.length > 0">
+                <h4 class="mb-1">
+                    {{occu}}
+                </h4>
+                <div class="popup">
+                    <lims-grid [headers]="getHeadersData(occu)" [dataSource]="getOccuActivitiesDataSource(occu)">
+                    </lims-grid>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="analystOccuActivities.length == 0" align="center">
+            User not assigned with any tasks
+        </div>
+    </div>
+</div>

@@ -1,0 +1,56 @@
+<page-head [pageTitle]="pageTitle" viewBack="true" [backUrl]="backUrl"></page-head>
+
+<div id="details-class">
+    <div class="content-div">
+        <lims-grid (onActionClicked)="onActionClicked($event)" [headers]="headersData" [dataSource]="dataSource"></lims-grid>
+    </div>
+    <div class="content-div">
+        <div *ngIf="showDetails">
+            <!-- <mat-label>{{sdmsDetails.specTestID || 'N/A'}}</mat-label><br> -->
+            <p>
+                <b>Sample Analysis Test ID:</b> &nbsp; <mat-label>{{samAnaTestID || 'N/A'}}</mat-label><br>
+            </p>
+            <p>
+                <b>Reference Number:</b> &nbsp; <mat-label>{{sdmsDetails.referenceNumber || 'N/A'}}</mat-label><br>
+            </p>
+            <p>
+                <b>Batch Number:</b> &nbsp; <mat-label>{{sdmsDetails.batchNumber || 'N/A'}}</mat-label><br>
+            </p>
+            <p>
+                <b>Instrument ID:</b> &nbsp; <mat-label>{{sdmsDetails.instrumentID || 'N/A'}}</mat-label><br>
+            </p>
+            
+            <p>
+                <b>Analyst Name:</b> &nbsp; <mat-label>{{sdmsDetails.analystName || 'N/A'}}</mat-label><br>
+            </p>
+        
+            <p>
+                <b>Analyzed Date:</b> &nbsp; <mat-label>{{dateFormate(sdmsDetails.dateAnalyzed) || 'N/A'}}</mat-label><br>
+            </p>
+               
+            <p>
+                <b>Sample Name:</b> &nbsp; <mat-label>{{sdmsDetails.sampleName || 'N/A'}}</mat-label><br>
+            </p>
+        
+            <p>
+               <b> Preparation:</b> &nbsp; <mat-label>{{sdmsDetails.preparation || 'N/A'}}</mat-label><br>
+            </p>
+           
+        
+            <p>
+               <b>Method Name:</b> &nbsp; <mat-label>{{sdmsDetails.methodName || 'N/A'}}</mat-label><br>
+            </p>
+            
+            <p>
+                <b>Template Code:</b> &nbsp; <mat-label>{{sdmsDetails.templateCode || 'N/A'}}</mat-label><br>
+            </p>
+            
+        </div>
+        <lims-grid [headers]="headersSDMSList" [dataSource]="sdmsDatsource"></lims-grid>
+    </div>
+
+    
+</div>
+
+
+

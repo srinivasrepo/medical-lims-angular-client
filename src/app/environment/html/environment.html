@@ -1,0 +1,131 @@
+<mat-sidenav-container id="bgColor-home" style="background: none;">
+  <mat-toolbar class="topbarcolor head-sticky">
+
+    <div class="logosubtext">
+      <span class="qc_logo" (click)="splash()">
+        <img src="~/../assets/images/logo-white.png"> </span>
+      <span class="subtext">Laboratory Information<br>Management System</span>&nbsp;&nbsp;&nbsp;<span
+        class="version">{{appVersion}}</span>
+    </div>
+    <span class="example-fill-remaining-space"></span>
+
+    <div class="topusermenu">
+      <div>
+        <ul>
+          <li>
+            <span class="btn-create-notifications-main" *ngIf="newReqList.length > 0">
+              <button mat-mini-fab class="mat-elevation-z6 btn-notify" matTooltip="Create new request" color="warn"
+                [matMenuTriggerFor]="menu">
+                <!-- <i class="material-icons">add</i> -->
+                <i class="{{_global.icnAdd}}" aria-hidden="true"></i>
+              </button>
+              <mat-menu #menu="matMenu">
+                <span *ngFor="let act of newReqList;let index = index" id="act{{index + 1}}">
+                  <span>
+                    <button color="primary" mat-menu-item (click)="gotoNewRequestPage(act.route, act.entityCode)">
+                      <img class="routeIcon" [attr.src]="act.iconName" />
+                      <div class="icon-name">{{act.displayName}}</div>
+                    </button>
+                  </span>
+                </span>
+              </mat-menu>
+            </span>
+          </li>
+
+          <li>
+            <span class="btn-create-notifications-main">
+              <button mat-mini-fab class="mat-elevation-z6 btn-notify" [disabled]="disableSyncBtn"
+                matTooltip="Sync Reports" color="warn" (click)="syncReports()">
+                <i class="fas fa-sync"></i>
+              </button>
+            </span>
+          </li>
+          <li>
+
+
+            <span *ngFor="let item of moduleList;let i = index">
+
+              <!-- Handle branch node buttons here -->
+              <span *ngIf="item.children && item.children.length > 0">
+                <!-- <img class="routeIcon" [attr.src]="item.iconName" /> -->
+                <button mat-button class="menustyle" [ngClass]="{'active':item.entityType == activeType}"
+                  [matMenuTriggerFor]="menu.childMenu">
+                  {{item.displayName}}
+                </button>
+                <app-menu-list-item #menu [items]="item.children"></app-menu-list-item>
+              </span>
+
+              <!-- Leaf node buttons here -->
+              <span *ngIf="!item.children || item.children.length === 0">
+                <!-- <img class="routeIcon" [attr.src]="item.iconName" /> -->
+                <button mat-button class="menustyle" [ngClass]="{'active':item.entityType == activeType}"
+                  (click)="navigateToLind(item)">
+                  {{item.displayName}}
+                </button>
+              </span>
+
+            </span>
+
+          </li>
+
+          <li>
+
+            <button mat-mini-fab class="menubtn mat-elevation-z3" matTooltip="Profile" [matMenuTriggerFor]="menu">
+              <mat-icon>account_circle</mat-icon>
+            </button>
+
+            <mat-menu #menu="matMenu" class="usercardbg">
+              <div class="usercard">
+                <div class="uone">{{userName}}</div>
+                <div class="utwo">
+                  <ul>
+                    <li>
+                      <a href="javascript:">
+                        <span>
+                          <img src="~/../assets/images/plant.png">
+                        </span>{{plantName}}</a>
+                    </li>
+                    <li>
+                      <a href="javascript:">
+                        <span>
+                          <img src="~/../assets/images/department.png">
+                        </span>{{deptName}}</a>
+                    </li>
+                  </ul>
+                </div>
+                <div class="uthree">
+                  <button class="mat-raised-button mat-primary ub" color="primary" (click)="logout()"
+                    matTooltip="User Logout">
+                    Logout </button>
+                </div>
+              </div>
+            </mat-menu>
+
+          </li>
+
+          <li>
+
+            <button mat-mini-fab class="menubtn mat-elevation-z3" matTooltip="Home" (click)='splash()'>
+              <mat-icon>home</mat-icon>
+            </button>
+
+          </li>
+
+        </ul>
+
+      </div>
+
+    </div>
+
+
+  </mat-toolbar>
+
+  <mat-progress-bar *ngIf="loading" color="primary" class="router-progress-bar" mode="indeterminate">
+  </mat-progress-bar>
+
+  <div class="app-content">
+    <router-outlet>
+    </router-outlet>
+  </div>
+
+</mat-sidenav-container>

@@ -1,0 +1,94 @@
+<page-head [pageTitle]="pageTitle" viewBack="true" [backUrl]="backUrl"></page-head>
+
+<mat-card class="mat-card-c div-content mb-4 mt-1rem qc_mobp-main-tab">
+    <mat-card-content>
+        <div class="qc_heading_spce mt-3">
+            <mat-card class="mat-card-heading">
+                <mat-card-content>
+                    <h4 class="cardtitle"> Manage Stock Management </h4>
+                    <div class="view-inv pl-1 pr-1">
+                        <ul>
+                            <li class="w-66">
+                                <mat-label>
+                                    <span>Sub Category</span>
+                                    <span>{{subCategory || 'N/A'}}</span>
+                                </mat-label>
+                            </li>
+                            <li class="w-33">
+                                <mat-label>
+                                    <span>Chemical Code </span>
+                                    <span>{{chemicalCode || 'N/A'}}</span>
+                                </mat-label>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="pl-2 pr-2 mt-2">
+                      
+                        <mat-grid-list cols="2" rowHeight="68px" class="mt-3">
+                            <mat-grid-tile>
+                                <div class="full-width">
+                                <mat-cat [materialInfo]="materialInfo" [entityCode]="entityCode"
+                                (selectedMaterial)="materialData($event)" #materialCategory>
+                            </mat-cat>
+                        </div>
+                            </mat-grid-tile>
+                            
+                            <mat-grid-tile>
+                                <div class="full-width">
+                                    <lims-lookup [info]="manufacturerInfo" #manufacturer></lims-lookup>
+                                </div>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Quantity</mat-label>
+                                    <input type="text" matInput placeholder="Quantity" [disabled]="readonly"
+                                        autocomplete=off (keypress)="allowdecimal($event)" [(ngModel)]="quantity"
+                                        onpaste="return false">
+                                    <span class="uom-name">{{uomName}}</span>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width ">
+                                    <mat-label>Batch No.</mat-label>
+                                    <input matInput placeholder="Batch No." maxLength="25" [disabled]="readonly"
+                                        [(ngModel)]="batchNo">
+                                    <mat-hint align="end">{{batchNo?.length || 0}} / 25</mat-hint>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                        </mat-grid-list>
+                    </div>
+
+                        <div align="right" class="mt-2 pb-2 pr-2">
+                            <button mat-raised-button class="btnbase btn-blue" *ngIf="!confirmDisable"
+                                (click)="confirm()"  id="qcInv" btnLoader [isLoaderOn]="isLoaderStart">
+                                <i class="{{_global.icnConfirm}}"
+                                    aria-hidden="true"></i>&nbsp;&nbsp;Confirm</button>
+                            <button mat-raised-button class="btnbase btn-blue" (click)="manageQcInvt()">
+                                <i class="{{_global.icnSave}}" *ngIf="btnType == 'Save'" aria-hidden="true"></i>
+                                <i class="{{_global.icnUpdate}}" *ngIf="btnType == 'Update'" aria-hidden="true"></i>
+                                &nbsp;&nbsp;{{btnType}}</button>
+
+                        </div>
+                   
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+
+
+
+
+
+
+
+
+
+        <!-- <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Use Before Date: </mat-label>
+    <input matInput [matDatepicker]="picker" readonly [min]="currentDate" placeholder="Use before date" [(ngModel)]="useBeforeDate">
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+</mat-form-field> -->
+
+    </mat-card-content>
+    </mat-card>

@@ -1,0 +1,81 @@
+
+<div class="qc_box-n">
+    <mat-card class="matcard-nobg">
+        <mat-card-content>
+<div class="matcard-custom-search search-bg">
+    <page-head [pageTitle]="pageTitle"></page-head>
+    <form>
+        <div class="search-fields">
+            <mat-grid-list cols="2" rowHeight="65px">
+                <mat-grid-tile>
+                    <mat-form-field appearance="outline" class="full-width pl-0">
+                        <mat-label> Module</mat-label>
+                        <mat-select placeholder="Module" name="entityID" id="entityID" [(ngModel)]="entityID"
+                            class="form-control" (ngModelChange)="changeModule(entityID)">
+                            <mat-option *ngFor="let ent of ddlModules" [value]="ent.entityID">{{ent.entityName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <mat-form-field appearance="outline" class="full-width pr-0">
+                        <mat-label> Condition</mat-label>
+                        <mat-select placeholder="Condition" name="condition" id="conditionID"
+                            [(ngModel)]="conditionID" class="form-control">
+                            <mat-option *ngFor="let mod of ddlCondition" [value]="mod.conditionID">{{mod.condition}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <mat-form-field appearance="outline" class="full-width pl-0">
+                        <mat-label> Status</mat-label>
+                        <mat-select placeholder="Status" name="Status" id="Status" [(ngModel)]="statusID"
+                            class="form-control">
+                            <mat-option *ngFor="let status of ddlStatus" [value]="status.statuS_ID">{{status.status}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-grid-tile>
+            </mat-grid-list>
+
+            <div align="right" class="full-width">
+                <!-- <button type="button" mat-raised-button color="primary" (click)="cloneRoles()">Clone Roles</button>&nbsp;&nbsp; -->
+                <button type="button" mat-raised-button class="btnbase btn-blue" (click)="add()"
+                    *ngIf="hasCreateCap"><i class="{{_global.icnAdd}}"></i>&nbsp;Create New</button>
+                <button type="button" mat-raised-button class="btnbase btn-blue" (click)="manageCapability()"><i
+                        class="{{_global.icnList}}"></i>&nbsp;Manage Capability</button>
+                <button type="button" mat-raised-button class="btnbase btn-blue" (click)="searchfilter('Search')"><i
+                            aria-hidden="true" class="{{_global.icnSearch}}"></i>&nbsp;Search</button>
+                <button type="button" mat-raised-button class="btnbase btn-blue mr-0" (click)="searchfilter('SearchAll')"><i
+                            aria-hidden="true" class="{{_global.icnSearchAll}}"></i>&nbsp;Search All</button>
+            </div>
+        </div>
+    </form>
+</div>
+</mat-card-content>
+</mat-card>
+</div>
+
+<!-- <div class="matcard-custom mt-5">
+        <mat-card class="mat-card-c">
+            <mat-card-content>
+                <lims-grid (onActionClicked)="onActionClicked($event)" [headers]="headersData" [dataSource]="dataSource"
+                    [actions]="actions" [removeAction]="removeAction"></lims-grid>
+            </mat-card-content>
+            </mat-card>
+
+        </div> -->
+
+        <div class="mt-5 mb-5">
+            <mat-card class="matcard-custom pxy-2 qc_table-Analysis">
+        <mat-card-content>
+            <lims-grid (onActionClicked)="onActionClicked($event)" [headers]="headersData" [dataSource]="dataSource"
+                [actions]="actions" [removeAction]="removeAction"></lims-grid>
+           
+                <lims-paging (onPageIndexClicked)="onPageIndexClicked($event);" [totalRecords]="totalRecords"
+                    [currentSelectedIndex]="currentSelectedIndex"></lims-paging>
+            
+        </mat-card-content>
+    </mat-card>
+</div>

@@ -1,0 +1,77 @@
+<div class="mt-2 mb-3 mr-0 ml-0" class="calibration-grid ">
+    <mat-table #table [dataSource]="dataSource" *ngIf="dataSource && dataSource.data">
+        <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDef">
+            <mat-header-cell *matHeaderCellDef class="{{column.width}}">{{ column.header }}</mat-header-cell>
+            <mat-cell *matCellDef="let row;let idx = index;" class="{{column.width}}">
+
+                <mat-label>
+                    <span *ngIf="dataValidationsShowHide(column.columnDef, row)">
+                        {{ formatValue(column.cell(row), column.columnDef, row) }}
+                    </span>
+
+                    <i class="{{_global.icnPdf}}" aria-hidden="true"
+                        *ngIf="column.columnDef == 'limitResult' && row['limitType'] == 'D'"
+                        (click)="onActionClick('PDF', row)"></i>
+
+                    <i class="{{_global.icnOk}}" aria-hidden="true" *ngIf="checkfieldExist(row, column.columnDef)"></i>
+
+                </mat-label>
+
+
+                <mat-checkbox [disabled]="isEnableCheckbox" id="{{idx}}" [(ngModel)]="row[checkboxField]"
+                    *ngIf="isShowCheckBox(column.columnDef, row)" (change)="selectSingleChk($event, row)">
+                </mat-checkbox>
+
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="actions" stickyEnd>
+            <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+            <mat-cell *matCellDef="let row;let idx = index">
+
+                <div *ngIf="actions.length > 1 && checkUserActions(row, idx).length > 1">
+
+                    <a href="Javascript:" [matMenuTriggerFor]="menu">
+                        <i class="material-icons">
+                            more_horiz
+                        </i>
+                    </a>
+
+                    <mat-menu #menu="matMenu">
+                        <span *ngFor="let act of checkUserActions(row, idx, ['PDF']);let index = index"
+                            id="act{{index + 1}}">
+                            <a href="Javascript:" mat-menu-item (click)="onActionClick(act.code, row)">
+                                <i class="material-icons">
+                                    {{act.icon}}
+                                </i>
+                                <div>{{actiontoolTip.get(act.code)}}</div>
+                            </a>
+                        </span>
+                    </mat-menu>
+
+                </div>
+
+                <div *ngIf="checkUserActions(row, idx).length == 1">
+
+                    <a href="Javascript:" id="c{{idx}}" *ngFor="let act of checkUserActions(row, idx)"
+                        (click)="onActionClick(act.code, row)">
+                        <i class="material-icons" matTooltip="{{actiontoolTip.get(act.code)}}">
+                            {{act.icon}}
+                        </i>
+                    </a>
+
+                </div>
+
+            </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row [class]="changeBgColor(row)" id="grid-{{i}}" (click)="getActiveRowClass(i)"
+            *matRowDef="let row; columns: displayedColumns; let i = index"></mat-row>
+    </mat-table>
+
+    <div *ngIf="dataSource && dataSource.data.length < 1" class="textaligncenter">
+        <p>No Records Found</p>
+    </div>
+
+</div>

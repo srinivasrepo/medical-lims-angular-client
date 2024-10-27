@@ -1,0 +1,43 @@
+<div class="new-popupTitle" mat-dialog-title>
+    <h1>Planned Change / Change Control / Deviation / Initiation of Procedures</h1>
+    <div class="popup-close">
+        <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close(null)"></i>
+    </div>
+</div>
+
+
+<div mat-dialog-content class="mt-3  pl-3 pr-3 mb-3">
+    <form [formGroup]="devForm">
+        <div class="pb-2">
+            <mat-label><b class="qc_lable-txt">Reason :</b> <span> &nbsp; {{description}}</span></mat-label>
+        </div>
+        <mat-form-field appearance="outline" class="full-width pl-0 pr-0">
+            <mat-label>Type</mat-label>
+            <mat-select placeholder="Type" [(ngModel)]="type" [ngModelOptions]="{standalone: true}"
+                (ngModelChange)="getnumberInfo()">
+                <mat-option value="p">Planned Change</mat-option>
+                <mat-option value="d">Deviation</mat-option>
+                <mat-option value="c">Change Control</mat-option>
+                <mat-option value="i">Initiation of Procedure</mat-option>
+                <mat-option value="CAPA">CAPA</mat-option>
+                <mat-option value="n">Intimation To QA</mat-option>
+
+            </mat-select>
+        </mat-form-field>
+        <div class="full-width px-in-0" [ngClass]="{'hide' : !type || type == 'n'}">
+            <lims-lookup [info]="numberInfo" #numbers (onSelect)="selectedNumber($event)"></lims-lookup>
+
+            <lims-grid [headers]="headersData" [dataSource]="dataSource"></lims-grid>
+        </div>
+        <mat-form-field appearance="outline" class="full-width  pl-0 pr-0">
+            <textarea formControlName="comments" matInput placeholder="Comments" maxlength="500"></textarea>
+            <mat-hint align="end">{{devForm.controls.comments?.value.length || 0}} / 500</mat-hint>
+        </mat-form-field>
+    </form>
+    <div align="right">
+        <button mat-raised-button class="btnbase btn-blue" (click)="confirmDeviation();"><i
+                class="{{_global.icnConfirm}}" aria-hidden="true"></i>&nbsp;Confirm</button>
+        <button mat-raised-button class="btnbase btn-blue" (click)="clear();"><i
+                class="{{_global.icnCancel}}" aria-hidden="true"></i>&nbsp;Clear</button>
+    </div>
+</div>

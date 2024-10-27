@@ -1,0 +1,26 @@
+<page-head [pageTitle]="pageTitle"></page-head>
+
+<mat-card class="matcard-custom">
+    <mat-card-content>
+        <mat-tab-group #sampleAnaTab mat-align-tabs="center">
+            <mat-tab label="Sampling Information">
+                <analy-header></analy-header>
+            </mat-tab>
+            <mat-tab label="Sampling" *ngIf="sampleMode != 'S'">
+                <samp-info [pageType]="'VIEW'"></samp-info>
+            </mat-tab>
+            <mat-tab label="ARDS" *ngIf="sampleMode != 'S'">
+                <div class="mt-2">
+                <app-analysis-ards [encEntityActID]="encSioID" [pageType]="'VIEW'" [entityCode]="'QCSAMPASYS'">
+                </app-analysis-ards>
+            </div>
+            </mat-tab>
+            <mat-tab label="Analysis" *ngIf="sampleMode != 'S'">
+                <app-analysis [encEntityActID]="encSioID" [pageType]="'VIEW'" [entityCode]="'QCSAMPASYS'"></app-analysis>
+            </mat-tab>
+            <mat-tab label="Supplier COA" *ngIf="sampleMode == 'S'">
+                <sup-coa #supCOA [pageType]="'VIEW'"></sup-coa>
+            </mat-tab>
+        </mat-tab-group>
+    </mat-card-content>
+</mat-card>

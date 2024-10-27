@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Splash</title>
+</head>
+
+<body class="splashbg">
+
+
+    <div class="divbgsplash">
+
+        <div class="splashdiv">
+
+
+            <div class="splash-l divtwo-s">
+                <ul>
+                    <li>
+                        <div class="userinfo-s">
+
+                            <div class="divuserone">
+                                <i class="{{_global.icnUser}}"></i>
+                            </div>
+                            <div class="divusertwo">
+                                <span>{{loginDetails.userName}}</span>
+                                <span>{{loginDetails.plantName}}&nbsp;&nbsp;|&nbsp;&nbsp;{{loginDetails.deptName}}</span>
+
+                                <span>
+                                    <a href="javascript:" (click)="logout()">LOGOUT</a>
+                                    <!-- <button href="javascript:" (click)="userDetails()" class="sdms-btn">SDMS Details</button> -->
+                                </span>
+
+                                <span *ngIf="isSwitchPlant" class="switch_plant">
+                                    <a href="javascript:" (click)="switchPlant()">Switch Plant</a>
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </li>
+                </ul>
+            </div>
+
+            <div class="splash divone-s">
+
+                <ul>
+
+                    <li class="splashhover" (click)="homePage('SOLMGMT')">
+                        <img src="~/../assets/images/solutionmanagement-db-icon.png" />
+                        <div> {{ getSplashData('SOLMGMT', 'Name') }}</div>
+                    </li>
+
+                    <li class="splashhover" (click)="homePage('ANALYSIS')">
+                        <img src="~/../assets/images/analysis-db-icon.png" />
+                        <div>{{ getSplashData('ANALYSIS', 'Name') }}</div>
+                    </li>
+
+                    <li class="splashhover" (click)="homePage('SAMPLAN')">
+                        <img src="~/../assets/images/sample-analysis.png" />
+                        <div>{{ getSplashData('SAMPLAN', 'Name') }}</div>
+                    </li>
+
+                    <li class="splashhover" (click)="homePage('LABINV')">
+                        <img src="~/../assets/images/labinve-db-icon.png" />
+                        <div>{{ getSplashData('LABINV', 'Name') }}</div>
+                    </li>
+
+                    <li class="splashhover" (click)="homePage('QCCALIB')">
+                        <img src="~/../assets/images/labinve-db-icon.png" />
+                        <div>{{ getSplashData('QCCALIB', 'Name') }}</div>
+                    </li>
+
+                </ul>
+
+
+
+
+
+
+            </div>
+
+        </div>
+
+
+
+    </div>
+
+
+</body>
+
+</html>

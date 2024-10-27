@@ -1,0 +1,44 @@
+<div class="mt-2">
+    <div align="right" class="mb-3">
+        <!-- <mat-label class="mr-2">Evaluation :</mat-label> -->
+        <button type="button" mat-raised-button class="btnbase btn-blue" [disabled]="appLevel < 1"
+            (click)="saveChecklist()"><i class="{{_global.icnList}}"></i>&nbsp;Checklist</button>
+    </div>
+    <div class="qc_heading_spce mt-2">
+        <mat-card class="mat-card-heading">
+            <mat-card-content>
+                <h4 class="cardtitle"> Evaluation Details</h4>
+                <div class="pl-2 pr-2 mt-2">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Other Reasons, if any</mat-label>
+                        <textarea matInput placeholder="Other Reasons, if any" [(ngModel)]="reasons"
+                            [disabled]="disable" maxlength="1000"></textarea>
+                        <mat-hint align="end">{{reasons?.length || 0}}/1000</mat-hint>
+
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Actions Recommended</mat-label>
+                        <textarea matInput placeholder="Actions Recommended" [(ngModel)]="actionsRecommended"
+                            maxlength="8000" [disabled]="disable"></textarea>
+                        <mat-hint align="end">{{actionsRecommended?.length || 0}}/8000</mat-hint>
+
+                    </mat-form-field>
+                    <div align="right" class="pb-2 mt-2">
+                        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="uploadFiles()"> <i
+                                class="{{_global.icnUpload}}" *ngIf="btnType == 'Save'" aria-hidden="true"></i>
+                            <i class="{{_global.icnViewFiles}}" *ngIf="btnType == 'Update'"
+                                aria-hidden="true"></i>&nbsp;{{btnUpload}} </button>
+                        <button type="button" mat-raised-button class="btnbase btn-blue" [disabled]="appLevel != 1"
+                            (click)="saveEvalutions()" id="btnLoaders" btnLoader [isLoaderOn]="isLoaderStart">
+                            <i class="{{_global.icnSave}}" *ngIf="btnType=='Save'" aria-hidden="true"></i>
+                            <i class="{{_global.icnUpdate}}" *ngIf="btnType=='Update'"
+                                aria-hidden="true"></i>&nbsp;{{btnType}}</button>
+                        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="clear()"
+                            [disabled]="btnType=='Update'"><i class="{{_global.icnCancel}}"
+                                aria-hidden="true"></i>&nbsp;Clear</button>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

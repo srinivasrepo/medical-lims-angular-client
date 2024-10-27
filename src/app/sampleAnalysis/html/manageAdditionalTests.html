@@ -1,0 +1,31 @@
+<div class="new-popupTitle" mat-dialog-title>
+    <h1> Additional Test </h1>
+    <div class="popup-close">
+        <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+    </div>
+</div>
+<div class=" mt-3 mb-3 ml-3 mr-3 modal_body" mat-dialog-content>
+    <div [ngClass]="{'hide': pageType != 'MNG'}">
+        <div>
+            <lims-lookup [info]="testInfo" #tests>
+            </lims-lookup>
+        </div>
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Specification Limit</mat-label>
+            <input matInput placeholder="Specification Limit" [(ngModel)]="specLimit" maxlength="100">
+            <mat-hint align="end">{{specLimit?.length || 0}} / 100</mat-hint>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Result</mat-label>
+            <input matInput placeholder="Result" [(ngModel)]="result" maxlength="100">
+            <mat-hint align="end">{{result?.length || 0}} / 100</mat-hint>
+        </mat-form-field>
+        <div align="right">
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)='addTest()'>
+                <i class="{{_global.icnAdd}}" aria-hidden="true"></i>&nbsp;Add</button>
+        </div>
+    </div>
+    <lims-grid (onActionClicked)="onActionClicked($event)" [headers]="headersData" [dataSource]="dataSource"
+        [actions]="actions">
+    </lims-grid>
+</div>

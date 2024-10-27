@@ -1,0 +1,152 @@
+<page-head [pageTitle]="pageTitle" viewBack="true" [backUrl]="backUrl" [viewHistoryVisible]="showHistory"
+    [viewHistory]="viewHistory" [status]="status" [refNo]="reqCode"></page-head>
+<mat-card class="mat-card-c div-content mb-4 mt-1rem qc_mobp-main-tab">
+    <mat-card-content>
+        <div align="right" class="qc_btnbase-confirm"
+            *ngIf="appBo && appBo.canApprove && encSpecValidationID && pageType != 'VIEW'">
+            <button type="button" mat-raised-button class="btnbase-confirm" (click)="confirm()">
+                <i class="{{_global.icnConfirm}}" aria-hidden="true"></i>&nbsp; Confirm</button>
+        </div>
+
+        <mat-tab-group #mbTab mat-align-tabs="center">
+            <mat-tab label="Intiation">
+                <div class="qc_heading_spce">
+                    <mat-card class="mat-card-heading">
+                        <mat-card-content>
+                            <h4 class="cardtitle">Initiation Details</h4>
+                            <div class="pl-2 pr-2">
+                                <mat-grid-list cols="2" rowHeight="68px" class="mt-2"
+                                    [ngClass]="{'hide' : encSpecValidationID}">
+                                    <mat-grid-tile>
+                                        <div class="full-width">
+                                            <lims-lookup [info]="specificationsInfo" #specifications
+                                                (onSelect)="testLkp()">
+                                            </lims-lookup>
+                                        </div>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile>
+                                        <div class="full-width">
+                                            <lims-lookup [info]="testInfo" #specTests (onSelect)="validateTest()">
+                                            </lims-lookup>
+                                        </div>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile>
+                                        <mat-form-field appearance="outline" class="full-width">
+                                            <mat-label>Mode</mat-label>
+                                            <mat-select placeholder="Mode" [(ngModel)]="specReqBO.mode"
+                                                [disabled]="encSpecValidationID">
+                                                <mat-option *ngFor="let item of getCatItemList('ANALYSIS_MODES')"
+                                                    [value]="item.catItemID">
+                                                    {{item.catItem}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [ngClass]="{'hide': isShow(specReqBO.mode)}">
+                                        <div class="full-width">
+                                            <lims-lookup [info]="templateInfo" #tempalte></lims-lookup>
+                                        </div>
+                                    </mat-grid-tile>
+                                </mat-grid-list>
+                            </div>
+
+                            <div class="view-inv" *ngIf="encSpecValidationID">
+                                <ul>
+                                    <li>
+                                        <mat-label>
+                                            <span>Mode</span>
+                                            <span>{{viewSpec.mode}}</span>
+                                        </mat-label>
+                                    </li>
+                                    <li *ngIf="viewSpec.matCode">
+                                        <mat-label>
+                                            <span>Material Code</span>
+                                            <span>{{viewSpec.matCode}}</span>
+                                        </mat-label>
+                                    </li>
+                                    <li class="w-100">
+                                        <mat-label>
+                                            <span>{{ entityCode == 'SPEC_VALID' ? 'Test Name' : 'Parameter
+                                                Name'}}</span>
+                                            <span>{{viewSpec.testName}}</span>
+                                        </mat-label>
+                                    </li>
+                                    <li class="w-100">
+                                        <mat-label>
+                                            <span>STP Title</span>
+                                            <span>{{viewSpec.template || 'N / A'}}</span>
+                                        </mat-label>
+                                    </li>
+                                    <li class="">
+                                        <h4 class="cardtitle_sm pl-2 mt-1 mb-0">
+                                            {{ entityCode == 'SPEC_VALID' ? 'Specification' : 'Calibration'}} &nbsp; :
+                                            &nbsp; <a class="qc_badge" href="javascript:"
+                                                (click)="getSpec()">{{viewSpec.specificationName}}</a>
+                                        </h4>
+                                    </li>
+                                    <li class="" *ngIf="entityCode == 'SPEC_VALID'">
+                                        <h4 class="cardtitle_sm pl-2 mt-1 mb-0">
+                                            <a class="qc_badge" href="javascript:"
+                                                (click)="getValidationRpt()">Validation Report</a>
+                                        </h4>
+                                    </li>
+                                    <li class="" *ngIf="viewSpec.documentID && viewSpec.documentName">
+                                        <h4 class="cardtitle_sm pl-2  mt-1">
+                                            Document Number &nbsp; : &nbsp; <a class="qc_badge" href="javascript:"
+                                                (click)="getDocument()">{{viewSpec.documentName}}</a>
+                                        </h4>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div align="right" class="pb-2" [ngClass]="{'hide' : encSpecValidationID}">
+                                <h5 class=" mr-1 mt-0 mb-0 pr-2">
+                                    <a class="qc_badge" href="javascript:" (click)="getSpec()"
+                                        *ngIf="specifications.selectedId && entityCode == 'SPEC_VALID'">Specification
+                                        Details</a>
+                                </h5>
+                                <h5 class="mt-0 mb-0 mr-1 pr-2">
+                                    <a class="qc_badge" href="javascript:" (click)="getSpec()"
+                                        *ngIf="specifications.selectedId && entityCode != 'SPEC_VALID'">Calibration
+                                        Parameter Details</a>
+                                </h5>
+                            </div>
+                            <div align="right" class="mt-2 pb-2 pr-2" *ngIf="!encSpecValidationID">
+                                <button mat-raised-button class="btnbase btn-blue" [disabled]="disableButtonReq"
+                                    (click)="saveRequest()" id="btnLoadersGo" btnLoader [isLoaderOn]="isLoaderStart">
+                                    <i class="{{_global.icnGo}}" aria-hidden="true"></i>&nbsp;Go</button>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </mat-tab>
+            <mat-tab label="Validation" [disabled]="!encSpecValidationID">
+                <div align="right" *ngIf="regPageType == 'MNG'" class="mt-2">
+                    <button mat-raised-button class="btnbase btn-blue" (click)="manageCycle('SAVE')"
+                        id="btnLoadersCycle" btnLoader [isLoaderOn]="isLoaderStartForAddCycles">
+                        <i class="{{_global.icnAdd}}" aria-hidden="true"></i>&nbsp;Add Cycle</button>
+                </div>
+                <div class="qc_heading_spce">
+                    <mat-card class="mat-card-heading">
+                        <mat-card-content>
+                            <h4 class="cardtitle">Validation Details</h4>
+                            <div class="pl-2 pr-2 pb-2">
+                                <lims-grid [dataSource]="dataSource" [headers]="headers" [actions]="gridActions"
+                                    applyRowCss='true' (onActionClicked)="onActionClicked($event)"
+                                    [removeAction]="removeActions"></lims-grid>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+                <div class="mt-2 px-5">
+
+                    <div *ngIf="showAnalysis" class="qc_cycle-spec">
+                        <h3>{{cycleName}}</h3>
+                        <app-analysis [encEntityActID]="entityActID" [entityCode]="entityCode" [pageType]="regPageType"
+                            [specCatID]="specReqBO.specTestCatID" [appBO]="appBo"
+                            (updateAppInfo)="updateAppInfo($event)" #samAna></app-analysis>
+                    </div>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </mat-card-content>
+</mat-card>

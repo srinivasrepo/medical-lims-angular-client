@@ -1,0 +1,36 @@
+<page-head [pageTitle]="pageTitle" viewBack="true" [backUrl]="backUrl" [status]="status" [refNo]="refNo"></page-head>
+<mat-card class="mat-card-c div-content mb-4 mt-1rem qc_mobp-main-tab">
+    <mat-card-content>
+        <div align="right">
+            <button type="button" mat-raised-button class="btnbase-confirm"
+                *ngIf="appBO.canApprove && btnType == 'Update'" (click)="confirm()">
+                <i class="{{_global.icnConfirm}}" aria-hidden="true"></i>&nbsp;&nbsp;Confirm</button>&nbsp;&nbsp;
+        </div>
+        <div class="full-width mt-2">
+            <lims-lookup [info]="analystInfo" #analyst></lims-lookup>
+        </div>
+        <div class="modal-list roleCheck">
+            <h4 class="borderbottom"> Qualifications</h4>
+            <ul>
+                <li *ngFor="let qua of qualificationList" class="mt-1">
+                    <mat-checkbox [(ngModel)]="qua.isSelect" [disabled]="disable">{{qua.catItem}}
+                    </mat-checkbox>
+                </li>
+            </ul>
+        </div>
+        <mat-form-field appearance="outline" class="mt-2 full-width">
+            <mat-label>Reason</mat-label>
+            <textarea matInput placeholder="Reason" [disabled]="disable" [(ngModel)]="reason"
+                maxLength="500"></textarea>
+            <mat-hint align="end">{{reason?.length || 0}}/500</mat-hint>
+        </mat-form-field>
+        <div align="center" class="mb-1 mt-1">
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="save()"
+                [disabled]="btnDisabledReq">
+                <i class="{{changeIcons()}}" aria-hidden="true"></i>&nbsp;{{btnType}}</button>&nbsp;&nbsp;&nbsp;
+            <button type="button" mat-raised-button class="btnbase btn-blue" [disabled]="btnType == 'Update'"
+                (click)="clear()">
+                <i class="{{_global.icnClear}}" aria-hidden="true"></i>&nbsp;Clear</button>
+        </div>
+    </mat-card-content>
+</mat-card>

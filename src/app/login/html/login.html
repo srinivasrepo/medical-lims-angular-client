@@ -1,0 +1,80 @@
+<mat-sidenav-container>
+
+    <!-- <mat-sidenav #sidenav mode="over" class="app-sidenav" color="primary" position="end">
+
+        <mat-toolbar>
+            <mat-action-list class="mt-30">
+                <button mat-list-item (click)="Dashboard()"> Dashboard </button>
+                <button mat-list-item (click)="Log-Entry-Record()"> Log Entry Record </button>
+                <button mat-list-item (click)="Calibration()"> Calibration </button>
+                <button mat-list-item (click)="Eccentricity()"> Eccentricity Check </button>
+                <button mat-list-item (click)="Uncertainty()"> Uncertainty </button>
+                <button mat-list-item (click)="Weights()"> Weights Check</button>
+            </mat-action-list>
+
+
+            <mat-toolbar-row>
+                <button mat-raised-button color="accent" class="app-sidebar-button">
+                    <mat-icon class="example-icon">verified_user</mat-icon>
+                    Login
+                </button>
+            </mat-toolbar-row>
+        </mat-toolbar>
+    </mat-sidenav> -->
+
+    <!-- <mat-toolbar color="primary">
+
+        <span class="qc_logo">
+            <img src="../assets/images/logo-white.png">
+        </span>
+        <span class="example-fill-remaining-space"></span> -->
+    <!-- <button mat-button class="app-menu-button" (click)="sidenav.toggle()">
+        <i class="material-icons">menu</i>
+      </button> -->
+    <!-- </mat-toolbar> -->
+
+    <form [formGroup]="loginForm">
+        <div class="app-content">
+
+            <!-- FLEX-FLOW CONTROLS CONTAINER -->
+            <div fxFlex="1 1 100%" fxLayout="row wrap" fxLayoutAlign="center">
+
+                <div fxFlex="1 1 100%" fxLayoutAlign="end" fxLayout="column wrap" class="qc_title">
+                    <h3 fxLayoutAlign="center" class="mat-display-1 mb-0 " color="primary">Log In</h3>
+                    <div class="smallsep primaryColorBG"></div>
+                </div>
+
+
+
+                <div fxFlex="1 1 300px">
+                    <mat-card>
+                        <mat-card-content>
+                            <div fxFlex="1 1 100%" fxLayoutAlign="space-between stretch" fxLayout="column">
+                                <mat-form-field>
+                                    <input matInput placeholder="Username" formControlName="userName" />
+                                </mat-form-field>
+
+
+                                <mat-form-field>
+                                    <input matInput placeholder="Password" formControlName="password" type="password" />
+                                </mat-form-field>
+
+                                <div fxLayoutAlign="end">
+                                    <button mat-raised-button color="primary" (click)="login()" id="btnLoaders" btnLoader [isLoaderOn]="isLoaderStart">
+                                        <mat-icon class="example-icon">verified_user</mat-icon>
+                                        Login
+                                    </button>
+
+                                    <!-- <div class="loader-07"></div> -->
+
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </div>
+            <!-- END OF FLEX-FLOW CONTROLS CONTAINER -->
+        </div>
+    </form>
+
+</mat-sidenav-container>

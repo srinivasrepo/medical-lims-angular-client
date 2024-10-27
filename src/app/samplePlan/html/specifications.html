@@ -1,0 +1,68 @@
+<!-- <mat-accordion class="analyst_samples_spc">
+    <ul>
+        <li *ngFor="let sampl of getSamplesWithMult.sam" class="samples_coll">
+            <mat-expansion-panel [class.is-expanded]="true" [disabled]="true">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                         AR No. : {{sampl.arNumber}}
+                    </mat-panel-title>
+                    <mat-panel-description>
+                        <i class="material-icons">
+                            remove_red_eye
+                        </i>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <div>
+                    <ul>
+                        <li *ngFor="let spec of getSamplesWithMult.samSpe">
+                            <mat-checkbox id="{{sampl}}" (change)="changeSampSpec($event, spec.specificationID)"
+                                [checked]="spec.isSelected" [disabled]="spec.canDisable || btnSaveType == 'Update'">
+                                {{spec.specNumber}}
+                            </mat-checkbox>
+
+                        </li>
+                    </ul>
+                </div>
+            </mat-expansion-panel>
+        </li>
+    </ul>
+
+    <div class="mt-4" align="center">
+        <button type="button" mat-raised-button class="btnbase btn-green" (click)="saveSpecifications()">
+            <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;{{btnSaveType}}</button>
+    </div>
+
+</mat-accordion> -->
+
+<div class="sampleplan_analyst_spc">
+    <ul>
+        <li *ngFor="let sampl of getSamplesOrder(getSamplesWithMult.sam)">
+            <span *ngIf="sampl.sampleMode != 'S'">
+                <div>
+                    <span>AR No. : {{sampl.arNumber}}</span>
+
+                    <span><span (click)="getSampleDetails(sampl.sampleID)" class="analyst_Samples_btn"><i
+                                class="fas fa-ellipsis-h"></i></span></span>
+                </div>
+                <ul>
+                    <li *ngFor="let spec of getSampleSpec(sampl.sampleID)">
+                        <mat-checkbox id="{{spec.specificationID}}{{spec.sampleID}}"
+                            (change)="changeSampSpec($event, spec.specificationID, spec.sampleID)"
+                            [checked]="isSelectedSpec(spec.specificationID, spec.sampleID)"
+                            [disabled]="spec.canDisable || btnSaveType == 'Update' || disableAll">
+                            {{spec.specNumber}}
+                        </mat-checkbox>
+                    </li>
+                </ul>
+            </span>
+
+        </li>
+    </ul>
+
+    <!-- <div class="btn-sampleplan mt-2" align="right" *ngIf="getSamplesWithMult.sam && getSamplesWithMult.sam.length > 0">
+        <button type="button" mat-raised-button class="btnbase btn-green" (click)="saveSpecifications()">
+            <i class="{{_global.icnSave}}" *ngIf="btnSaveType == 'Save'" aria-hidden="true"></i>
+            <i class="{{_global.icnUpdate}}" *ngIf="btnSaveType == 'Update'" aria-hidden="true"></i>&nbsp;{{btnSaveType}}</button>
+    </div> -->
+
+</div>

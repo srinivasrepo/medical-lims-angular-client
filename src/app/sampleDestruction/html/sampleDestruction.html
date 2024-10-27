@@ -1,0 +1,40 @@
+<page-head [pageTitle]="pageTitle" viewBack="true" [backUrl]="backUrl"></page-head>
+
+
+
+<div align="right" class="pr-2 workallotmentinfo">
+    <mat-label *ngIf='dataSource && dataSource.data'><span>Total Samples</span> :
+        <span>{{dataSource.data.length}}</span></mat-label>
+    <mat-label><span>Selected Samples</span> : <span class="min-width-43">{{activeRows}}</span></mat-label>
+</div>
+<mat-card class="mat-card-c div-content mb-4 mt-1rem qc_mobp-main-tab">
+    <mat-card-content>
+        <div class="qc_heading_spce">
+            <mat-card class="mat-card-heading">
+                <mat-card-content>
+                    <h4 class="cardtitle">Sample Destruction Details</h4>
+                    <div class="pl-2 pr-2">
+
+                        <div class="add_sroll_3">
+                            <lims-grid [dataSource]="dataSource" [headers]="headers"
+                                (isSelectedCheckBox)='isSelectedCheckBox($event)'
+                                [isParentCheckBoxVisible]='isParentCheckBoxVisible'></lims-grid>
+                        </div>
+                    </div>
+                    <div class="pl-1 pr-1">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Remarks </mat-label>
+                            <textarea matInput [(ngModel)]='saveDestructionObj.remarks' maxlength="500" rows="3"></textarea>
+                            <mat-hint align="end">{{saveDestructionObj.remarks?.length || 0}} / 500</mat-hint>
+                        </mat-form-field>
+                    </div>
+                    <div align="right" class="mt-2 pb-2 pr-1">
+                        <button mat-raised-button class="btnbase btn-blue" (click)="sampDestrSave()"
+                        id="sampleDestrcn" btnLoader [isLoaderOn]="isLoaderStart">
+                            <i class="{{_globalBtn.icnSave}}" aria-hidden="true"></i> &nbsp;&nbsp;Save</button>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </mat-card-content>
+</mat-card>

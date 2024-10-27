@@ -1,0 +1,81 @@
+<page-head [pageTitle]="pageTitle" [backUrl]="backUrl" viewBack="true"></page-head>
+<mat-card class="mat-card-c div-content mb-4 mt-1rem qc_mobp-main-tab">
+    <mat-card-content>
+        <div class="qc_heading_spce">
+            <mat-card class="mat-card-heading">
+                <mat-card-content>
+                    <h4 class="cardtitle">Manage STP</h4>
+                    <div class="pl-2 pr-2 mt-2" [ngClass]="{'hide' : btnText == 'Change'}">
+                        <mat-grid-list cols="1" rowHeight="68px" class="mt-3">
+                            <mat-grid-tile>
+                                <div class="full-width">
+                                    <lims-lookup [info]="specificationsInfo" #specifications
+                                        (onSelect)="selectNewSpec()">
+                                    </lims-lookup>
+                                </div>
+                            </mat-grid-tile>
+                        </mat-grid-list>
+                    </div>
+                    <div class="view-inv" [ngClass]="{'hide' : btnText == 'Go'}">
+                        <ul>
+                            <li class="w-100">
+                                <mat-label>
+                                    <span *ngIf="entityCode == 'SPEC_VALID'">Specification </span>
+                                    <span *ngIf="entityCode != 'SPEC_VALID'">Calibration </span>
+                                    <span> {{specificationName || 'N / A'}}</span>
+                                </mat-label>
+                            </li>
+                        </ul>
+                    </div>
+                    <div align="right" class="mt-1 pb-2 pr-2">
+                        <button mat-raised-button class="btnbase btn-blue" (click)="goAssignSTP()"><i
+                                class="fas fa-chevron-circle-right"></i>&nbsp;{{btnText}}</button>
+                    </div>
+                    <div class="mt-4 pl-2 pr-2 view-calib-grid">
+                        <table mat-table *ngIf="dataSource && dataSource.data" [dataSource]="dataSource">
+
+                            <ng-container *ngFor="let column of headersData" [matColumnDef]="column.columnDef">
+                                <mat-header-cell *matHeaderCellDef>
+                                    {{ column.header }}
+                                </mat-header-cell>
+                                <mat-cell *matCellDef="let row; let i = dataIndex;">
+                                    <mat-checkbox (change)="selectCheckBox($event,row)" [(ngModel)]="row[checkboxField]"
+                                        *ngIf="isShowCheckBox(column.columnDef, row)">
+                                    </mat-checkbox>
+                                    <mat-label *ngIf="column.columnDef !='isSelected'">
+                                        {{ formatString(column.cell(row))}}
+                                    </mat-label>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="actions" stickyEnd>
+                                <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+                                <mat-cell *matCellDef="let row ;let idx = dataIndex ">
+                                    <a href="Javascript:" id="c{{idx}}" (click)="onActionClick(row.specCatID)">
+                                        <i class="material-icons" matTooltip="History">
+                                            history
+                                        </i>
+                                    </a>
+                                </mat-cell>
+                            </ng-container>
+                            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                        </table>
+                    </div>
+                    <br>
+
+                    <div class="full-width" [ngClass]="{hide: !(dataSource && dataSource.data.length > 0)}">
+                        <lims-lookup [info]="templateInfo" #tempalte></lims-lookup>
+                    </div>
+                    <div align="right" class="mt-2 pb-2 pr-1"
+                        *ngIf="dataSource && dataSource.data && dataSource.data.length > 0">
+                        <button type="button" mat-raised-button class="btnbase btn-blue " (click)="manageSTP('ASSIGN')">
+                            <i class="{{_global.icnAdd}}"></i> &nbsp;Manage STP</button>&nbsp;
+                        <button type="button" mat-raised-button class="btnbase btn-blue "
+                            (click)="manageSTP('UNASSIGN')">
+                            <i class="{{_global.icnCancel}}"></i> &nbsp;UnAssign STP</button>&nbsp;
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </mat-card-content>
+</mat-card>

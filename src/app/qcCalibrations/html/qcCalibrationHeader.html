@@ -1,0 +1,180 @@
+<page-head [pageTitle]="getHeaderInfo('TITLE')" viewBack="'true'" [backUrl]="getHeaderInfo('BACKURL')"
+    [status]="getHeaderInfo('STATUS')" [refNo]="getHeaderInfo('REFNUM')" [viewHistoryVisible]="viewHistoryVisible"
+    [viewHistory]="viewHistory" [entityCode]="entityCode"></page-head>
+
+
+
+<div class="matcard-custom-search">
+
+    <div align="right" class="mt-2 pb-1">
+        <button type="button" mat-raised-button class="btnbase-confirm mr-0" *ngIf="getConirm()" (click)="confirm()">
+            <i class="{{changeIcons('CONFIRM')}}" aria-hidden="true"></i>&nbsp;&nbsp;Confirm</button>&nbsp;&nbsp;
+        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="Uploadfiles()">
+            <i class="{{changeIcons('UPLOAD')}}" aria-hidden="true"></i>&nbsp;{{btnUpload}}</button>
+
+    </div>
+    <div class="qc_heading_spce">
+        <mat-card class="mat-card-heading">
+            <mat-card-content>
+                <h4 class="cardtitle">Details of Parameter Set</h4>
+
+    <div class="view-inv" *ngIf="btnType == 'Update'">
+        <div>
+            <ul>
+                <span>
+                    <li class="w-100">
+                        <mat-label>
+                            <span>Title</span>
+                            <span>{{getHeadersInfoBo.title || 'N / A'}}</span>
+                        </mat-label>
+                    </li>
+                    <li class="w-100">
+                        <mat-label>
+                            <span>Manual Reference Number</span>
+                            <span>{{getHeadersInfoBo.manualReferenceNumber || 'N / A'}}</span>
+                        </mat-label>
+                    </li>
+                    <li class="w-100 no-border">
+                        <mat-label>
+                            <span>Instrument Types</span>
+                            <span>{{getHeadersInfoBo.instrumentTypeDesc  || 'N / A'}}</span>
+                        </mat-label>
+                    </li>
+                </span>
+            </ul>
+        </div>
+    </div>
+    <div class="pl-2 pr-2 mt-2 pb-2">
+    <mat-grid-list rowHeight="130px" cols="1" *ngIf="btnType != 'Update'">
+        <mat-grid-tile>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Title</mat-label>
+                <textarea matInput placeholder="Title" [(ngModel)]="manageHeaderInfo.title" maxlength="500" rows="5"
+                    name="title" class="textarea_size_fix" [disabled]="btnType == 'Update'"></textarea>
+                <mat-hint align="end">{{manageHeaderInfo.title?.length || 0}} / 500</mat-hint>
+            </mat-form-field>
+        </mat-grid-tile>
+
+    </mat-grid-list>
+    <div *ngIf="btnType != 'Update'">
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Manual Reference Number</mat-label>
+            <input matInput placeholder="Manual Reference Number" [(ngModel)]="manageHeaderInfo.manualReferenceNumber"
+                maxlength="200" [disabled]="btnType == 'Update'">
+                <div align="end" style="position: absolute;top: -2px;right: 0px;padding-right: 5px;">
+                    <button mat-raised-button matTooltip="Document Reference" class="btnlookup" color="primary" (click)="getManualReferenceNumber()">
+                        <i class="{{_global.icnAdd}}" aria-hidden="true"></i></button>
+                </div>
+
+            <mat-hint align="end">{{manageHeaderInfo.manualReferenceNumber?.length || 0}} / 200</mat-hint>
+        </mat-form-field>
+    </div>
+
+    <div *ngIf="btnType != 'Update'">
+        <div class="pl-1 pr-1" *ngIf="totalCatItemList.length > 0">
+            <div class="grid-syn grid-syn_d2 mt-2">
+                <div class="instr_select_all">
+                    <mat-checkbox [disabled]="btnType == 'Update'" [checked]="allChecked" (change)="manageAllInstruments()">
+                        Select All
+                    </mat-checkbox>
+                </div>
+                <div class="pl-1 pr-1 pt-1 pb-1">
+                <mat-grid-list cols="5" rowHeight="5:1" gutterSize="10px">
+                    <mat-grid-tile *ngFor="let obj of getCatItemList('QCINST_TYPE')">
+                            <mat-checkbox [disabled]="btnType == 'Update'" [checked]="checkedInstrument(obj)"
+                        (change)="bindInstruments(obj)">
+                        {{obj.catItem}}
+                    </mat-checkbox>
+                    </mat-grid-tile>
+                </mat-grid-list>
+            </div>
+
+            </div>
+            </div>
+        </div>
+
+        <!-- <ul class="pl-0" *ngIf="instrumentTypeList.length > 0">
+
+            <div class="instr_select_all">
+                <mat-checkbox [disabled]="btnType == 'Update'" [checked]="allChecked" (change)="manageAllInstruments()">
+                    Select All
+                </mat-checkbox>
+            </div>
+
+            <div class="instr_single_select">
+                <li *ngFor="let obj of instrumentTypeList">
+                    <mat-checkbox [disabled]="btnType == 'Update'" [checked]="checkedInstrument(obj)"
+                        (change)="bindInstruments(obj)">
+                        {{obj.catItem}}
+                    </mat-checkbox>
+
+                </li>
+            </div>
+
+        </ul> -->
+    
+
+    <div align="right" class="mb-1 mt-3" *ngIf="pageType()">
+
+        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="save()"
+        id="headerBtnLoaders" btnLoader [isLoaderOn]="isLoaderStart">
+            <i class="{{changeIcons('SAVE')}}" aria-hidden="true"></i>&nbsp;{{btnType}}</button>&nbsp;
+
+        <button type="button" mat-raised-button class="btnbase btn-blue " (click)="clear()"
+            [disabled]="btnType == 'Update'">
+            <i class="{{changeIcons('CLEAR')}}" aria-hidden="true"></i>&nbsp;Clear</button>
+    </div>
+</div>
+    </mat-card-content>
+    </mat-card>
+    </div>
+
+
+  
+
+   
+    <!-- <mat-grid-list rowHeight="68" cols="1" [ngClass]="{'hide': btnType == 'Update'}">
+        <mat-grid-tile>
+            <div class="full-width mt-2 px-in-0 ">
+                <lims-lookup [info]="qcInstrTypesInfo" #qcInstrTypes
+                    (onSelect)="getQCInstrumentTypes($event,'INSTR_TYPE')">
+                </lims-lookup>
+            </div>
+        </mat-grid-tile>
+    </mat-grid-list> -->
+    <!-- <mat-grid-tile>
+        <div class="full-width mt-2">
+            <lims-lookup [info]="qcInstrumentsInfo" #qcInstruments>
+                </lims-lookup>
+
+        </div>
+    </mat-grid-tile> -->
+    <!-- <h4 class="dark-heading mb-2 " *ngIf="btnType != 'Update'">Instrument ID :</h4>
+    <div class="qc_calib-header mb-3" *ngIf="btnType != 'Update'"> -->
+    <!-- <mat-label>
+            <span>Instrument ID : </span> 
+        </mat-label> -->
+
+    <!-- <ul class="pl-0" *ngIf="qcinstrumentsList.length > 0">
+
+            <div class="instr_select_all">
+                <mat-checkbox [disabled]="btnType == 'Update'" [checked]="allChecked" (change)="manageAllInstruments()">
+                    Select All
+                </mat-checkbox>
+            </div>
+
+            <div class="instr_single_select">
+                <li *ngFor="let obj of qcinstrumentsList">
+                    <mat-checkbox [disabled]="btnType == 'Update'" [checked]="checkedInstrument(obj)"
+                        (change)="bindInstruments(obj)">
+                        {{obj.eqpUserCode}}
+                    </mat-checkbox>
+
+                </li>
+            </div>
+
+        </ul>
+    </div> -->
+
+  
+</div>

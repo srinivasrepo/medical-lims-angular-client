@@ -1,0 +1,369 @@
+<page-head [pageTitle]="pageTitle" viewBack="true" [backUrl]="backUrl" [status]="status" [refNo]="refNo"
+    [viewHistoryVisible]="viewHistoryVisible" [viewHistory]="viewHistory" [entityCode]="entitySourceCode"
+    showRpts="true" [encRptEntActID]="encQualificationID"></page-head>
+
+    <mat-card class="mat-card-c div-content mb-4 mt-1rem qc_mobp-main-tab">
+    <mat-card-content>
+
+        <div align="right" class="pos-r-btn">
+            <button type="button" mat-raised-button class="btnbase-confirm mr-0"
+                *ngIf="appBO.canApprove && (tabIndex == 0 ? btnType == 'Update' && appBO.appLevel == 0  : tabIndex == 1 ? true : false)"
+                (click)="confirm()">
+                <i class="{{_global.icnConfirm}}" aria-hidden="true"></i>&nbsp;&nbsp;Confirm</button>
+        </div>
+        <mat-tab-group #mbTab mat-align-tabs="center" (selectedIndexChange)="selectedTab($event)"
+            [selectedIndex]="tabIndex" class="qc_mobp-main-tab">
+            <mat-tab label="Request">
+                <div class="qc_heading_spce">
+                    <mat-card class="mat-card-heading">
+                        <mat-card-content>
+                            <h4 class="cardtitle">Initiation Details</h4>
+                            <div class="mt-2 pl-2 pr-2">
+                <mat-grid-list cols="2" rowHeight="68px" class="mt-2">
+                    <mat-grid-tile>
+                        <mat-form-field appearance="outline" class=" full-width">
+                            <mat-label>Request Type</mat-label>
+                            <mat-select placeholder="Request Type" [(ngModel)]="requestTypeCode"
+                                [disabled]="encQualificationID || btnType == 'Update'"
+                                (ngModelChange)="toGetQualification($event,'req_type')">
+                                <mat-option *ngFor="let list of getCatItemList('QUAL_REQUEST_TYPE')" [value]='list.catItemCode'>
+                                    {{list.catItem}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                        <div class="full-width ">
+                            <lims-lookup [info]="techniqueInfo" #technique
+                                (onSelect)="toGetQualification($event,'technique')">
+                            </lims-lookup>
+                        </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                        <div class="full-width">
+                            <lims-lookup [info]="analystInfo" #analyst
+                                (onSelect)="toGetQualification($event,'analyst')">
+                            </lims-lookup>
+                        </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile [ngClass]="{'hide': !hideFields}">
+                        <mat-form-field appearance="outline" class=" full-width">
+                            <mat-label>Activity Type</mat-label>
+                            <mat-select placeholder="Activity Type" [disabled]='true' [(ngModel)]="qualTypeID">
+                                <mat-option *ngFor='let list of qualificationTypeList'
+                                    [value]='list.qualificationTypeID'>
+                                    {{list.qualificationType}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                </mat-grid-list>
+
+                <div [ngClass]="{'hide': !hideFields}">
+                    <div class="full-width" *ngIf="requestTypeCode == 'SAMPLE_ANALYSIS'">
+                        <mat-cat [materialInfo]="materialInfo" [entityCode]="entitySourceCode" #materialCategory
+                            (selectedMaterial)='changeMaterialCategory($event)'></mat-cat>
+                    </div>
+                    <mat-grid-list cols="2" rowHeight="65px">
+                        
+                        <mat-grid-tile *ngIf="showRequalifiaction">
+                            <mat-form-field appearance="outline" class=" full-width">
+                                <mat-label>Requalification Purpose</mat-label>
+                                <mat-select placeholder="Requalification Purpose" [(ngModel)]="reQualificationID"
+                                    [disabled]="btnType == 'Update'">
+                                    <mat-option *ngFor="let list of getCatItemList('RE_QUALIF_PURPOSE')"
+                                        [value]='list.catItemID'>
+                                        {{list.catItem}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile *ngIf="showRequalifiaction">
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Reference No.</mat-label>
+                                <input matInput placeholder="Reference No." [(ngModel)]="referenceNo" maxlength="100"
+                                    [disabled]="btnType == 'Update'">
+                                <mat-hint align="end">{{referenceNo?.length || 0}}/ 100</mat-hint>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Type</mat-label>
+                                <mat-select placeholder="Type" [(ngModel)]="typeCode"
+                                    [disabled]="btnType == 'Update' || arNUmber">
+                                    <mat-option *ngFor='let list of getTypeLst()' [value]="list.catItemCode">
+                                        {{list.catItem}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile *ngIf="requestTypeCode != 'SAMPLE_ANALYSIS'">
+                            <div class="full-width">
+                                <lims-lookup [info]="volSolutionInfo" #volSolution>
+                                </lims-lookup>
+                            </div>
+                        </mat-grid-tile>
+                        <mat-grid-tile *ngIf="requestTypeCode == 'SAMPLE_ANALYSIS'">
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Analysis Type</mat-label>
+                                <mat-select placeholder="Analysis Type" [(ngModel)]="analysistypeId"
+                                    (ngModelChange)="selectedAnalysisType($event)" [disabled]="btnType == 'Update'">
+                                    <mat-option *ngFor="let list of analysisTypeList" [value]='list.analysisTypeID'>
+                                        {{list.analysisType}} </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile *ngIf="requestTypeCode == 'SAMPLE_ANALYSIS'">
+                            <div class="full-width">
+                                <lims-lookup [info]="refArNumberInfo" #refArNumber (onSelect)="toGetTestList($event)">
+                                </lims-lookup>
+                            </div>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline"
+                        *ngIf="requestTypeCode == 'SAMPLE_ANALYSIS' && appBO.appLevel > 0" class="full-width">
+                        <mat-label>Selected Tests</mat-label>
+                        <input matInput [(ngModel)]="selectedTests" [disabled]="btnType == 'Update'">
+                    </mat-form-field>
+                        </mat-grid-tile>
+                    </mat-grid-list>
+                    <div class="px-5" *ngIf="requestTypeCode == 'SAMPLE_ANALYSIS' && !(appBO.appLevel > 0)">
+                        <div class="modal-list roleCheck qc_modal-list">
+                            <h3 class="dark-heading"> Test</h3>
+                            <ul>
+                                <li *ngFor="let data of testList">
+                                    <mat-checkbox
+                                        (change)="selectedTestCheckBox($event, data.specTestID, data.groupSpecCatID)"
+                                        [disabled]="btnType == 'Update'" [checked]="data.isSelect"> {{data.displayName}}
+                                    </mat-checkbox>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+
+                    <div align="right" class="pb-2 mt-2">
+                        <button type="button" mat-raised-button class="btnbase btn-blue"
+                            (click)="uploadFile('ANALYST_QUA_REQ')">
+                            <i class="{{_global.icnUpload}}" *ngIf="btnType=='Save'" aria-hidden="true"></i>
+                            <i class="{{_global.icnViewFiles}}" *ngIf="btnType=='Update'"
+                                aria-hidden="true"></i>&nbsp;{{reqBtnUpd}}</button>&nbsp;&nbsp;&nbsp;
+                        <button type="button" mat-raised-button class="btnbase btn-blue"
+                            [disabled]=" btnType == 'Update' && appBO.appLevel > 0 " (click)='save()'  id="btnLoaders" btnLoader [isLoaderOn]="isLoaderStart">
+                            <i class="{{changeIcons()}}" aria-hidden="true"></i>&nbsp;{{btnType}}</button>
+                    </div>
+                </div>
+            </div>
+            </mat-card-content>
+            </mat-card>
+            </div>
+
+            </mat-tab>
+
+            <mat-tab label="Evaluation" [disabled]="!encQualificationID || appBO.appLevel == 0">
+                <div class="qc_heading_spce">
+                    <mat-card class="mat-card-heading">
+                        <mat-card-content>
+                            <h4 class="cardtitle">Evaluation  Details</h4>
+                            <div class="pl-2 pr-2">
+                    <div *ngIf="requestTypeCode == 'SAMPLE_ANALYSIS'">
+                        <lims-grid [headers]="analyHeader" [dataSource]="analyDataSource" [actions]="actions"
+                            (onActionClicked)="onActionClicked($event)">
+                        </lims-grid>
+                    </div>
+
+                    <div class="px-5 mt-3" *ngIf="requestTypeCode != 'SAMPLE_ANALYSIS'">
+                        <mat-grid-list cols="5" rowHeight="45px" class="oos-sum-grid fst-child">
+                            <mat-grid-tile class="oos-sum-head" colspan="2">Batch Number</mat-grid-tile>
+                            <mat-grid-tile class="oos-sum-head" colspan="2"> Status</mat-grid-tile>
+                            <mat-grid-tile class="oos-sum-head">Action</mat-grid-tile>
+                            <mat-grid-tile colspan="2" class="fst-child">{{batchNumber}}</mat-grid-tile>
+                            <mat-grid-tile colspan="2">{{batchStatus}}</mat-grid-tile>
+                            <mat-grid-tile>
+                                <i class="{{_global.icnViewFiles}}" (click)='showVolSolReport()' aria-hidden="true"></i>
+                            </mat-grid-tile>
+                        </mat-grid-list>
+                    </div>
+
+                    <div class="ana-table mb-3 mt-3">
+
+                        <mat-table #table [dataSource]="getQualificationTestsDetailsList"
+                            *ngIf="getQualificationTestsDetailsList && getQualificationTestsDetailsList.data"
+                            multiTemplateDataRows>
+
+                            <ng-container *ngFor="let column of headers" [matColumnDef]="column.columnDef">
+                                <mat-header-cell *matHeaderCellDef>
+                                    {{ column.header }}
+                                </mat-header-cell>
+
+                                <mat-cell *matCellDef="let row; let i = dataIndex;">
+                                    <mat-label *ngIf="column.columnDef == 'testTitle'">
+                                        {{ column.cell(row) }}
+                                    </mat-label>
+                                </mat-cell>
+                            </ng-container>
+
+                            <ng-container matColumnDef="expandedDetail">
+                                <mat-grid-list cols="3" rowHeight="62px" *matCellDef="let element"
+                                    [attr.colspan]="headers.length" class="pl-1 pr-1">
+                                    <mat-grid-tile *ngFor="let val of extraColumns" 
+                                        [colspan]="(val.columnDef == 'acceptanceCriteria' || val.columnDef == 'originalAcceptanceCriteria') ? 3 : 1">
+
+                                        <mat-form-field appearance="outline" class="full-width"
+                                            *ngIf="val.columnDef == 'originalResult'">
+                                            <mat-label>Original Result</mat-label>
+                                            <input matInput placeholder="Original Result"
+                                                [(ngModel)]="element['originalResult'] || element['originalTestResult']"
+                                                [readonly]="requestTypeCode == 'SAMPLE_ANALYSIS'"
+                                                [disabled]="disabledControls">
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" class="full-width"
+                                            *ngIf="val.columnDef == 'preparationResult1'">
+                                            <mat-label>Preparation Result 1</mat-label>
+                                            <input matInput placeholder="Preparation Result 1"
+                                                (keypress)="allowType($event, element['testMethodType'])"
+                                                [(ngModel)]="element['preparationResult1']"
+                                                [disabled]="disabledControls" maxLength="250"
+                                                (blur)="calculateValues(element)">
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline" class="full-width"
+                                            *ngIf="val.columnDef == 'preparationResult2'">
+                                            <mat-label>Preparation Result 2</mat-label>
+                                            <input matInput placeholder="Preparation Result 2"
+                                                (keypress)="allowType($event, element['testMethodType'])"
+                                                [(ngModel)]="element['preparationResult2']"
+                                                [disabled]="disabledControls" maxLength="250"
+                                                (blur)="calculateValues(element)">
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline" class="full-width"
+                                            *ngIf="val.columnDef == 'preparationResult3' && requestTypeCode != 'SAMPLE_ANALYSIS'">
+                                            <mat-label>Preparation Result 3</mat-label>
+                                            <input matInput placeholder="Preparation Result 3"
+                                                (keypress)="allowType($event, element['testMethodType'])"
+                                                [(ngModel)]="element['preparationResult3']"
+                                                [disabled]="disabledControls" maxLength="250"
+                                                (blur)="calculateValues(element)">
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline" class="full-width"
+                                            *ngIf="val.columnDef == 'variationObserved'">
+                                            <mat-label>Variation Observed</mat-label>
+                                            <input matInput placeholder="Variation Observed"
+                                                (keypress)="allowType($event, element['testMethodType'])"
+                                                [(ngModel)]="element['variationObserved']"
+                                                [disabled]="disabledControls || (element['testMethodType'] == 'N' && requestTypeCode == 'SAMPLE_ANALYSIS')"
+                                                maxLength="250">
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline" class="full-width"
+                                            *ngIf="val.columnDef == 'acceptanceCriteria'">
+                                            <mat-label>Acceptance Criteria</mat-label>
+                                            <mat-select placeholder="Acceptance Criteria"
+                                                [(ngModel)]="element['acceptanceCriteriaLstID']"
+                                                [disabled]="disabledControls" multiple>
+                                                <mat-option *ngFor="let list of acceptCriteria"
+                                                    [value]='list.qualificationCriteriaID'>
+                                                    {{list.acceptanceCriteria}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline" class="full-width"
+                                            *ngIf="val.columnDef == 'averageResult'">
+                                            <mat-label>Average Result</mat-label>
+                                            <input matInput placeholder="Average Result"
+                                                [(ngModel)]="element['averageResult']"
+                                                [disabled]="disabledControls || element['testMethodType'] == 'N'"
+                                                maxLength="250">
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline" class="full-width"
+                                            *ngIf="val.columnDef == 'originalVariationObserved'">
+                                            <mat-label>Original Variation Observed</mat-label>
+                                            <input matInput placeholder="Original Variation Observed"
+                                                [(ngModel)]="element['originalVariationObserved']"
+                                                [disabled]="disabledControls || (element['testMethodType'] == 'N' && requestTypeCode == 'SAMPLE_ANALYSIS')"
+                                                maxLength="250">
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline" class="full-width"
+                                            *ngIf="val.columnDef == 'originalAcceptanceCriteria'">
+                                            <mat-label>Original Acceptance Criteria</mat-label>
+                                            <mat-select placeholder="Original Acceptance Criteria"
+                                                [(ngModel)]="element['originalAcceptanceCriteriaLstID']"
+                                                [disabled]="disabledControls" multiple>
+                                                <mat-option *ngFor="let list of acceptCriteria"
+                                                    [value]='list.qualificationCriteriaID'>
+                                                    {{list.acceptanceCriteria}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </mat-grid-tile>
+                                </mat-grid-list>
+                            </ng-container>
+
+                            <ng-container matColumnDef="act" stickyEnd>
+                                <mat-header-cell *matHeaderCellDef style="width: 30px;">Action</mat-header-cell>
+                                <mat-cell *matCellDef="let row ;let idx = dataIndex " style="width: 30px;">
+                                    <i class="fas fa-chevron-down" *ngIf="!row['isOpened']"></i>
+                                    <i class="fas fa-chevron-up" *ngIf="row['isOpened']"></i>
+                                </mat-cell>
+                            </ng-container>
+
+                            <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+
+                            <mat-row id="ParentGrid" mousehoverout class="row-cls" (click)="onRowClick(row)"
+                                [allowMouseEvt]="extraColumns && extraColumns.length > 0"
+                                *matRowDef="let row; columns: displayedColumns; let i = index;"></mat-row>
+
+                            <mat-row id="ChildGrid" style="display: none;"
+                                *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></mat-row>
+                        </mat-table>
+
+
+                    </div>
+                </div>
+                <div class="pl-1 pr-1 pb-2">
+                
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Conclusion</mat-label>
+                    <mat-select placeholder="Conclusion" [(ngModel)]="conclusionID" [disabled]="disabledControls">
+                        <mat-option *ngFor="let list of getCatItemList('CONCLUSION')" [value]='list.catItemID'>{{list.catItem}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Remarks</mat-label>
+                    <textarea matInput placeholder="Remarks" [(ngModel)]="remarks" [disabled]="disabledControls"
+                        maxLength="500" cols="30" rows="5"></textarea>
+                    <mat-hint align="end">{{remarks?.length || 0}}/500</mat-hint>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width" *ngIf="showJustification">
+                    <mat-label>Justification</mat-label>
+                    <textarea matInput placeholder="Justification" [(ngModel)]="justification"
+                        [disabled]="disabledControls" cols="30" rows="5" maxLength="1000"></textarea>
+                    <mat-hint align="end">{{justification?.length || 0}}/1000</mat-hint>
+                </mat-form-field>
+                <div class="ml-1" *ngIf="getConclusionCode() == 'DISQUAL_OUTSPEC'">
+                    <mat-label class="cardtitle_dark mr-3">Analyst Qualification Checklist :</mat-label> 
+                    <button type="button" mat-raised-button class="btnbase btn-blue" (click)="saveChecklist()">
+                        <i class="{{_global.icnMaster}}" aria-hidden="true"></i>&nbsp;Checklist</button>
+
+                </div>
+
+
+                <div align="right" class="mt-2">
+                    <button type="button" mat-raised-button class="btnbase btn-blue"
+                        (click)="uploadFile('ANALYST_QUA_EVA')">
+                        <i class="{{_global.icnUpload}}" *ngIf="ChangebtnType=='Save'" aria-hidden="true"></i>
+                        <i class="{{_global.icnViewFiles}}" *ngIf="ChangebtnType=='Update'"
+                            aria-hidden="true"></i>&nbsp;{{evaBtnUpd}}</button>
+                    <button type="button" mat-raised-button class="btnbase btn-blue"
+                        [disabled]="appBO.operationType == 'VIEW'" (click)='evaluation()' id="btnLoadersEvaluation" btnLoader [isLoaderOn]="isLoaderStartEvaluation">
+                        <i class="{{changeIcons()}}" aria-hidden="true"></i>&nbsp;{{ChangebtnType}}</button>
+                </div>
+            </div>
+            
+            </mat-card-content>
+            </mat-card>
+            </div>
+            </mat-tab>
+
+        </mat-tab-group>
+    </mat-card-content>
+
+</mat-card>

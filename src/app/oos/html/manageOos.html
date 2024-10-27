@@ -1,0 +1,37 @@
+<page-head [pageTitle]="pageTitle" [status]="status" [refNo]="reqCode" viewBack="true" [backUrl]="backUrl"
+    [viewHistory]="viewHistory" [viewHistoryVisible]="oosPageType == 'VIEW' || viewHistoryVisible"
+    [encEntityActID]="encArdsExecID" [entityCode]="entityCode" showRpts="true" [encRptEntActID]="encOosTestID">
+</page-head>
+<mat-card class="mat-card-c div-content mb-4 mt-1rem qc_mobp-main-tab">
+    <mat-card-content>
+        <div align="right" class="qc_btnbase-confirm">
+            <button type="button" mat-raised-button class="btnbase-confirm"
+                *ngIf="appBo && appBo.canApprove && (oosPageType == 'MNG' || reviewPageType == 'MNG')"
+                (click)="confirm()"> <i class="{{_global.icnConfirm}}" aria-hidden="true"></i>&nbsp;
+                Confirm</button>
+        </div>
+        <mat-tab-group #mbTab mat-align-tabs="center">
+            <mat-tab label="Request Details">
+                <oos-header [encOosTestID]="encOosTestID" [oosPageType]="oosPageType" [conditionCode]="conditionCode">
+                </oos-header>
+            </mat-tab>
+            <mat-tab label="Analysis">
+                <oos-analysis [encOosTestID]="encOosTestID" [pageType]="oosPageType"
+                    (emitArdsExecID)="getArdsExec($event)"></oos-analysis>
+            </mat-tab>
+            <mat-tab label="Department Reviews" *ngIf="conditionCode != 'OOS_APP'">
+                <dept-review [encOOSTestDetailID]="encOosTestDetailID" [appBo]="appBo" [pageType]="reviewPageType">
+                </dept-review>
+            </mat-tab>
+            <mat-tab label="QC Summary"
+                *ngIf="conditionCode == 'OOS_APP' && (appBo.appLevel > 3 || oosPageType == 'VIEW')">
+                <oos-summary [encOosTestID]="encOosTestID" [appBo]="appBo" [pageType]="oosPageType"></oos-summary>
+            </mat-tab>
+            <mat-tab label="QA Summary"
+                *ngIf="conditionCode == 'OOS_APP' && (appBo.appLevel > 4 || oosPageType == 'VIEW')">
+                <qa-sum [encOosTestID]="encOosTestID" [pageType]="oosPageType" [refNo]="appBo.referenceNumber"
+                    [hideReasonForDelay]="hideReasonForDelay"></qa-sum>
+            </mat-tab>
+        </mat-tab-group>
+    </mat-card-content>
+</mat-card>

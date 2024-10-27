@@ -1,0 +1,76 @@
+<page-head [pageTitle]="pageTitle" viewBack="true" [backUrl]="backUrl" [status]="viewSampleDestructionObj.status"
+    [refNo]="viewSampleDestructionObj.requestCode" [viewHistoryVisible]="true" [viewHistory]="viewHistory"
+    [entityCode]="entityCode" showRpts="true" [encRptEntActID]="encDestructionID"></page-head>
+
+<mat-card class="mat-card-c div-content mb-4 mt-1rem qc_mobp-main-tab">
+    <mat-card-content>
+        <div class="qc_heading_spce mt-3">
+            <mat-card class="mat-card-heading">
+                <mat-card-content>
+                    <h4 class="cardtitle"> Sample Destruction Details</h4>
+                    <div class="view-inv">
+                        <ul>
+                            <li>
+                                <mat-label>
+                                    <span>Source</span>
+                                    <span>{{viewSampleDestructionObj.destructionSource}}</span>
+                                </mat-label>
+                            </li>
+                            <li>
+                                <mat-label>
+                                    <span>Type of waste</span>
+                                    <span>{{viewSampleDestructionObj.typeOfWaste}}</span>
+                                </mat-label>
+                            </li>
+                            <li>
+                                <mat-label>
+                                    <span>Nature of waste</span>
+                                    <span>{{viewSampleDestructionObj.natureOfWaste}}</span>
+                                </mat-label>
+                            </li>
+                            <li>
+                                <mat-label>
+                                    <span>Mode of destruction</span>
+                                    <span>{{viewSampleDestructionObj.modeOfDestruction}}</span>
+                                </mat-label>
+                            </li>
+                            <li>
+                                <mat-label>
+                                    <span>Quantity</span>
+                                    <span>{{viewSampleDestructionObj.quantity}}</span>
+                                </mat-label>
+                            </li>
+                            <li *ngIf="viewSampleDestructionObj.destructionSource == 'Miscellaneous'">
+                                <mat-label>
+                                    <span>Reference No.</span>
+                                    <span>{{viewSampleDestructionObj.refNumber || 'N/A'}}</span>
+                                </mat-label>
+                            </li>
+                            <li *ngIf="viewSampleDestructionObj.destructionSource == 'Miscellaneous'">
+                                <mat-label>
+                                    <span>Destruction of Source</span>
+                                    <span>{{viewSampleDestructionObj.destructionOfSource || 'N/A'}}</span>
+                                </mat-label>
+                            </li>
+                            <li class="w-100 no-border">
+                                <mat-label>
+                                    <span>Important notes</span>
+                                    <span>{{viewSampleDestructionObj.disposalRemarks || 'N/A'}}</span>
+                                </mat-label>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="mt-3 pl-2 pr-2 pb-2"
+                        *ngIf="viewSampleDestructionObj.destructionSource != 'Miscellaneous'">
+                        <mat-card class="matcard-custom">
+                            <mat-card-content>
+                                <lims-grid [headers]="headers" [dataSource]="dataSource"></lims-grid>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </mat-card-content>
+</mat-card>

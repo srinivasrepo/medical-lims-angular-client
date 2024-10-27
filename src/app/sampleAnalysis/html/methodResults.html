@@ -1,0 +1,186 @@
+<div class="new-popupTitle" mat-dialog-title>
+    <h1>{{pageTitle}}</h1>
+    <div class="popup-close">
+        <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+    </div>
+</div>
+<div class="mt-3 mb-3 pl-3 pr-3" mat-dialog-content>
+    <div class="view-inv add-hr pb-2">
+        <ul>
+            <li class="w-50">
+                <mat-label>
+                    <span>Group</span><span>{{formatString(testInfo.category)}}</span>
+                </mat-label>
+            </li>
+            <li class="w-50">
+                <mat-label>
+                    <span>Sub Group</span><span>{{formatString(testInfo.subCategory)}}</span>
+                </mat-label>
+            </li>
+            <li *ngIf="entityCode != 'ENGGMNT' && entityCode != 'CALIB_VALIDATION'" class="w-100">
+                <mat-label>
+                    <span>Test Name</span><span>{{testInfo.testTitle}}</span>
+                </mat-label>
+            </li>
+            
+            <li *ngIf="entityCode != 'ENGGMNT' && entityCode != 'CALIB_VALIDATION'">
+                <mat-label>
+                    <span>Specification Limit</span><span>{{testInfo.specDesc || 'N / A'}}</span>
+                </mat-label>
+            </li>
+            <li *ngIf="entityCode == 'ENGGMNT' || entityCode == 'CALIB_VALIDATION'" class="w-100">
+                <mat-label>
+                    <span>Parameter Name</span><span>{{testInfo.testTitle}}</span>
+                </mat-label>
+            </li>
+            <li *ngIf="entityCode == 'ENGGMNT' || entityCode == 'CALIB_VALIDATION'">
+                <mat-label>
+                    <span>Acceptance Criteria</span><span>{{testInfo.specDesc}}</span>
+                </mat-label>
+            </li>
+            <li *ngIf="mode != 'MNG'">
+                <mat-label>
+                    <span>Result</span>
+                    <span class="{{testCls}} qc_brnone">{{viewResult() || "N / A"}}  <p style="display: inline;" innerHTML="{{testInfo.testUom}}"></p>
+                        <!-- <i class="{{_global.icnCancel}}" *ngIf="testInfo.passOrFail == 'F'" aria-hidden="true"></i>
+                        <i class="{{_global.icnConfirm}}" *ngIf="testInfo.passOrFail == 'P'" aria-hidden="true"></i> -->
+                        </span>
+                </mat-label>
+            </li>
+            <li *ngIf="mode != 'MNG' && (entityCode == 'SPEC_VALID' || entityCode == 'CALIB_VALIDATION')">
+                <mat-label><span>Status</span> <span>{{getSpecResult()}}</span></mat-label>
+
+            </li>
+            <li *ngIf="mode != 'MNG'">
+                <mat-label><span>Type</span> <span>{{testInfo.type}}</span></mat-label>
+
+            </li>
+            <li *ngIf="mode != 'MNG' && testInfo.corrValue">
+                <mat-label><span>Corr. Value</span> <span>{{testInfo.corrValue}}</span></mat-label>
+
+            </li>
+            <li *ngIf="testInfo.phaseType == 'NS' || testInfo.phaseType == 'NS2' || testInfo.phaseType == 'NS3' || testInfo.phaseType == 'NS4'" >
+                <mat-label><span>Sample Inward Reference</span> <span>{{testInfo.newSampleRefCode || 'N / A'}}</span></mat-label>
+            </li>
+            <li *ngIf="sourceCode == 'OOS_HYPOTEST'" class="w-100" >
+                <mat-label><span>Justification</span> <span>{{justfication || 'N / A'}}</span></mat-label>
+            </li>
+           
+        </ul>
+    </div>
+    <div class="mt-2 mb-3" *ngIf="mode == 'MNG'">
+        <!-- <mat-checkbox [(ngModel)]="resultApplicable" [disabled]="btnType == 'Update'">Result Applicable</mat-checkbox> -->
+        <div *ngIf="resultApplicable" class="mt-3 row">
+            <div class="col-4 pl-0">
+            <mat-label class="cardtitle_md ">Result</mat-label>
+            <div class="sam-result mt-2">
+                <mat-form-field appearance="outline" style="width: 98%;" class="{{getClass()}}"
+                    *ngIf="testInfo.methodType == 'D' && !this.isExtraTest">
+                    <mat-select [(ngModel)]="testInfo.resultID" (ngModelChange)="selectMethod()"
+                        [disabled]="btnType == 'Update' || isDisabled">
+                        <mat-option *ngFor="let lst of methodList" [value]="lst.methodResultID">
+                            {{lst.resultName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline" style="width: 98%;" class="{{getClass()}}"
+                    *ngIf="testInfo.methodType == 'N'">
+                    <input matInput (keypress)="allowDecimals($event)" [(ngModel)]="testInfo.result" style="width: 90%;"
+                        [disabled]="btnType == 'Update' || isDisabled" (blur)="getResultStatus()">
+                        <span innerHTML="{{testInfo.testUom}}"></span>
+                </mat-form-field>
+                <mat-form-field appearance="outline" style="width: 98%;" class="{{getClass()}}"
+                    *ngIf="testInfo.methodType == 'S'">
+                    <input matInput [(ngModel)]="testInfo.result" maxlength="512" style="width: 90%;"
+                        [disabled]="btnType == 'Update' || isDisabled">
+                        <span innerHTML="{{testInfo.testUom}}"></span>
+                    <mat-hint align="end">{{testInfo.result?.length || 0}} / 512</mat-hint>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="half-width" class="{{getClass()}}"
+                    *ngIf="testInfo.methodType == 'R'">
+                    <input matInput [(ngModel)]="testInfo.result" (blur)="getResultStatus()" style="width: 90%;"
+                        [disabled]="btnType == 'Update' || isDisabled" (keypress)="allowDecimals($event)">
+                        <span innerHTML="{{testInfo.testUom}}"></span>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="half-width" class="{{getClass()}}"
+                    *ngIf="testInfo.methodType == 'R'">
+                    <input matInput [(ngModel)]="testInfo.resultTo" (blur)="getResultStatus()" style="width: 90%;"
+                        [disabled]="btnType == 'Update' || isDisabled" (keypress)="allowDecimals($event)">
+                        <span innerHTML="{{testInfo.testUom}}"></span>
+                </mat-form-field>
+                <!-- <i class="{{_global.icnCancel}}" *ngIf="testInfo.passOrFail == 'F'" aria-hidden="true"></i>
+                <i class="{{_global.icnConfirm}}" *ngIf="testInfo.passOrFail == 'P'" aria-hidden="true"></i> -->
+            </div>
+            <div *ngIf="testInfo.resultID == 'O'">
+                <mat-form-field appearance="outline" class="full-width {{getClass()}}">
+                    <input matInput placeholder="Result" [(ngModel)]="testInfo.result" maxlength="512"
+                        [disabled]="btnType == 'Update' || isDisabled">
+                    <mat-hint align="end">{{testInfo.result?.length || 0}} / 512</mat-hint>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="full-width {{getClass()}}">
+                    <mat-select placeholder="Pass or Fail" [(ngModel)]="testInfo.passOrFail"
+                        [disabled]="btnType == 'Update'">
+                        <mat-option value="P">Pass</mat-option>
+                        <mat-option value="F">Fail</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            </div>
+            <div class="col-8 pr-0">
+                <mat-label class="bold">&nbsp;</mat-label>
+                <mat-form-field appearance="outline" class="full-width mt-2">
+                    <mat-label>Type</mat-label>
+                    <mat-select placeholder="Type" [(ngModel)]="testInfo.typeCode" [disabled]="btnType == 'Update'">
+                        <mat-option *ngFor="let type of resultTypes" [value]="type.catItemCode">{{type.catItem}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="full-width"
+                    *ngIf="testInfo.typeCode && testInfo.typeCode!= 'ACT_RES'">
+                    <mat-label>Corr. Value</mat-label>
+                    <input matInput [(ngModel)]="testInfo.corrValue" maxlength="512" [disabled]="btnType == 'Update'">
+                    <mat-hint align="end">{{testInfo.corrValue?.length || 0}} / 512</mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+        <div *ngIf="(entityCode == 'SPEC_VALID' || entityCode == 'CALIB_VALIDATION') && resultApplicable" class="mt-2"
+            style="clear: both;">
+            <mat-label class="bold">Status</mat-label>
+            <mat-form-field appearance="outline" style="width: 90%;  float: right;  margin-top: -15px;">
+                <mat-select placeholder="Status" [(ngModel)]="testInfo.specPassOrFail" [disabled]="btnType == 'Update'">
+                    <mat-option value="P">Pass</mat-option>
+                    <mat-option value="F">Fail</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div *ngIf="sourceCode == 'OOS_HYPOTEST'" class="mt-2" style="clear: both;">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Justification</mat-label>
+                <textarea matInput Placeholder="Justification" [(ngModel)]="justification" maxlength="8000"></textarea>
+                <mat-hint align="end">{{justfication?.length || 0}} / 8000</mat-hint>
+            </mat-form-field>
+        </div>
+        <div *ngIf="testInfo.phaseType == 'NS' || testInfo.phaseType == 'NS2' || testInfo.phaseType == 'NS3' || testInfo.phaseType == 'NS4'" class="mt-1" style="clear: both;">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Select Sample Inward Reference</mat-label>
+                <mat-select Placeholder="Select Sample Inward Reference" [(ngModel)]="testInfo.newSampleRefID">
+                    <mat-option *ngFor="let ref of sampleRefList" [value]="ref.sioID">{{ref.sioCode}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+
+
+    <div align="right">
+        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="raiseDev()"
+            *ngIf="(headerInfo.statusCode == 'APP' || headerInfo.statusCode == 'REJ') && sourceCode != 'CONT_WISE_ANA' && testInfo.result && pageType != 'VIEW'">
+            <i class="{{_global.icnUpdate}}" aria-hidden="true"></i>&nbsp;
+            {{resultBtn}}
+        </button>
+
+        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="saveMethodResults()"
+            *ngIf="mode == 'MNG' && !testInfo.updTestStatus" id="btnLoaders" btnLoader [isLoaderOn]="isLoaderStart">
+            <i class="{{_global.icnSave}}" *ngIf="btnType == 'Confirm'" aria-hidden="true"></i>
+            <i class="{{_global.icnUpdate}}" *ngIf="btnType == 'Update'"
+                aria-hidden="true"></i>&nbsp;{{btnType}}</button>
+    </div>
+</div>

@@ -1,0 +1,76 @@
+<div>
+
+
+    <div class="new-popupTitle" mat-dialog-title>
+        <h1 class="colorwhite">Test Occupancy</h1>
+        <div class="popup-close">
+            <!-- <i class="material-icons" matTooltip="Close" (click)="close()">close</i> -->
+            <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+        </div>
+    </div>
+    <div class="mt-3 mb-3 pl-3 pr-3" mat-dialog-content>
+    <div id="content" class="view_prep_List mb-5 ">
+            <h4 class="cardtitle mt-0 mb-2">Assign Occupancy</h4>
+            <mat-grid-list cols="2" rowHeight="90px">
+                <span *ngFor="let data of testList;">
+                    <mat-grid-tile *ngIf="!data.isAssigned">
+                        <div class="row full-width">
+                            <div class="col-12 no-padding">
+                                <mat-label class="cardtitle_dark">{{data.testName}}</mat-label>
+                            </div>
+                            <div class="col-12 mt-1 no-padding">
+                                <mat-form-field appearance="outline" grid_mouse_hover class="full-width pl-0 pr-0">
+                                    <mat-label>{{data.testName}}</mat-label>
+                                    <input matInput placeholder="Value" [(ngModel)]="data.occMinutes"
+                                         (blur)="saveValue(data, j,i)"
+                                        (keypress)="allowNumbers($event)" [disabled]=" data.isDisabled">
+                                        <span matSuffix>Minutes</span>
+                                  </mat-form-field>
+                                <!-- <mat-form-field appearance="outline" class="no-padding" grid_mouse_hover class="full-width">
+                                    <input matInput placeholder="Value" [(ngModel)]="data.occMinutes"
+                                         (blur)="saveValue(data, j,i)"
+                                        (keypress)="allowNumbers($event)" [disabled]=" data.isDisabled">
+                                    <span>Minutes</span>
+                                    <span *ngIf="data.isDisabled" style="margin: -2px; height: 28px;"
+                                        class="edit_sdmsInput">
+                                        <i class="{{_global.icnEdit}}" (click)="edit(data,i)"></i>
+                                    </span>
+                                </mat-form-field> -->
+                            </div>
+                        </div>
+
+                    </mat-grid-tile>
+                </span>
+            </mat-grid-list>
+        </div>
+        <div id="content" class="view_prep_List mb-5 mt-3">
+            <h4 class="cardtitle mt-0 mb-2">Assigned Occupancy</h4>
+            <mat-grid-list cols="2" rowHeight="90px" >
+                <span *ngFor="let data of testList;">
+                    <mat-grid-tile *ngIf="data.isAssigned">
+                        <div class="row full-width">
+                            <div class="col-12 no-padding">
+                                <mat-label class="cardtitle_dark">{{data.testName}}</mat-label>
+                            </div>
+                            <div class="col-12 mt-1 no-padding">
+                                <mat-form-field appearance="outline" class="full-width pl-0 pr-0 no-padding" grid_mouse_hover>
+                                    <input matInput placeholder="Value" [(ngModel)]="data.occMinutes" (blur)="saveValue(data, j,i)"
+                                        (keypress)="allowNumbers($event)" [disabled]=" data.isDisabled">
+                                    <span matSuffix>Minutes</span>
+                                    <span *ngIf="data.isDisabled" 
+                                        class="edit_sdmsInput_3">
+                                        <i class="{{_global.icnEdit}}" (click)="edit(data,i)"></i>
+                                    </span>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </mat-grid-tile>
+                </span>
+            </mat-grid-list>
+        </div>
+
+
+
+      
+    </div>
+</div>

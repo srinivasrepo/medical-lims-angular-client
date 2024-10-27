@@ -1,0 +1,154 @@
+<form>
+    <div class="new-popupTitle" mat-dialog-title>
+        <h1 class="colorwhite">{{pageTitle}}</h1>
+        <div class="popup-close">
+            <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+        </div>
+    </div>
+
+    <div class=" mt-0 mb-3 pl-3 pr-3 modal_body" mat-dialog-content>
+        <form [formGroup]="occuFormGroup" *ngIf="pageType == 'MNG'" class="pt-2">
+            <div *ngIf="occReqDispaly">
+                <label class="cardtitle_dark ">Occupancy Required : </label>&nbsp;&nbsp;&nbsp;
+                <mat-radio-group color="primary" [(ngModel)]="occupancyRequired" [ngModelOptions]="{standalone: true}"
+                    [disabled]="isDisabled() || buttonType == 'Update'">
+                    <mat-radio-button value="Y">Yes</mat-radio-button>&nbsp;&nbsp;&nbsp;
+                    <mat-radio-button value="N">No</mat-radio-button>
+                </mat-radio-group>
+            </div>
+            <div *ngIf="occupancyRequired && occupancyRequired == 'Y' || !occReqDispaly" class="mt-2 mng_occ_body">
+                <ul>
+                    <li *ngIf="isAppPrimaryOcc">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Occupancy Type</mat-label>
+                            <mat-select placeholder="Occupancy Type" name="occupancyType" formControlName="occType">
+                                <mat-option value="PRI_OCC">Primary Occupancy</mat-option>
+                                <mat-option value="ADD_OCC">Additional Occupancy</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </li>
+                    <li>
+                        <div class="full-width px-in-0">
+                            <lims-lookup [info]="equipmentInfo" #equipment (onSelect)="prepareRefLkp($event)">
+                            </lims-lookup>
+                        </div>
+                    </li>
+                    <li>
+                        <mat-checkbox [checked]="isRefEqpOcc" (change)="prepareRefLkp($event)">
+                            Refer existing occupancy?
+                        </mat-checkbox>
+                    </li>
+                    <li [ngClass]="{'hide': !isRefEqpOcc}">
+                        <div class="full-width">
+                            <lims-lookup [info]="refOccuInfo" #refOccu (onSelect)="getRefEqpOCC($event)">
+                            </lims-lookup>
+                        </div>
+                    </li>
+                    <br />
+                    <li>
+                        <mat-form-field appearance="outline" class="full-width pl-0 pr-0"
+                            *ngIf="dateFieldType != 'BTN'">
+                            <mat-label>Date From</mat-label>
+                            <input matInput [max]="getDate" (ngModelChange)="onChangeDate($event, 'dateFrom')"
+                                formControlName="dateFrom" [attr.hour12Timer]="false" [owlDateTime]="fromDate"
+                                name="dateFrom" owl-date-time="fromDate" readonly>
+                            <owl-date-time #fromDate></owl-date-time>
+
+                            <mat-icon matTooltip="Calendar" matSuffix [owlDateTimeTrigger]="fromDate">date_range
+                            </mat-icon>
+
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="full-width pl-0 pr-0"
+                            *ngIf="dateFieldType == 'BTN'">
+                            <mat-label>Reserved Date</mat-label>
+                            <input matInput placeholder="Reserved Date" formControlName="dateFrom" readonly
+                                style="width: 96%;">
+                            <i class="far fa-calendar-alt" aria-hidden="true"
+                                *ngIf="buttonType != 'Update' && !disableDateFromIcon"
+                                (click)="getCurrentDateTime('dateFrom')"></i>
+                        </mat-form-field>
+
+                    </li>
+                    <li>
+                        <mat-form-field appearance="outline" class="full-width pl-0 pr-0"
+                            *ngIf="dateFieldType != 'BTN'">
+                            <mat-label>Date To</mat-label>
+                            <input matInput [min]="f.dateFrom.value" [max]="getDate"
+                                (ngModelChange)="onChangeDate($event, 'dateTo')" [attr.hour12Timer]="false"
+                                formControlName="dateTo" name="dateTo" [owlDateTime]="toDate" owl-date-time="toDate"
+                                readonly>
+                            <owl-date-time #toDate></owl-date-time>
+                            <mat-icon matTooltip="Calendar" matSuffix [owlDateTimeTrigger]="toDate">date_range
+                            </mat-icon>
+                        </mat-form-field>
+                        <mat-form-field appearance="outline" class="full-width pl-0 pr-0"
+                            *ngIf="dateFieldType == 'BTN'">
+                            <mat-label>Released Date</mat-label>
+                            <input matInput placeholder="Released Date" formControlName="dateTo" readonly
+                                style="width: 96%;">
+                            <i class="far fa-calendar-alt" aria-hidden="true"
+                                *ngIf="buttonType != 'Update' && !disableDateToIcon"
+                                (click)="getCurrentDateTime('dateTo')"></i>
+                        </mat-form-field>
+                    </li>
+
+                </ul>
+
+                <mat-form-field appearance="outline" class="full-width pl-0 pr-0">
+                    <mat-label>Comments</mat-label>
+                    <textarea matInput name="Comments" cols="30" rows="5" maxlength="8000"
+                        formControlName="remarks"></textarea>
+                    <mat-hint align="end">{{f.remarks.value?.length || 0}} / 8000</mat-hint>
+                </mat-form-field>
+            </div>
+            <div *ngIf="occupancyRequired && occupancyRequired == 'N'" class="mt-2">
+                <mat-form-field appearance="outline" class="full-width pl-0 pr-0">
+                    <mat-label>Comments</mat-label>
+                    <textarea matInput maxlength="20" [(ngModel)]="comment" [disabled]="buttonType == 'Update'"
+                        [ngModelOptions]="{standalone: true}"></textarea>
+                    <mat-hint align="end">{{comment?.length || 0}} / 20</mat-hint>
+                </mat-form-field>
+            </div>
+            <div align="right" class="mt-2">
+                <!-- <button type="submit" mat-raised-button class="btn-save" (click)="save()">{{buttonType}}</button> -->
+
+                <button type="button" mat-raised-button class="btnbase btn-blue" (click)="save()" id="mngOcpbtnLoaders"
+                    btnLoader [isLoaderOn]="isLoaderStart">
+                    <i class="{{_global.icnSave}}" *ngIf="buttonType=='Save'" aria-hidden="true"></i>
+                    <i class="{{_global.icnUpdate}}" *ngIf="buttonType=='Update'"
+                        aria-hidden="true"></i>&nbsp;{{buttonType}}</button>
+
+                <button type="button" mat-raised-button class="btnbase btn-blue mr-0" (click)="close()">
+                    <i class="{{_global.icnCancel}}" aria-hidden="true"></i>&nbsp;Close</button>
+            </div>
+
+        </form>
+
+        <div class="mt-0" *ngIf="occupancyRequired && occupancyRequired == 'Y' || !occReqDispaly" class="qc_table-mocc">
+            <lims-grid (onActionClicked)="onActionClicked($event);" [headers]="headersData" [dataSource]="dataSource"
+                [actions]="action" [removeAction]="removeActions" [usrActions]="usrActions"></lims-grid>
+
+        </div>
+        <div *ngIf="occupancyRequired && occupancyRequired == 'N' && this.pageType == 'VIEW'">
+            <div class="view-inv add-hr">
+                <ul>
+                    <li class="w-100">
+                        <mat-label>
+                            <span> Occupancy required</span>
+                            <span>No</span>
+                        </mat-label>
+                    </li>
+                    <li class="w-100 no-border">
+                        <mat-label>
+                            <span>Comment</span>
+                            <span>{{comment}}</span>
+                        </mat-label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+</form>

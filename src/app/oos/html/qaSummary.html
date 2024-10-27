@@ -1,0 +1,152 @@
+<div class="qc_heading_spce">
+    <mat-card class="mat-card-heading">
+        <mat-card-content>
+            <h4 class="cardtitle"> Quality Assurance Remarks</h4>
+            <div class="pl-2 pr-2 mt-2">
+
+
+                <mat-grid-list cols='2' rowHeight="30px" class="oos-sum" *ngIf="pageType != 'VIEW'">
+                    <mat-grid-tile>
+                        <mat-label class="cardtitle_dark mr-3">Are there any Quality Agreements in-force to notify the
+                            client/applicant about OOS?
+                        </mat-label>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                        <mat-radio-group class="mat-radio-btn" [(ngModel)]="manageObj.isQualityAgreement"
+                            [disabled]="isNotifyFromAPP || disableFields">
+                            <mat-radio-button color="primary" value="Yes">Yes</mat-radio-button>&nbsp;&nbsp;&nbsp;
+                            <mat-radio-button color="primary" value="No">No</mat-radio-button>
+                        </mat-radio-group>
+                    </mat-grid-tile>
+                    <mat-grid-tile *ngIf="manageObj.isQualityAgreement == 'Yes' && !hideLkp">
+                        <div class="full-width pl-in-0">
+                            <lims-lookup [info]="customerInfo" #customer></lims-lookup>
+                        </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile *ngIf="manageObj.isQualityAgreement == 'Yes' && hideLkp">
+                        <mat-label><span class="cardtitle_dark mr-1"> Customer : </span> <span class="qc_viewradio">
+                                {{manageObj.customerName}}</span></mat-label>
+                    </mat-grid-tile>
+                    <mat-grid-tile *ngIf="manageObj.isQualityAgreement == 'Yes'">
+                        <div align="right">
+                            <mat-label><span class="cardtitle_dark mr-1"> Notification Date : </span> <span
+                                    class="qc_viewradio">{{notificationDate || 'N/A'}}</span></mat-label>
+                        </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                        <mat-label class="cardtitle_dark mr-3">If yes, has OOS notified
+                        </mat-label>&nbsp;&nbsp;&nbsp;
+                        <mat-radio-group class="mat-radio-btn" [(ngModel)]="manageObj.isQualityAgreement" disabled>
+                            <mat-radio-button color="primary" value="Yes">Yes</mat-radio-button>&nbsp;&nbsp;&nbsp;
+                            <mat-radio-button color="primary" value="No">No</mat-radio-button>
+                        </mat-radio-group>
+
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                        <mat-label class="cardtitle_dark mr-1">
+                            Cross reference deviation number (incase further investigation is required) : <span
+                                class="qc_viewradio">{{manageObj.devCode || 'N/A'}}</span>
+                        </mat-label>
+                    </mat-grid-tile>
+
+                </mat-grid-list>
+            </div>
+            <div class="view-inv mt-1" *ngIf="pageType == 'VIEW'">
+                <ul>
+                    <li>
+                        <mat-label>
+                            <span>Are there any Quality Agreements in-force to notify the client/applicant about
+                                OOS?</span>
+                            <span> {{manageObj.isQualityAgreement}}</span>
+                        </mat-label>
+                    </li>
+                    <li *ngIf="manageObj.isQualityAgreement == 'Yes' && hideLkp">
+                        <mat-label>
+                            <span>Customer</span>
+                            <span> {{manageObj.customerName}}</span>
+                        </mat-label>
+                    </li>
+                    <li *ngIf="manageObj.isQualityAgreement == 'Yes'">
+                        <mat-label>
+                            <span>Notification Date</span>
+                            <span>{{notificationDate || 'N/A'}}</span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label>
+                            <span>If yes, has OOS notified</span>
+                            <span>{{manageObj.isQualityAgreement || 'N/A'}}</span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label>
+                            <span>Cross reference deviation number (incase further investigation is required)</span>
+                            <span>{{manageObj.devCode || 'N/A'}}</span>
+                        </mat-label>
+                    </li>
+                    <li class="w-100">
+                        <mat-label>
+                            <span>Description of Notification</span>
+                            <span>{{manageObj.descNotification || 'N/A'}}</span>
+                        </mat-label>
+                    </li>
+                    <li class="w-100">
+                        <mat-label>
+                            <span>Comments</span>
+                            <span>{{manageObj.qARemarks || 'N/A'}}</span>
+                        </mat-label>
+                    </li>
+                    <li class="w-100">
+                        <mat-label>
+                            <span>Reason for Delay</span>
+                            <span>{{manageObj.reasonForDelay || 'N/A'}}</span>
+                        </mat-label>
+                    </li>
+                </ul>
+            </div>
+            <mat-grid-list cols='1' rowHeight="110px">
+                <mat-grid-tile *ngIf="manageObj.isQualityAgreement == 'Yes' && pageType == 'MNG'">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Description of Notification </mat-label>
+                        <textarea matInput rows="3" maxlength="8000" placeholder="Description of Notification"
+                            [(ngModel)]="manageObj.descNotification" [disabled]="disableFields"></textarea>
+                        <mat-hint align="end">{{manageObj.descNotification?.length || 0}} / 8000
+                        </mat-hint>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile *ngIf="pageType == 'MNG'">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Comments </mat-label>
+                        <textarea matInput rows="4" maxlength="8000" placeholder="Comments"
+                            [(ngModel)]="manageObj.qaRemarks " [disabled]="disableFields"></textarea>
+                        <mat-hint align="end">{{manageObj.qaRemarks?.length || 0}} / 8000
+                        </mat-hint>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile *ngIf="!hideReasonForDelay && pageType == 'MNG'">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Reason for Delay</mat-label>
+                        <textarea matInput rows="4" maxlength="8000" placeholder="Reason for Delay"
+                            [(ngModel)]="manageObj.reasonForDelay" [disabled]="disableFields"></textarea>
+                        <mat-hint align="end">{{manageObj.reasonForDelay?.length || 0}} / 8000
+                        </mat-hint>
+                    </mat-form-field>
+                </mat-grid-tile>
+            </mat-grid-list>
+
+
+
+            <div align="right" class="mt-2 pb-2 pr-1">
+                <button type="button" mat-raised-button class="btnbase btn-blue" (click)="Uploadfiles()">
+                    <i class="{{_global.icnViewFiles}}" *ngIf="btnUpload != 'Upload'" aria-hidden="true"></i>
+                    <i class="{{_global.icnUpload}}" *ngIf="btnUpload == 'Upload'"
+                        aria-hidden="true"></i>&nbsp;{{btnUpload}}</button>
+                <button type="button" mat-raised-button class="btnbase btn-blue" (click)="saveQASummary()"
+                    id="btnLoadersQASummary" btnLoader [isLoaderOn]="isLoaderStart" *ngIf="pageType =='MNG'">
+                    <i class="{{_global.icnSave}}" *ngIf="btnType=='Save'" aria-hidden="true"></i>
+                    <i class="{{_global.icnUpdate}}" *ngIf="btnType=='Update'"
+                        aria-hidden="true"></i>&nbsp;{{btnType}}</button>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

@@ -1,0 +1,213 @@
+<div class="qc_box-n">
+    <mat-card class="matcard-nobg">
+        <mat-card-content>
+            <div class="matcard-custom-search search-bg">
+                <page-head [pageTitle]="pageTitle"></page-head>
+                <mat-form-field appearance="outline" class="full-width pl-0 pr-0 qc_search-input">
+                    <mat-label>{{searchBy}}</mat-label>
+                    <input matInput [ngClass]="{'hide' : hasSearchVal()}"
+                        [(ngModel)]="searchQCInventoryObj.advanceSearch" [readonly]="hasSearchVal()">
+                    <mat-chip-list class="mat-chip-list srch-chip" *ngIf="searchResult && searchResult.length > 0">
+                        <div class="mat-chip-list-wrapper">
+                            <mat-chip class="mat-chip mat-primary mat-standard-chip ng-star-inserted"
+                                *ngFor="let item of searchResult; let i = index" [matTooltip]="item.name">{{item.name}}
+                                &nbsp;&nbsp;
+                                <i class="{{_global.icnClear}}" style="color:red;" matTooltip="Clear"
+                                    (click)="clearOption(item.code, i)" aria-hidden="true"></i>
+                            </mat-chip>
+                        </div>
+                    </mat-chip-list>
+                    <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="openModal('qcInv-srch')">
+                        <mat-icon>keyboard_arrow_down</mat-icon>
+                    </button>
+                </mat-form-field>
+                <div>
+                    <srch-filter-modal id="qcInv-srch">
+                        <div class="cls-div">
+                            <i class="{{_global.icnClear}} cls-icon" aria-hidden="true" matTooltip="Close"
+                                (click)="closeModal('qcInv-srch')"></i>
+                        </div>
+                        <mat-grid-list cols="2" rowHeight="68px">
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width ">
+                                    <mat-label>Chemical Source</mat-label>
+                                    <mat-select [(ngModel)]="searchQCInventoryObj.entityID">
+                                        <mat-option *ngFor="let stadet of getSources" [value]="stadet.entityID">
+                                            {{stadet.entity}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <div class="full-width">
+                                    <lims-lookup [info]="inventoryInfo" #inventoryData></lims-lookup>
+                                </div>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Chemical Type</mat-label>
+                                    <mat-select [(ngModel)]="searchQCInventoryObj.chemicalType">
+                                        <mat-option *ngFor="let chemTy of getCatItemList('NATURE_OF_CHEMICAL')" [value]="chemTy.catItemID">
+                                            {{chemTy.catItem}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <!-- <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Use Before Date</mat-label>
+                                    <input [matDatepicker]="useBeforeDate" matInput
+                                        [(ngModel)]="searchQCInventoryObj.batchExpDateTo" readonly>
+                                    <mat-datepicker-toggle matSuffix [for]="useBeforeDate"></mat-datepicker-toggle>
+                                    <mat-datepicker #useBeforeDate></mat-datepicker>
+                                </mat-form-field>
+                            </mat-grid-tile> -->
+                        </mat-grid-list>
+
+                        <div class="full-width">
+                            <mat-cat [materialInfo]="materialInfo" [entityCode]="entitySourceCode" #materialCategory
+                                (selectedMaterial)='changeMaterialCategory($event)'></mat-cat>
+                        </div>
+
+                        <!-- <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width pr-0">
+                                    <mat-label>Batch Expiry</mat-label>
+                                    <input [matDatepicker]="expiryDate" matInput
+                                        [(ngModel)]="searchQCInventoryObj.btBefDate" readonly>
+                                    <mat-datepicker-toggle matSuffix [for]="expiryDate"></mat-datepicker-toggle>
+                                    <mat-datepicker #expiryDate></mat-datepicker>
+                                </mat-form-field>
+                            </mat-grid-tile> -->
+                        <mat-grid-list cols="2" rowHeight="68px">
+
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width ">
+                                    <mat-label>Expiry / Validity Date From</mat-label>
+                                    <input [matDatepicker]="FromDate" matInput
+                                        [(ngModel)]="searchQCInventoryObj.batchUseBeforeDate" readonly
+                                        [max]="searchQCInventoryObj.useBeforeDate">
+                                    <mat-datepicker-toggle matSuffix [for]="FromDate"></mat-datepicker-toggle>
+                                    <mat-datepicker #FromDate></mat-datepicker>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width ">
+                                    <mat-label>Expiry / Validity Date To</mat-label>
+                                    <input [matDatepicker]="toDate" matInput
+                                        [(ngModel)]="searchQCInventoryObj.useBeforeDate" readonly
+                                        [min]="searchQCInventoryObj.batchUseBeforeDate">
+                                    <mat-datepicker-toggle matSuffix [for]="toDate"></mat-datepicker-toggle>
+                                    <mat-datepicker #toDate></mat-datepicker>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Chemical Grade</mat-label>
+                                    <mat-select placeholder="Grade" [(ngModel)]="searchQCInventoryObj.chemicalGrade">
+                                        <mat-option *ngFor="let grade of getCatItemList('GRADE')" [value]="grade.catItemID">
+                                            {{grade.catItem}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label> Block</mat-label>
+                                    <mat-select placeholder="Block" [(ngModel)]="searchQCInventoryObj.blockID">
+                                        <mat-option *ngFor="let block of blockList" [value]="block.blocK_ID">
+                                            {{block.blocK_NAME}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <div class="full-width">
+                                    <lims-lookup [info]="manufacturerInfo" #manufacturer></lims-lookup>
+                                </div>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width ">
+                                    <mat-label> Inward Date From</mat-label>
+                                    <input [matDatepicker]="FromInwardDate" matInput
+                                        [(ngModel)]="searchQCInventoryObj.inwardDateFrom" readonly
+                                        [max]="searchQCInventoryObj.inwardDateTo">
+                                    <mat-datepicker-toggle matSuffix [for]="FromInwardDate"></mat-datepicker-toggle>
+                                    <mat-datepicker #FromInwardDate></mat-datepicker>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width ">
+                                    <mat-label>Inward Date To</mat-label>
+                                    <input [matDatepicker]="toInwardDate" matInput
+                                        [(ngModel)]="searchQCInventoryObj.inwardDateTo" readonly
+                                        [min]="searchQCInventoryObj.inwardDateFrom">
+                                    <mat-datepicker-toggle matSuffix [for]="toInwardDate"></mat-datepicker-toggle>
+                                    <mat-datepicker #toInwardDate></mat-datepicker>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width ">
+                                    <mat-label>Status</mat-label>
+                                    <mat-select [(ngModel)]="searchQCInventoryObj.statusID">
+                                        <mat-option *ngFor="let stadet of statusDetailsList" [value]="stadet.statusID">
+                                            {{stadet.status}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                        </mat-grid-list>
+                        <mat-grid-list cols="2" rowHeight="30px">
+                            <mat-grid-tile>
+                                <div class="pl-1">
+                                <mat-checkbox  [(ngModel)]="searchQCInventoryObj.showZeroQtyRecords"></mat-checkbox>  &nbsp;&nbsp;
+                                <mat-label class="cardtitle_dark"> Show Zero Qty Records</mat-label>
+                            </div>
+                            </mat-grid-tile>
+
+                        </mat-grid-list>
+                        <div align="right" class="mt-3">
+                            <button type="button" mat-raised-button class="btnbase btn-blue"
+                                (click)="searchQCInvent('SEARCH')">
+                                <i class="{{_global.icnSearch}}" aria-hidden="true"></i>&nbsp; Search</button>
+                            <button type="button" mat-raised-button class="btnbase btn-blue"
+                                (click)="searchQCInvent('ALL')">
+                                <i class="{{_global.icnSearchAll}}" aria-hidden="true"></i>&nbsp;Search All</button>
+                            <button type="button" mat-raised-button class="btnbase btn-blue "
+                                (click)="closeModal('qcInv-srch')">
+                                <i class="{{_global.icnClear}}" aria-hidden="true"></i>&nbsp;Close</button>
+                        </div>
+                    </srch-filter-modal>
+                    <div align="right" class="mt-3">
+                        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="sendSample()">
+                            <i class="fas fa-paper-plane" aria-hidden="true"></i>&nbsp; Send Sample</button>
+                        <button type="button" mat-raised-button class="btnbase btn-blue" *ngIf="hasSamDestructionCap"
+                            (click)="sampleDestruction()">
+                            <i class="fas fa-file-medical-alt" aria-hidden="true"></i>&nbsp; Sample Destruction</button>
+                        <button type="button" mat-raised-button class="btnbase btn-blue"
+                            (click)="searchQCInvent('SEARCH')">
+                            <i class="{{_global.icnSearch}}" aria-hidden="true"></i>&nbsp; Search</button>
+                        <button type="button" mat-raised-button class="btnbase btn-blue"
+                            (click)="searchQCInvent('ALL')">
+                            <i class="{{_global.icnSearchAll}}" aria-hidden="true"></i>&nbsp;Search All</button>
+                        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="update()">
+                            <i class="{{_global.icnAdd}}" aria-hidden="true"></i>&nbsp;Add Stock</button>
+                        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="addConverion()"> <i
+                                class="{{_global.icnConvert}}" aria-hidden="true"></i> &nbsp; &nbsp; Conversion</button>
+                        <button mat-raised-button class="btnbase btn-blue mr-0" (click)="export()" *ngIf="hasExpCap"><i
+                                class="fas fa-file-export"></i>Export</button>
+                    </div>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
+<div class="mt-5 mb-5">
+    <mat-card class="matcard-custom pxy-2 qc_table-Analysis">
+        <mat-card-content>
+            <lims-grid [dataSource]="dataSource" [headers]="headers" (onActionClicked)="onActionClicked($event)"
+                [actions]="actions"></lims-grid>
+            <div class="mt-1">
+                <lims-paging (onPageIndexClicked)="onPage($event)" [totalRecords]="searchQCInventoryObj.totalRecords"
+                    [currentSelectedIndex]="searchQCInventoryObj.pageIndex"></lims-paging>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

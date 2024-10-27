@@ -1,0 +1,234 @@
+<app-qcCalib-headers (showHideCalibration)="showHideCalib($event)" #headerCom></app-qcCalib-headers>
+
+<div *ngIf="getShowHideCalib()" class="matcard-custom-search">
+    <div class="pl-1 pr-1">
+
+        <mat-accordion *ngIf="pageType()" class="qc_accordion-1">
+            <mat-expansion-panel [expanded]="isExpandPanel">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Add Parameter
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <div class="mt-1">
+                    <mat-grid-list cols="2" rowHeight="68px">
+
+                        <mat-grid-tile>
+
+                            <div class="full-width mt-2" *ngIf="showHideCategory">
+                                <lims-lookup [info]="categoryInfo" #category (onSelect)="getCategories($event)">
+                                </lims-lookup>
+                            </div>
+
+
+                            <div *ngIf="showHideCategory" align="right">
+                                <button type="button" mat-raised-button class="btnbase btn-blue"
+                                    (click)="btnType == 'Update' ? $event.preventDefault() : showHideCategory = !showHideCategory"><i
+                                        class="{{changeIcons('ADD')}} calib-icon" matTooltip="New Group"
+                                        aria-hidden="true"></i>&nbsp;Add</button>
+                            </div>
+
+                            <div *ngIf="!showHideCategory" class="width-90">
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Group</mat-label>
+                                    <input matInput name="category" [(ngModel)]="manageCalibBO.category"
+                                        maxlength="100">
+                                    <mat-hint align="end">{{manageCalibBO.category?.length || 0}} / 100</mat-hint>
+                                </mat-form-field>
+                            </div>
+
+                            <div *ngIf="!showHideCategory">
+                                <span class="btnlookup_2"><i class="{{changeIcons('ADD')}} calib-icon" matTooltip="Add"
+                                        aria-hidden="true" (click)="saveCategory('CAT')"></i></span>
+                                <span class="btnlookup_2"><i class="{{changeIcons('CLEAR')}} calib-icon"
+                                        matTooltip="Cancel" aria-hidden="true" (click)="clear('CAT')"></i></span>
+                            </div>
+
+                        </mat-grid-tile>
+
+                        <mat-grid-tile>
+                            <div class="full-width mt-2" *ngIf="showHideSubCategory">
+                                <lims-lookup [info]="subCategoryInfo" #subCategory>
+                                </lims-lookup>
+                            </div>
+                            <div *ngIf="showHideSubCategory">
+                                <button type="button" mat-raised-button class="btnbase btn-blue"
+                                    (click)="btnType == 'Update' ? $event.preventDefault() : showHideSubCategory = !showHideSubCategory"><i
+                                        class="{{changeIcons('ADD')}} calib-icon" matTooltip="New Sub Group"
+                                        aria-hidden="true"></i>&nbsp;Add</button>
+                            </div>
+
+                            <div *ngIf="!showHideSubCategory" class="width-90">
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Sub Group</mat-label>
+                                    <input matInput name="subcategory" [(ngModel)]="manageCalibBO.subCategory"
+                                        maxlength="100">
+                                    <mat-hint align="end">{{manageCalibBO.subCategory?.length || 0}} / 100</mat-hint>
+                                </mat-form-field>
+                            </div>
+
+                            <div *ngIf="!showHideSubCategory">
+                                <span class="btnlookup_2"><i class="{{changeIcons('ADD')}} calib-icon" matTooltip="Add"
+                                        aria-hidden="true" (click)="saveCategory('SUB_CAT')"></i></span>
+                                <span class="btnlookup_2"><i class="{{changeIcons('CLEAR')}} calib-icon"
+                                        matTooltip="Cancel" aria-hidden="true" (click)="clear('SUB_CAT')"></i></span>
+                            </div>
+
+                        </mat-grid-tile>
+
+                        <mat-grid-tile [colspan]="2">
+                            <div class="full-width mt-2">
+                                <lims-lookup [info]="testsInfo" #tests>
+                                </lims-lookup>
+                            </div>
+                        </mat-grid-tile>
+
+                        <mat-grid-tile [colspan]="2" [rowspan]="2" *ngIf="manageCalibBO.limitType != 'S'">
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Enter Acceptance Criteria</mat-label>
+                                <textarea matInput placeholder="Enter Acceptance Criteria" name="specLimit"
+                                    [(ngModel)]="manageCalibBO.specLimit" rows="5" [disabled]="btnType == 'Update'"
+                                    class="textarea_size_fix" maxlength="500"></textarea>
+                                <mat-hint align="end">{{manageCalibBO.specLimit?.length || 0}} / 500</mat-hint>
+                            </mat-form-field>
+                        </mat-grid-tile>
+
+                        <!-- <mat-grid-tile [colspan]="3">
+                        <div class="qc_br qc_limitype">
+                            <mat-label class="m-15">Limit Type : </mat-label>
+                            <mat-radio-group color="primary" [(ngModel)]="manageCalibBO.limitType"
+                                [disabled]="btnType == 'Update'">
+                                <mat-radio-button value="D">Descriptive </mat-radio-button>&nbsp;
+                                <mat-radio-button value="N">Numerical </mat-radio-button>&nbsp;
+                                <mat-radio-button value="R">Range </mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+
+                    </mat-grid-tile> -->
+
+                    </mat-grid-list>
+
+                    <div class="qc_br qc_limitype">
+                        <mat-label class="m-15 cardtitle_sm pr-1">Limit Type : </mat-label>
+                        <mat-radio-group color="primary" [(ngModel)]="manageCalibBO.limitType"
+                            [disabled]="btnType == 'Update'" (ngModelChange)="changeLimitType()">
+                            <mat-radio-button value="D" class="pr-2">Descriptive </mat-radio-button>&nbsp;
+                            <mat-radio-button value="N" class="pr-2">Numerical </mat-radio-button>&nbsp;
+                            <mat-radio-button value="R" class="pr-2">Range </mat-radio-button>&nbsp;
+                            <mat-radio-button value="S" class="pr-2">Report Results </mat-radio-button>
+                        </mat-radio-group>
+                    </div>
+
+                    <div *ngIf="manageCalibBO.limitType == 'D'" class="mt-2">
+                        <mat-grid-list cols="1" rowHeight="120px">
+
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Add Results</mat-label>
+                                    <textarea matInput name="addResults" [(ngModel)]="addResult.resultName" rows="5"
+                                        class="textarea_size_fix" maxlength="250"></textarea>
+                                    <mat-hint align="end">{{addResult.resultName?.length || 0 }} / 250</mat-hint>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                        </mat-grid-list>
+                        <mat-grid-list cols="1" rowHeight="68px">
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="mt-2 full-width">
+                                    <mat-label>Result Type</mat-label>
+                                    <mat-select placeholder="Result Type" [(ngModel)]="addResult.result">
+                                        <mat-option value="P">Pass</mat-option>
+                                        <mat-option value="F">Fail</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                        </mat-grid-list>
+                        <div class="mt-2 pb-2 pr-1" align="right">
+                            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="saveResult()"
+                                [disabled]="btnDisabledReq">
+                                <i class="{{changeIcons('SAVE')}}" aria-hidden="true"></i>&nbsp;Add</button>
+                        </div>
+                        <div class="mt-2 pl-2 pr-2 add_scroll">
+
+                            <lims-grid [headers]="resultHeadersData" [dataSource]="resultDatasource"
+                                [actions]="resultActions" (onActionClicked)="onActionClicked($event, 'TEST_RESUL')">
+                            </lims-grid>
+                        </div>
+
+                    </div>
+
+                    <div *ngIf="manageCalibBO.limitType && manageCalibBO.limitType != 'D' && manageCalibBO.limitType != 'S'"
+                        class="mt-2">
+                        <mat-grid-list cols="2" rowHeight="70px">
+
+                            <mat-grid-tile>
+                                <mat-checkbox [(ngModel)]="manageCalibBO.isLowerLimitApp"
+                                    (change)="selectCheckBox($event, 'LOWER')"
+                                    [disabled]="btnType == 'Update'">
+                                </mat-checkbox>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>{{manageCalibBO.limitType == 'N' ? 'Lower Limit' : 'Lower Range' }}
+                                    </mat-label>
+                                    <input (keypress)="allowDecimal($event)" matInput name="lowerLimit"
+                                        [(ngModel)]="manageCalibBO.lowerLimit"
+                                        [disabled]="btnType == 'Update' || !manageCalibBO.isLowerLimitApp" />
+                                </mat-form-field>
+                            </mat-grid-tile>
+
+                            <mat-grid-tile>
+                                <mat-checkbox [(ngModel)]="manageCalibBO.isUpperLimitApp"
+                                    (change)="selectCheckBox($event, 'UPPER')"
+                                    [disabled]="btnType == 'Update'">
+                                </mat-checkbox>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>{{manageCalibBO.limitType == 'N' ? 'Upper Limit' : 'Upper Range' }}
+                                    </mat-label>
+                                    <input (keypress)="allowDecimal($event)" matInput name="upperLimit"
+                                        [(ngModel)]="manageCalibBO.upperLimit"
+                                        [disabled]="btnType == 'Update' || !manageCalibBO.isUpperLimitApp" />
+                                </mat-form-field>
+                            </mat-grid-tile>
+
+                        </mat-grid-list>
+                    </div>
+
+
+                    <div align="right" class="pb-1 mt-2">
+
+                        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="save()"
+                            id="mngQcBtnLoader" btnLoader [isLoaderOn]="isLoaderStart">
+                            <i class="{{changeIcons('SAVE')}}" aria-hidden="true"></i>&nbsp;{{btnType}}</button>&nbsp;
+
+                        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="clear()"
+                            [disabled]="btnType == 'Update'">
+                            <i class="{{changeIcons('CLEAR')}}" aria-hidden="true"></i>&nbsp;Clear</button>
+                    </div>
+
+                </div>
+
+
+            </mat-expansion-panel>
+        </mat-accordion>
+    </div>
+
+    <!-- <material-grid [columns]="calibrationHeadersData" [dataSource]="calibrationDatasource"
+        [actions]="calibrationActions" [rowActions]="'QC_CALIB'" (onActionClicked)="onActionClicked($event, 'MAIN')">
+    </material-grid>
+ -->
+    <div class="mt-4 pl-1 pr-1 view-calib-grid">
+        <app-calib-grid [columns]="calibrationHeadersData" [dataSource]="calibrationDatasource"
+            [actions]="calibrationActions" (onActionClicked)="onActionClicked($event, 'MAIN')"
+            [actionPage]="'MANAGE_GP_TECH'" [removeAction]="removeActions">
+        </app-calib-grid>
+    </div>
+
+    <div align="right" class="pb-1 mt-3"
+        *ngIf="calibrationDatasource && calibrationDatasource.data && calibrationDatasource.data.length > 0 && pageType()">
+        <button type="button" mat-raised-button class="btnbase btn-blue " (click)="manageGroupTechnique()"
+            id="mngGrpBtnLoader" btnLoader [isLoaderOn]="isLoaderStartIcn">
+            <i class="{{changeIcons('MNG_GROP_TECH')}}" aria-hidden="true"></i>&nbsp;Manage Group
+            Technique</button>&nbsp;
+
+    </div>
+
+</div>

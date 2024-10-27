@@ -1,0 +1,275 @@
+<page-head [pageTitle]="pageTitle" viewBack="true" [backUrl]="backUrl" [status]="status" [refNo]="refNo"
+    [viewHistoryVisible]="true" [viewHistory]="viewHistory" [encRptEntActID]="encInvalidationID"
+    [entityCode]="entityCode" showRpts="true"></page-head>
+
+
+<mat-card class="mat-card-c div-content mb-4 mt-1rem qc_mobp-main-tab">
+    <mat-card-content>
+        <div class="mt-2">
+            <mat-tab-group #invTab mat-align-tabs="center">
+                <mat-tab label="Initiation">
+                    
+                        <div class="qc_heading_spce">
+                            <mat-card class="mat-card-heading">
+                                <mat-card-content>
+                                    <h4 class="cardtitle">Initiation Details</h4>
+                                    <div class="view-inv">
+                                        <ul>
+                                            <li class="w-100"
+                                                *ngIf="(result.entitySource == 'INVA_STD' || result.entitySource == 'INVAL_CALIB') ? false : true ">
+                                                <mat-label>
+                                                    <span>Product (Stage) </span> <span>{{result.productName}} (
+                                                        {{result.stage || 'N / A'}}
+                                                        )</span>
+                                                </mat-label>
+                                            </li>
+                                            <li class="w-100" *ngIf="(result.entitySource == 'INVA_STD')">
+                                                <mat-label>
+                                                    <span>Solution Name</span>
+                                                    <span> {{result.productName}} </span>
+                                                </mat-label>
+                                            </li>
+                                            <li class="w-100" *ngIf="(result.entitySource != 'INVA_STD')">
+                                                <mat-label>
+                                                    <span>{{testType}} </span>
+                                                    <span>{{formatValueString(result.testTitle)}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li>
+                                                <mat-label>
+                                                    <span>Invalidation Number </span>
+                                                    <span>{{ formatValueString(result.invalidationCode)}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li>
+                                                <mat-label>
+                                                    <span>Invalidation Date </span> <span>
+                                                        {{result.invalidationDate | datePipe: 'datetime'}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li>
+                                                <mat-label>
+                                                    <span>Batch/Reference Number</span> <span>
+                                                        {{result.batchNumber || 'N / A'}} </span>
+                                                </mat-label>
+                                            </li>
+                                            <li>
+                                                <mat-label>
+                                                    <span>A.R. Number </span>
+                                                    <span>{{formatValueString(result.arNumber)}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li>
+                                                <mat-label>
+                                                    <span>Instrument Type </span> <span>
+                                                        {{formatValueString(result.eqpType || 'N / A')}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li *ngIf="result.oosNumber">
+                                                <mat-label>
+                                                    <span>OOS Number</span>
+                                                    <span>{{result.oosNumber}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li>
+                                                <mat-label>
+                                                    <span>Initiated By </span>
+                                                    <span> {{result.intiatedUser || 'N / A'}} </span>
+                                                </mat-label>
+                                            </li>
+                                            <li>
+                                                <mat-label>
+                                                    <span>Instrument Title/ID </span> <span>
+                                                        {{formatValueString(result.eqpTitle)}}
+                                                        ({{formatValueString(result.eqpCode)}})
+                                                    </span>
+                                                </mat-label>
+                                            </li>
+                                            <li class="w-100">
+                                                <h4 class="cardtitle_sm pl-2 mt-1">Previous Invalidations Details &nbsp;
+                                                    : &nbsp; <a class="qc_badge" href="javascript:"
+                                                        (click)="getPreviousInvalidations()"> Invalidations Details</a>
+                                                </h4>
+                                            </li>
+
+                                        </ul>
+
+                                    </div>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+
+                        <div class="qc_heading_spce mt-5">
+                            <mat-card class="mat-card-heading">
+                                <mat-card-content>
+                                    <h4 class="cardtitle">Invalidations Details</h4>
+                                    <div class="view-inv">
+                                        <ul>
+                                            <li>
+                                                <mat-label>
+                                                    <span>Impact Type </span>
+                                                    <span>{{formatValueString(result.impactTypeName)}}</span>
+                                                </mat-label>
+                                            </li>
+
+                                            <li>
+                                                <mat-label>
+                                                    <span>Sample Set No.</span>
+                                                    <span>{{formatValueString(result.sampleSetNo)}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li>
+                                                <mat-label>
+                                                    <span>Data File Numbers</span>
+                                                    <span>{{formatValueString(result.dataFileNo)}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li>
+                                                <mat-label>
+                                                    <span>Instrument Type</span> <span>
+                                                        {{formatValueString(result.instTypeName)}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li>
+                                                <mat-label>
+                                                    <span>Analysis Done By </span>
+                                                    <span>{{formatValueString(result.analysisUser)}}</span> </mat-label>
+                                            </li>
+                                            <li class="w-100">
+                                                <mat-label>
+                                                    <span>Brief Description Of Invalidation</span> <span>
+                                                        {{formatValueString(result.description)}}</span>
+                                                </mat-label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div align="right" class="mt-2 pb-2 pr-1">
+                                        <button type="button" mat-raised-button class="btnbase btn-blue"
+                                            (click)="uploadFiles('INVALID_REQ')"><i class="{{_global.icnViewFiles}}"
+                                                aria-hidden="true"></i>&nbsp; View Documents
+                                        </button>
+                                    </div>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                  
+
+                </mat-tab>
+                <mat-tab label="Evaluation">
+                   
+                        <div class="qc_heading_spce">
+                            <mat-card class="mat-card-heading">
+                                <mat-card-content>
+                                    <h4 class="cardtitle">Evaluation Details</h4>
+                                    <div class="view-inv">
+                                        <ul>
+                                            <li class="w-100">
+                                                <mat-label>
+                                                    <span>Other Reasons, if
+                                                        any</span><span>{{formatValueString(result.otherReasons)}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li class="w-100 no-border">
+                                                <mat-label>
+                                                    <span>Actions Recommended</span>
+                                                    <span>{{formatValueString(result.actionsRecommended)}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <hr>
+                                        </ul>
+                                    </div>
+                                    <div align="right" class="mt-2 pb-2 pr-1">
+                                        <button type="button" mat-raised-button class="btnbase btn-blue"
+                                            (click)="viewCheckList()">
+                                            <i class="{{_global.icnList}}"></i>&nbsp;View Checklist
+                                        </button>
+                                        <button type="button" mat-raised-button class="btnbase btn-blue"
+                                            (click)="uploadFiles('INVALID_EVAL')"> <i class="{{_global.icnViewFiles}}"
+                                                aria-hidden="true"></i>&nbsp;View Documents </button>
+                                    </div>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                    
+                </mat-tab>
+                <mat-tab label="Review">
+                   
+                        <div class="qc_heading_spce">
+                            <mat-card class="mat-card-heading">
+                                <mat-card-content>
+                                    <h4 class="cardtitle">Review Details</h4>
+                                    <div class="view-inv ">
+                                        <ul>
+                                            <li *ngIf="result.isReAnalysisValid == 'NO'">
+                                                <mat-label>
+                                                    <span>If No, Actions Recommended</span> <span>
+                                                        {{formatValueString(result.reviewActRecommended)}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li class="w-100">
+                                                <mat-label>
+                                                    <span>Implementation Summary</span> <span>
+                                                        {{formatValueString(result.implimantationSummary)}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li>
+                                                <mat-label>
+                                                    <span>Is the Re-Analysis Result is Valid</span>
+                                                    <span>{{formatValueString(result.isReAnalysisValid)}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li>
+                                                <mat-label>
+                                                    <span>Root Cause </span> <span>
+                                                        {{formatValueString(result.rootCauseCategory)}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li *ngIf="result.impactTypeCode != 'INVALID_NON-QUALITY'">
+                                                <mat-label>
+                                                    <span>Initial Analysis SST Results</span> <span>
+                                                        {{formatValueString(result.initSSTResult)}}
+                                                    </span> </mat-label>
+                                            </li>
+                                            <li *ngIf="result.impactTypeCode != 'INVALID_NON-QUALITY'">
+                                                <mat-label>
+                                                    <span>Initial Analysis Results</span> <span>
+                                                        {{formatValueString(result.initAnaResult)}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li *ngIf="result.impactTypeCode != 'INVALID_NON-QUALITY'">
+                                                <mat-label>
+                                                    <span>Re-Analysis SST Results</span> <span>
+                                                        {{formatValueString(result.reSSTResult)}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li *ngIf="result.impactTypeCode != 'INVALID_NON-QUALITY'">
+                                                <mat-label>
+                                                    <span>Re-Analysis Results</span> <span>
+                                                        {{formatValueString(result.reAnaResult)}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li class="w-100" *ngIf="result.qaRemarks || result.applevel > 3">
+                                                <mat-label> <span>QA Remarks</span><span>
+                                                        {{formatValueString(result.qaRemarks)}}</span>
+                                                </mat-label>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <div align="right" class="mt-2 pb-2 pr-1">
+                                        <button type="button" mat-raised-button class="btnbase btn-blue"
+                                            (click)="uploadFiles('INVALID_REVIEW')"> <i class="{{_global.icnViewFiles}}"
+                                                aria-hidden="true"></i>&nbsp;View Documents
+                                        </button>
+                                    </div>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                    
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+
+
+    </mat-card-content>
+</mat-card>

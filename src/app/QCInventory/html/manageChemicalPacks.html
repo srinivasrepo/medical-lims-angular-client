@@ -1,0 +1,165 @@
+<page-head [pageTitle]="pageTitle" [backUrl]="backUrl" [viewBack]="'true'" [status]="status" [refNo]="refNumber"
+    [viewHistoryVisible]="viewHistoryVisible" [viewHistory]="viewHistory" [entityCode]="entityCode" showRpts="true"
+    [encRptEntActID]="encInvSourceID">
+</page-head>
+<mat-card class="mat-card-c div-content mb-4 mt-1rem qc_mobp-main-tab">
+    <mat-card-content>
+        <div align="right" class="pos-r-btn pr-2">
+            <button type="button" mat-raised-button class="btnbase-confirm" *ngIf="saveBtn == 'Update'"
+                (click)="confirm()">
+                <i class="{{_global.icnConfirm}}" aria-hidden="true"></i>&nbsp;&nbsp;Confirm</button>
+        </div>
+        <div class="qc_heading_spce pt-4">
+            <mat-card class="mat-card-heading">
+                <mat-card-content>
+                    <h4 class="cardtitle">Details of Chemicals
+                        <div class="mt-0 mb-0 ml-0 float-right"> Chemical Source : <span
+                                class="qc_lable-txt pl-1" style="color: #444;">{{chemicalSource || 'N / A'}}</span>
+                        </div>
+                    </h4>
+
+
+
+                    <div class="pl-2 pr-2" *ngIf="dataSource && dataSource.data && dataSource.data.length > 0">
+                        <div *ngFor="let data of dataSource.data, let idx = index" class="view_prep_List mb-5 mt-3">
+                            <div class="cardtitle">
+                                <mat-label>Reference Number  : <span class="qc_lable-txt pl-1" style="color: #444;">{{data.refNumber}}</span></mat-label>
+                            <div *ngIf="actions.length > 1"  style="float: right;">
+                                
+                                <a href="Javascript:" [matMenuTriggerFor]="menu">
+                                    <i class="material-icons">
+                                        more_vert
+                                    </i>
+                                </a>
+
+                                <mat-menu #menu="matMenu">
+                                    <span *ngFor="let act of checkUserActions(data, idx);let index = index"
+                                        id="act{{index + 1}}">
+                                        <a href="Javascript:" mat-menu-item
+                                            (click)="onActionClicked(act.code, data)">
+                                            <i class="material-icons">
+                                                {{act.icon}}
+                                            </i>
+                                            <div>{{actiontoolTip.get(act.code)}}</div>
+                                        </a>
+                                    </span>
+                                </mat-menu>
+
+                            </div>
+                            </div>
+                            <div class="view-inv">
+                                <ul>
+                                    
+                                    <li class="w-66">
+                                        <mat-label>
+                                            <span>Chemical</span>
+                                            <span>{{data.chemical}}</span>
+                                        </mat-label>
+                                    </li>
+                                    
+                                    <li class="w-33">
+                                        <mat-label>
+                                            <span>Batch Qty.</span>
+                                            <span>{{data.batchQty}} {{data.uom }}</span>
+                                        </mat-label>
+                                    </li>
+                                    <li *ngIf="saveBtn != 'Save'">
+                                        <mat-label>
+                                            <span>Mfg. Batch Number</span>
+                                            <span>{{data.mfgBatchNumber}}</span>
+                                        </mat-label>
+                                    </li>
+                                </ul>
+                            </div>
+                                
+                            <div class="mt-2 pl-1 pr-1">
+                                <mat-grid-list cols="2" rowHeight="68px">
+                                    <mat-grid-tile  *ngIf="saveBtn == 'Save'">
+                                        <mat-form-field appearance="outline" class="full-width">
+                                            <mat-label>Mfg. Batch Number</mat-label>
+                                            <input matInput placeholder="Mfg. Batch Number"
+                                                [(ngModel)]="data.mfgBatchNumber" autocomplete="off" maxlength="25"
+                                                [disabled]="saveBtn == 'Update'">
+                                        </mat-form-field>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile>
+                                        <mat-form-field appearance="outline" class="full-width">
+                                            <mat-label>Mfg. Date</mat-label>
+                                            <input matInput [(ngModel)]="data.manufDate" [matDatepicker]="mfgDate"
+                                                placeholder="Mfg. Date" [max]="today" [disabled]="saveBtn == 'Update'">
+                                            <mat-datepicker-toggle matSuffix [for]="mfgDate"></mat-datepicker-toggle>
+                                            <mat-datepicker #mfgDate></mat-datepicker>
+                                        </mat-form-field>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile>
+                                        <mat-form-field appearance="outline" class="full-width">
+                                            <mat-label>Expiry Date</mat-label>
+                                            <input matInput [(ngModel)]="data.expiredDate" [owlDateTime]="expiredDate"
+                                                owl-date-time="expiredDate" readonly placeholder="Expiry Date"
+                                                [min]="today" [disabled]="saveBtn == 'Update'">
+                                            <owl-date-time #expiredDate></owl-date-time>
+                                            <mat-icon matSuffix [owlDateTimeTrigger]="expiredDate">date_range</mat-icon>
+                                            <!-- 
+                        <mat-datepicker-toggle matSuffix [for]="expDate"></mat-datepicker-toggle>
+                        <mat-datepicker #expDate></mat-datepicker> -->
+                                        </mat-form-field>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile>
+                                        <mat-form-field appearance="outline" class="full-width">
+                                            <mat-label> Grade</mat-label>
+                                            <mat-select placeholder="Grade" [(ngModel)]="data.gradeID"
+                                                [disabled]="saveBtn == 'Update'">
+                                                <mat-option *ngFor="let grade of getCatItemList('GRADE')" [value]="grade.catItemID">
+                                                    {{grade.catItem}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile>
+                                        <mat-form-field appearance="outline" class="full-width">
+                                            <mat-label> Block</mat-label>
+                                            <mat-select placeholder="Block" [(ngModel)]="data.blockID"
+                                                [disabled]="saveBtn == 'Update'">
+                                                <mat-option *ngFor="let block of blockList" [value]="block.blocK_ID">
+                                                    {{block.blocK_NAME}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile>
+                                        <mat-form-field appearance="outline" class="full-width">
+                                            <mat-label> Purity</mat-label>
+                                            <input matInput maxlength="10" [(ngModel)]="data.purity"
+                                                [disabled]="saveBtn == 'Update'" autocomplete="off">
+                                        </mat-form-field>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile>
+                                        <mat-form-field appearance="outline" class="full-width">
+                                            <mat-label> Density</mat-label>
+                                            <input matInput maxlength="10" [(ngModel)]="data.density"
+                                                [disabled]="saveBtn == 'Update'" autocomplete="off">
+                                        </mat-form-field>
+                                    </mat-grid-tile>
+                                </mat-grid-list>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <lims-grid [headers]="headers" [dataSource]="dataSource" [actions]='actions' [gradeList]="gradeList"
+            [blockList]="blockList" (onActionClicked)="onActionClicked($event)" [removeAction]="removeActions" #grid>
+        </lims-grid> -->
+                    <div align="right" class="mt-2 pb-2 pr-1">
+                        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="save()"
+                        id="mngChemicals" btnLoader [isLoaderOn]="isLoaderStart">
+                            <i class="{{_global.icnSave}}" *ngIf="saveBtn == 'Save'" aria-hidden="true"></i>
+                            <i class="{{_global.icnUpdate}}" *ngIf="saveBtn == 'Update'" aria-hidden="true"></i>
+                            &nbsp;&nbsp;{{saveBtn}}
+                        </button>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+    </mat-card-content>
+</mat-card>

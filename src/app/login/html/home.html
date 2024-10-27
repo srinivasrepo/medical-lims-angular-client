@@ -1,0 +1,250 @@
+<!-- <page-head [pageTitle]="pageTitle">
+</page-head>  -->
+
+
+
+
+<div class="qc_mobp-main-tab qc_deshboard">
+    <!-- <h1 class="qc_deasb-head">TO DO List</h1> -->
+    <mat-tab-group #mbTab mat-align-tabs="center">
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <span *ngIf="mbTab.selectedIndex != 0" matTooltip="TODO"><img src="~/../assets/images/no-todo.png"
+                        width="40px">
+                </span>
+                <span *ngIf="mbTab.selectedIndex == 0" matTooltip="TODO"><img src="~/../assets/images/act-todo.png"
+                        width="40px">
+                </span>
+            </ng-template>
+            <div class="container-fluid mt-3 pl-2 pr-2 qc_home-todo">
+
+                <div>
+                    <div>
+                        <div class="container-fluid nopadding">
+                            <div class="todo-conditions">
+                                <div *ngFor="let t of toDoCountList;let i = index" class="dbdatabox">
+
+                                    <div class="dbsectionhead {{getClass(i+1)}}"
+                                        (click)="GetTodoList(t.conditionID, i+1)">
+                                        <span class="todo-txt"> {{t.condition}} </span>
+                                        <span class="countc">{{t.totalCount}}</span>
+
+                                    </div>
+
+                                </div>
+                                <div *ngIf="actPenAct && actPenAct.length > 0" class="dbdatabox">
+
+                                    <div class="dbsectionhead {{getClass(toDoCountList.length + 1)}}"
+                                        (click)="getPendingAct()">
+                                        My Activities
+                                        <span class="countc">{{actPenAct.length}}</span>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="todo-table {{searchCls}}">
+                                <div class="todo-search {{searchCls}}">
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>{{searchTitle}}</mat-label>
+                                        <input matInput placeholder="{{searchTitle}}" [(ngModel)]="searchText"
+                                            style="color: black;" (keyup)="filterData()">
+                                        <mat-icon matSuffix>search</mat-icon>
+                                    </mat-form-field>
+
+                                    <span class="todo-count">{{count}}</span>
+                                </div>
+                                <div class=" dbgrid-table">
+
+                                    <todo-tabel [dataSource]="GetItems()" (actionClick)="onActionClicked($event)">
+                                    </todo-tabel>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+
+                    <div class="pt-3" style="clear: both;" *ngIf="getSampleUsersList.length> 0">
+                        <h4 class="qc_graphheading mb-3">Shift Incharge Planner</h4>
+                        <div class="graprhblock">
+                            <div class="graph-title">
+                                <h4 class="cardtitle">Assigned Analysts</h4>
+                            </div>
+                            <div class="graphcontent">
+                                <div *ngIf="getSampleUsersList.length> 0" class="inchargedb">
+                                    <div class="pl-1 pr-1">
+                                    <ul class="row">
+                                        <li *ngFor="let usr of getAnalysts('ASS');let i = index" id="usr{{i}}"
+                                            (click)="assignPlanTest(usr)" class="col-3">
+                                            <div class="row"> 
+                                                <div class="col-9 pl-0 pr-0" align="left">
+                                                <span style="vertical-align: sub;">{{usr.userName}}</span>
+                                            </div>
+                                            <div class="col-3 pr-0" align="right">
+                                                <span><i class="material-icons"
+                                                        matTooltip="Manage Test Plan">assignment_ind</i></span>
+    
+                                                <span matBadge="{{usr.assignedCount}}" matBadgePosition="above after"
+                                                    [ngClass]="{'more-task' : usr.assignedCount > 10}">
+                                                </span>
+                                            </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    </div>
+                                    </div>
+                                    </div>
+                                    </div>
+
+                                    <div class="graprhblock mt-3">
+                                        <div class="graph-title">
+                                   
+                                        <h4 class="cardtitle ">Not Assigned Analysts</h4>
+                                    </div>
+                                    <div class="graphcontent">
+                                        <div *ngIf="getSampleUsersList.length> 0" class="inchargedb">
+                                            <div  class="pl-1 pr-1">
+                                    <ul class="row">
+                                        <li *ngFor="let usr of  getAnalysts('NOT');let i = index" id="usr{{i}}"
+                                            (click)="assignPlanTest(usr)" class="col-3">
+                                            <div class="row"> 
+                                                <div class="col-9 pl-0 pr-0" align="left">
+                                                <span style="vertical-align: sub;">{{usr.userName}}</span>
+                                                </div>
+                                                <div class="col-3 pr-0" align="right">
+                                            <span><i class="material-icons"
+                                                    matTooltip="Manage Test Plan">assignment_ind</i></span>
+
+                                            <span matBadge="{{usr.assignedCount}}" matBadgePosition="above after">
+                                            </span>
+                                        </div>
+                                        </div>
+
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+        </mat-tab>
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <span *ngIf="mbTab.selectedIndex != 1" matTooltip="GRAPHS"><img src="~/../assets/images/no-graph.png"
+                        width="40px">
+                </span>
+                <span *ngIf="mbTab.selectedIndex == 1" matTooltip="GRAPHS"><img src="~/../assets/images/act-graph.png"
+                        width="40px">
+                </span>
+            </ng-template>
+            <div class="row mt-1">
+                <div class="col-12 ">
+                    <h2 class="qc_graphheading">Sample Analysis</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="row qc_graphcontent">
+                        <div class="col-3">
+                            <h3 class="qc_graphtitle">Sample Analysis</h3>
+                            <img src="assets/images/graph_1.png">
+                        </div>
+                        <div class="col-3">
+                            <h3 class="qc_graphtitle">Sample Analysis</h3>
+                            <img src="assets/images/graph_1.png">
+                        </div>
+                        <div class="col-6">
+                            <h3 class="qc_graphtitle">Sample Analysis</h3>
+                            <img src="assets/images/graph_2.png">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 mt-2">
+                    <div class="row qc_graphcontent">
+                        <div class="col-12">
+                            <h3 class="qc_graphtitle">Sample Analysis</h3>
+                            <img src="assets/images/graph_3.png">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 mt-2">
+                    <div class="row qc_graphcontent">
+                        <div class="col-6">
+                            <h3 class="qc_graphtitle">Sample Analysis</h3>
+                            <img src="assets/images/graph_2.png">
+                        </div>
+                        <div class="col-6">
+                            <h3 class="qc_graphtitle">Sample Analysis</h3>
+                            <img src="assets/images/graph_2.png">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="row">
+                
+            <div class="col-6">
+                <div class="graprhblock mt-4">
+                    <div class="graph-title">
+                        <h4 style="padding-top:12px;">Graph Title</h4>
+                    </div>
+                    
+                    <div class="graphcontent">
+                        <div class="charts-graphs">
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="graprhblock mt-4">
+                    <div class="graph-title">
+                        <h4 style="padding-top:12px;">Graph Title</h4>
+                    </div>
+                    <div class="graphcontent">
+                        <div class="charts-graphs">
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+        </mat-tab>
+    </mat-tab-group>
+
+</div>
+
+
+
+<!-- <mat-sidenav-container class="app-content">
+       
+
+    <mat-sidenav-content class="sidenav-content">
+    </mat-sidenav-content>
+</mat-sidenav-container> -->

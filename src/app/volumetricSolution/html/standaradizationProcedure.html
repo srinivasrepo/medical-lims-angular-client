@@ -1,0 +1,29 @@
+<div class="new-popupTitle" mat-dialog-title>
+    <h1 mat-dialog-title class="colorwhite">{{pageTitle}}</h1>
+    <div class="popup-close">
+        <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+    </div>
+</div>
+
+<div  class="mt-3 mb-3 pl-3 pr-3 modal-over" mat-dialog-content>
+
+    <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Preparation Procedure</mat-label>
+        <textarea matInput placeholder="Preparation Procedure" [(ngModel)]="preProcedure" rows="4" maxlength="5000" [disabled]="btnType == 'Update'"></textarea>
+        <mat-hint align="end">{{preProcedure?.length || 0}}/5000</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Standardization Procedure</mat-label>
+        <textarea matInput placeholder="Standardization Procedure" [(ngModel)]="staProcedure" rows="4" maxlength="5000" [disabled]="btnType == 'Update'"></textarea>
+        <mat-hint align="end">{{staProcedure?.length || 0}}/5000</mat-hint>
+    </mat-form-field>
+
+    <div align="right" class="mt-3">
+        <button type="submit" mat-raised-button class="btnbase btn-blue btn-save" (click)="save()"
+        id="prcdBtnLoader" btnLoader [isLoaderOn]="isLoaderStart">
+            <i class="{{_global.icnSave}}" *ngIf="btnType == 'Save'" aria-hidden="true"></i>
+            <i class="{{_global.icnUpdate}}" *ngIf="btnType == 'Update'" aria-hidden="true"></i>&nbsp;{{btnType}}</button>&nbsp;
+    </div>
+
+</div>

@@ -1,0 +1,66 @@
+<div class="new-popupTitle" mat-dialog-title>
+    <h1> {{getConversionTitles('PAGE_TITLE')}}</h1>
+    <div class="popup-close">
+        <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+    </div>
+</div>
+<mat-card class="mt-3 mb-2 pl-3 pr-3" mat-dialog-content>
+    <mat-card-content>
+        <div [ngClass]="{'hide': isShowMaterial}">
+            <mat-cat [materialInfo]="material" [entityCode]="entityCode" (selectedMaterial)="materialData($event)"
+                #materialCategory>
+            </mat-cat>
+        </div>
+        <div *ngIf="materialID">
+            <div class="view-inv add-hr">
+                <ul>
+                    <li class="w-66 no-border">
+                        <mat-label>
+                            <span>{{getConversionTitles('MAT_NAME')}}</span>
+                            <span>{{materialName}}</span>
+                        </mat-label>
+                    </li>
+                    <li class="w-33 no-border">
+                        <mat-label>
+                            <span>{{getConversionTitles('SOURCE_UOM')}}</span>
+                            <span>{{sourceName}}</span>
+                        </mat-label>
+                    </li>
+                </ul>
+            </div>
+            <div *ngIf="pageType == 'MNG'" class="mt-3">
+                <mat-grid-list cols="2" rowHeight="68px">
+                    <mat-grid-tile>
+                        <mat-form-field appearance="outline" class="full-width pl-0">
+                            <mat-label>Conversion Factor</mat-label>
+                            <input matInput placeholder="Conversion Factor" [(ngModel)]="targetValue"
+                                (keypress)="allowDecimal($event)" onpaste="return false" autocomplete=off>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                        <mat-form-field appearance="outline" class="full-width pr-0">
+                            <mat-label>Target UOM</mat-label>
+                            <mat-select placeholder="Target UOM" [(ngModel)]="targetUom">
+                                <mat-option *ngFor="let uom of uomList" [value]="uom.paramKey">
+                                    {{uom.uom}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                </mat-grid-list>
+
+            </div>
+
+            <div align="right">
+                <button type="button" mat-raised-button class="btnbase btn-blue mt-1 mr-0" (click)="addConversion()">
+                    <i class="{{_global.icnAdd}}" aria-hidden="true"> </i> &nbsp; Add
+                </button>
+            </div>
+
+            <div style="clear: both;" class="mt-3 qc_table-uom">
+                <lims-grid [headers]="headerData" [dataSource]="dataSource" [actions]="actions"
+                    [removeAction]="removeAction" (onActionClicked)="onActionClicked($event);"></lims-grid>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>

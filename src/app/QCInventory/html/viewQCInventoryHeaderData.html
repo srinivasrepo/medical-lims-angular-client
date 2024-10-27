@@ -1,0 +1,120 @@
+<div class="mt-1 mat-card ">
+    <div class="mat-card-one box-shadow-n">
+        <div class="cardtitle">
+            <mat-label>
+                <span>Chemical Name</span> :
+                <span style="color: black;">{{formatValueString(viewQCInvtDetails.chemicalName) }}</span>
+            </mat-label>
+            <div class="exp-icon">
+                <i class="{{_global.icnUp}}" aria-hidden="true" *ngIf="isShow" (click)="isShow = !isShow"></i>
+                <i class="{{_global.icnDown}}" aria-hidden="true" *ngIf="!isShow" (click)="isShow = !isShow"></i>
+            </div>
+        </div>
+        
+        <div class="view-inv add-hr mt-0">
+        <ul>
+            <li>
+                <mat-label>
+                    <span>Sub Category</span>
+                    <span>{{formatValueString(viewQCInvtDetails.subCategory) }}</span>
+                </mat-label>
+            </li>
+            <!-- <li>
+                <mat-label>
+                    <span>Chemical Name</span>
+                    <span>{{formatValueString(viewQCInvtDetails.chemicalName) }}</span>
+                </mat-label>
+            </li> -->
+            <li>
+                <mat-label>
+                    <span>Chemical Code</span>
+                    <span>{{formatValueString(viewQCInvtDetails.chemicalCode) }}</span>
+                </mat-label>
+            </li>
+            <li>
+                <mat-label>
+                    <span>Batch Number</span>
+                    <span>{{formatValueString(viewQCInvtDetails.batchNumber) }}</span>
+                </mat-label>
+            </li>
+                <li *ngIf="isShow">
+                    <mat-label>
+                        <span>Batch Quantity</span>
+                        <span>{{formatValueString(viewQCInvtDetails.batchQty)}} {{ viewQCInvtDetails.uom }}</span>
+                    </mat-label>
+                </li>
+                <li *ngIf="isShow">
+                    <mat-label>
+                        <span>Manufacturing Date</span>
+                        <span>{{dateFormate(viewQCInvtDetails.mfgDate) }}</span>
+                    </mat-label>
+                </li>
+                <li *ngIf="isShow">
+                    <mat-label>
+                        <span>Expiry Date</span>
+                        <span>{{dateTimeFormate(viewQCInvtDetails.expiryDate) }}</span>
+                    </mat-label>
+                </li>
+               
+                <li *ngIf="isShow">
+                    <mat-label>
+                        <span>Chemical Source</span>
+                        <span>{{formatValueString(viewQCInvtDetails.chemicalSource) }}</span>
+                    </mat-label>
+                </li>
+                <li *ngIf="isShow">
+                    <mat-label>
+                        <span>Grade</span>
+                        <span>{{formatValueString(viewQCInvtDetails.grade) }}</span>
+                    </mat-label>
+                </li>
+                <li *ngIf="isShow">
+                    <mat-label>
+                        <span>Block</span>
+                        <span>{{formatValueString(viewQCInvtDetails.block) }}</span>
+                    </mat-label>
+                </li>
+               
+                <li *ngIf="isShow">
+                    <mat-label>
+                        <span>Inventory Date</span>
+                        <span>{{dateFormate(viewQCInvtDetails.invDate) }}</span>
+                    </mat-label>
+                </li>
+                <li *ngIf="isShow">
+                    <mat-label>
+                        <span>Chemical Type</span>
+                        <span>{{formatValueString(viewQCInvtDetails.natureofChemical) }}</span>
+                    </mat-label>
+                </li>
+                <li *ngIf="isShow">
+                    <mat-label>
+                        <span>Manufacturer Name</span>
+                        <span>{{viewQCInvtDetails.manufacturerName || 'N/A' }}</span>
+                    </mat-label>
+                </li>
+                <li *ngIf="isShow" class="no-border">
+                    <mat-label>
+                        <span>Purity</span>
+                        <span>{{viewQCInvtDetails.purity || 'N/A' }}</span>
+                    </mat-label>
+                </li>
+                <li *ngIf="isShow" class="no-border">
+                    <mat-label>
+                        <span>Density</span>
+                        <span>{{viewQCInvtDetails.density || 'N/A' }}</span>
+                    </mat-label>
+                </li>
+            
+
+        </ul>
+    </div>
+   
+        
+
+        <div align="right" class="mt-3" *ngIf="isShow && !viewQCInvtDetails.inHouse">
+            <button type="button" class="btnbase btn-blue  mr-0" mat-raised-button (click)="viewFiles()"><i
+                    class="{{_global.icnViewFiles}}" aria-hidden="true"></i>&nbsp;&nbsp;View Documents</button>
+        </div>
+    </div>
+</div>

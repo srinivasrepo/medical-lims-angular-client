@@ -1,0 +1,61 @@
+<page-head [pageTitle]="pageTitle" viewBack="true" [backUrl]="backUrl" [status]="viewObj.status"
+    [refNo]="viewObj.requestCode" [viewHistoryVisible]="true" [viewHistory]="viewHistory" [entityCode]="entityCode"
+    showRpts="true" [encRptEntActID]="encShiftID"></page-head>
+
+    <mat-card class="mat-card-c div-content mb-4 mt-1rem qc_mobp-main-tab">
+    <mat-card-content>
+        <div class="pl-1 pr-1 mt-3 mb-4">
+            <div class="view-inv add-hr pt-1">
+                <ul>
+                    <li class="no-border">
+                        <mat-label>
+                            <span>Analyst Name</span>
+                            <span>{{viewObj.userName || 'N/A'}}</span>
+                        </mat-label>
+                    </li>
+                    <li class="no-border">
+                        <mat-label>
+                            <span>Requested On</span>
+                            <span>{{viewObj.requestDate || 'N/A'}}</span>
+                        </mat-label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div *ngFor="let plan of planLst">
+            <div class="qc_heading_spce"  *ngIf="getData(plan.planID) &&getData(planID).data && getData(plan.planID).data.length > 0">
+                <mat-card class="mat-card-heading">
+                    <mat-card-content>
+                        <h4 *ngIf="plan.planID" class="cardtitle">{{plan.planCode}}</h4>
+                        <h4 *ngIf="!plan.planID" class="cardtitle">Incharge Assigned Tasks</h4>
+            <div class="pl-2 pr-2 pb-1 mt-1">
+            
+                <lims-grid [dataSource]="getData(plan.planID)" [headers]="headersData"></lims-grid>
+            </div>
+                    </mat-card-content>
+                    </mat-card>
+            </div>
+
+        </div>
+        <div class="pl-1 pr-1 mt-2">
+            <h4>Assessment by Section Incharge</h4>
+            <div class="view-inv add-hr pt-1  ">
+                <ul>
+                    <li class="w-100 no-border">
+                        <mat-label>
+                            <span>Observations by section in-charge: (Applicable in the events of OOS/Deviations/Invalidations)</span>
+                            <span>{{viewObj.observations || 'N/A'}}</span>
+                        </mat-label>
+                    </li>
+                    <li class="w-100">
+                        <mat-label>
+                            <span>Remarks</span>
+                            <span>{{viewObj.assessment || 'N/A'}}</span>
+                        </mat-label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>

@@ -1,0 +1,41 @@
+<form [ngClass]="appclass" >
+    <div class="new-popupTitle" mat-dialog-title>
+        <h1 class="colorwhite" >Approval Process</h1>
+        <div class="popup-close">
+            <!-- <i class="material-icons" matTooltip="Close" (click)="cancel()">close</i> -->
+            <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="cancel()"></i>
+        </div>
+    </div>
+
+    <div class="mt-3 mb-3 pl-3 pr-3 modal-over" mat-dialog-content>
+        <div align="center">
+            <mat-label>
+                <span style="color: rgb(192, 21, 21);">Note*</span> :
+                <span>{{noteMsg}}</span>
+            </mat-label>
+        </div>
+        <mat-form-field appearance="outline" class="full-width mt-2">
+            <mat-label>Action</mat-label>
+            <mat-select placeholder="Action" [(ngModel)]="appbo.actionID" name="action">
+                <mat-option *ngFor="let k of actions" [value]="k.actionID">
+                    {{k.action}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Action Comments</mat-label>
+            <textarea matInput placeholder="Action Comments" rows="6" [(ngModel)]="appbo.comment" maxlength="8000"
+                name="comment"></textarea>
+            <mat-hint align="end">{{appbo.comment?.length || 0}} / 8000</mat-hint>
+        </mat-form-field>
+
+        <div align="right" class="mt-1 mb-2">
+            <button type="submit" id="appConfirmID" btnLoader [isLoaderOn]="isLoaderStart" mat-raised-button class="btnbase btn-blue" tabindex="-2" (click)="onConfirm()">
+                <i class="{{_global.icnConfirm}}" aria-hidden="true"></i>&nbsp;Confirm</button>
+        </div>
+
+        <view-his [obj]="transHis" type="APP"></view-his>
+
+    </div>
+
+</form>

@@ -1,0 +1,287 @@
+<page-head [pageTitle]="pageTitle" [status]="status" [refNo]="refNo" viewBack="True" [backUrl]="backUrl"
+    [encEntityActID]="encInvalidationID" [viewHistoryVisible]="viewHistoryVisible" [viewHistory]="viewHistory"
+    [entityCode]="entityCode" showRpts="true" [encRptEntActID]="encInvalidationID"></page-head>
+<mat-card class="mat-card-c div-content mb-4 mt-1rem qc_mobp-main-tab">
+    <mat-card-content>
+        <div align="right" class="pos-r-btn">
+            <button type="button" mat-raised-button class="btnbase-confirm" *ngIf="show()" [disabled]="confBtnDisable"
+                (click)="confirm()"> <i class="{{_global.icnConfirm}}" aria-hidden="true"></i>&nbsp;
+                Confirm</button>
+        </div>
+        <mat-tab-group #invTab mat-align-tabs="center" class="qc_mobp-main-tab mt-2">
+            <mat-tab label="Initiation">
+                <div class="qc_heading_spce">
+                    <mat-card class="mat-card-heading">
+                        <mat-card-content>
+                            <h4 class="cardtitle">Initiation Details</h4>
+                            <div [ngClass]="{hide: appLevel != 0 || !manualEntitySource()}">
+                                <mat-grid-list cols="2" rowHeight="68px">
+                                    <mat-grid-tile>
+                                        <mat-form-field appearance="outline" class="full-width">
+                                            <mat-label>Product Name</mat-label>
+                                            <input placeholder="Product Name" matInput maxlength="500"
+                                                [(ngModel)]="mngManualObj.productName"
+                                                [disabled]="reqBtnType == 'Update'">
+                                            <mat-hint align="end">{{mngManualObj.productName?.length || 0}} / 500
+                                            </mat-hint>
+                                        </mat-form-field>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile>
+                                        <mat-form-field appearance="outline" class="full-width">
+                                            <mat-label>Stage</mat-label>
+                                            <input placeholder="Stage" matInput maxlength="50"
+                                                [(ngModel)]="mngManualObj.stage" [disabled]="reqBtnType == 'Update'">
+                                            <mat-hint align="end">{{mngManualObj.stage?.length || 0}} / 50
+                                            </mat-hint>
+                                        </mat-form-field>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile>
+                                        <mat-form-field appearance="outline" class="full-width">
+                                            <mat-label>Batch Number</mat-label>
+                                            <input placeholder="Batch Number" matInput maxlength="50"
+                                                [(ngModel)]="mngManualObj.batchNumber"
+                                                [disabled]="reqBtnType == 'Update'">
+                                            <mat-hint align="end">{{mngManualObj.batchNumber?.length || 0}} / 50
+                                            </mat-hint>
+                                        </mat-form-field>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile>
+                                        <mat-form-field appearance="outline" class="full-width">
+                                            <mat-label>A.R. Number</mat-label>
+                                            <input placeholder="A.R. Number" matInput maxlength="50"
+                                                [(ngModel)]="mngManualObj.arNumber" [disabled]="reqBtnType == 'Update'">
+                                            <mat-hint align="end">{{mngManualObj.arNumber?.length || 0}} / 50
+                                            </mat-hint>
+                                        </mat-form-field>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile>
+                                        <mat-form-field appearance="outline" class="full-width">
+                                            <mat-label> Instrument Type</mat-label>
+                                            <mat-select placeholder="Instrument Type"
+                                                (ngModelChange)="equpConditon($event)"
+                                                [(ngModel)]="mngManualObj.instrumentTypeID"
+                                                [disabled]="reqBtnType == 'Update'">
+                                                <mat-option *ngFor="let ins of getCatItemList('QCINST_TYPE')"
+                                                    [value]="ins.catItemID">{{ins.catItem}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile>
+                                        <div class="w-66">
+                                            <lims-lookup [info]="qcInstrTypesInfo" #qcInstrTypes
+                                                (onSelect)="getInstCode($event)"></lims-lookup>
+                                        </div>
+                                        <div class="w-33 mb-2">
+                                            <mat-label class="qc_badge ">Instrument ID : {{instCode || 'N / A'}}
+                                            </mat-label>
+                                        </div>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile>
+                                        <mat-form-field appearance="outline" class="full-width">
+                                            <mat-label>Name of the Test</mat-label>
+                                            <input placeholder="Name of the Test" matInput maxlength="500"
+                                                [(ngModel)]="mngManualObj.testName" [disabled]="reqBtnType == 'Update'">
+                                            <mat-hint align="end">{{mngManualObj.testName?.length || 0}} / 500
+                                            </mat-hint>
+                                        </mat-form-field>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile>
+                                        <mat-form-field appearance="outline" class="full-width">
+                                            <mat-label>Spec & STP / Protocol Number</mat-label>
+                                            <input placeholder="Spec & STP / Protocol Number" matInput maxlength="100"
+                                                [(ngModel)]="mngManualObj.specStpNumber"
+                                                [disabled]="reqBtnType == 'Update'">
+                                            <mat-hint align="end">{{mngManualObj.specStpNumber?.length || 0 }} / 100
+                                            </mat-hint>
+                                        </mat-form-field>
+                                    </mat-grid-tile>
+                                </mat-grid-list>
+                                <div align="end" class="pb-2 mt-2">
+                                    <button type="button" mat-raised-button class="btnbase btn-blue" id="btnLoadersReq"
+                                        btnLoader [isLoaderOn]="isLoaderStartReq" (click)="saveManualInvalidationReq()">
+                                        <i class="{{_global.icnSave}}" *ngIf="reqBtnType == 'Save'"
+                                            aria-hidden="true"></i>
+                                        <i class="{{_global.icnUpdate}}" *ngIf="reqBtnType == 'Update'"
+                                            aria-hidden="true"></i>&nbsp;{{reqBtnType}}</button>
+                                </div>
+                            </div>
+                            <div class="view-inv" [ngClass]="{hide: appLevel == 0 && manualEntitySource() }">
+                                <ul>
+                                    <li class="w-100"
+                                        *ngIf="(result.entitySource == 'INVA_STD' || result.entitySource == 'INVAL_CALIB') ? false : true ">
+                                        <mat-label>
+                                            <span>Product (Stage) </span>
+                                            <span> {{result.productName}} ( {{result.stage || 'N / A'}} ) </span>
+                                        </mat-label>
+                                    </li>
+                                    <li class="w-100" *ngIf="(result.entitySource == 'INVA_STD')">
+                                        <mat-label>
+                                            <span>Solution Name</span>
+                                            <span> {{result.productName}} </span>
+                                        </mat-label>
+                                    </li>
+                                    <li class="w-100" *ngIf="(result.entitySource != 'INVA_STD')">
+                                        <mat-label>
+                                            <span>{{testType}}</span>
+                                            <span> {{formatValueString(result.testTitle)}} </span>
+                                        </mat-label>
+                                    </li>
+                                    <li>
+                                        <mat-label>
+                                            <span>Invalidation Number </span>
+                                            <span> {{ formatValueString(result.invalidationCode)}}</span>
+                                        </mat-label>
+                                    </li>
+                                    <li>
+                                        <mat-label>
+                                            <span>Invalidation Date</span>
+                                            <span> {{result.invalidationDate | datePipe:'datetime'}}</span>
+                                        </mat-label>
+                                    </li>
+                                    <li>
+                                        <mat-label>
+                                            <span>Batch/Reference Number </span>
+                                            <span> {{result.batchNumber || 'N / A'}} </span>
+                                        </mat-label>
+                                    </li>
+                                    <li>
+                                        <mat-label>
+                                            <span>A.R. Number </span>
+                                            <span> {{formatValueString(result.arNumber)}} </span>
+                                        </mat-label>
+                                    </li>
+                                    <li>
+                                        <mat-label>
+                                            <span>Instrument Type </span> <span>
+                                                {{formatValueString(result.eqpType || 'N / A')}}</span>
+                                        </mat-label>
+                                    </li>
+                                    <li *ngIf="result.oosNumber">
+                                        <mat-label>
+                                            <span>OOS Number</span>
+                                            <span>{{result.oosNumber}}</span>
+                                        </mat-label>
+                                    </li>
+                                    <li>
+                                        <mat-label>
+                                            <span>Initiated By </span>
+                                            <span> {{result.intiatedUser || 'N / A'}} </span>
+                                        </mat-label>
+                                    </li>
+                                    <li>
+                                        <mat-label>
+                                            <span>Instrument Title/ID </span>
+                                            <span> {{formatValueString(result.eqpTitle)}}
+                                                ({{formatValueString(result.eqpCode)}})</span>
+                                        </mat-label>
+                                    </li>
+                                    <li class="w-100">
+                                        <h4 class="cardtitle_sm pl-2 mt-1">Previous Invalidations Details &nbsp;
+                                            : &nbsp; <a class="qc_badge" href="javascript:"
+                                                (click)="getPreviousInvalidations()"> Invalidations Details</a>
+                                        </h4>
+                                    </li>
+                                </ul>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+
+                <div class="qc_heading_spce mt-5">
+                    <mat-card class="mat-card-heading">
+                        <mat-card-content>
+                            <h4 class="cardtitle"> Invalidations Details</h4>
+                            <div class="pl-2 pr-2 mt-2">
+                                <mat-grid-list cols="2" rowHeight="68px">
+                                    <mat-grid-tile>
+                                        <mat-form-field appearance="outline" class="full-width">
+                                            <mat-label> Impact Type</mat-label>
+                                            <mat-select placeholder="Impact Type" [(ngModel)]="impactType"
+                                                [disabled]="disable  || impactDis">
+                                                <mat-option *ngFor="let impact of getCatItemList('INVALID_IMPACT_TYPE')"
+                                                    [value]="impact.catItemCode">
+                                                    {{impact.catItem}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile>
+                                        <mat-form-field appearance="outline" class="full-width">
+                                            <mat-label>Sample Set No.</mat-label>
+                                            <input matInput placeholder="Sample Set No." [(ngModel)]="sampleNumber"
+                                                [disabled]="disable" maxlength="50">
+                                            <mat-hint align="end">{{sampleNumber?.length || 0}}/50</mat-hint>
+                                        </mat-form-field>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile>
+                                        <mat-form-field appearance="outline" class="full-width">
+                                            <mat-label>Data File Numbers</mat-label>
+                                            <input matInput placeholder="Data File Numbers" [(ngModel)]="dataNumbers"
+                                                [disabled]="disable" maxlength="50">
+                                            <mat-hint align="end">{{dataNumbers?.length || 0}}/50</mat-hint>
+
+                                        </mat-form-field>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile>
+                                        <mat-form-field appearance="outline" class="full-width">
+                                            <mat-label> Instrument Type</mat-label>
+                                            <mat-select placeholder="Instrument Type" [(ngModel)]="instrumentType"
+                                                [disabled]="disable  || impactDis || prevInvalidationID">
+                                                <mat-option *ngFor="let inst of getCatItemList('INVALID_INSTRU_TYPE')"
+                                                    [value]="inst.catItemID">
+                                                    {{inst.catItem}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile>
+                                        <div class="full-width">
+                                            <lims-lookup [info]="analystInfo" #analyst>
+                                            </lims-lookup>
+                                        </div>
+                                    </mat-grid-tile>
+                                </mat-grid-list>
+                                <div class="full-width">
+                                    <mat-form-field appearance="outline" class="full-width">
+                                        <mat-label>Brief Description Of Invalidation</mat-label>
+                                        <textarea matInput placeholder="Brief Description Of Invalidation"
+                                            [(ngModel)]="description" [disabled]="disable" maxlength="8000"
+                                            rows="3"></textarea>
+                                        <mat-hint align="end">{{description?.length || 0}}/8000</mat-hint>
+                                    </mat-form-field>
+                                </div>
+
+                                <div align="right" class="pb-2 mt-2">
+                                    <button type="button" mat-raised-button class="btnbase btn-blue"
+                                        (click)="uploadFiles()">
+                                        <i class="{{_global.icnUpload}}" *ngIf="btnType == 'Save'"
+                                            aria-hidden="true"></i>
+                                        <i class="{{_global.icnViewFiles}}" *ngIf="btnType == 'Update'"
+                                            aria-hidden="true"></i>&nbsp;{{btnUpload}} </button>
+                                    <button type="button" mat-raised-button class="btnbase btn-blue"
+                                        [disabled]="appLevel !=0" (click)="saveRequest()" id="btnLoaders" btnLoader
+                                        [isLoaderOn]="isLoaderStart">
+                                        <i class="{{_global.icnSave}}" *ngIf="btnType == 'Save'" aria-hidden="true"></i>
+                                        <i class="{{_global.icnUpdate}}" *ngIf="btnType == 'Update'"
+                                            aria-hidden="true"></i>&nbsp;{{btnType}}</button>
+                                    <button type="button" mat-raised-button class="btnbase btn-blue"
+                                        [disabled]="btnType == 'Update'" (click)="clear()">
+                                        <i class="{{_global.icnCancel}}" aria-hidden="true"></i>&nbsp;Clear</button>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+
+            </mat-tab>
+            <mat-tab label="Evaluation">
+                <inv-evl [encInvalidationID]="encInvalidationID" (updateData)="updateData($event)" #evaluation>
+                </inv-evl>
+            </mat-tab>
+            <mat-tab label="Review">
+                <inv-review [encInvalidationID]="encInvalidationID" (updateData)="updateData($event)" #review>
+                </inv-review>
+            </mat-tab>
+        </mat-tab-group>
+    </mat-card-content>
+</mat-card>

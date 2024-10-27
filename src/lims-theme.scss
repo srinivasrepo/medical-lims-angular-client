@@ -1,0 +1,35 @@
+@import '~@angular/material/theming';
+
+$custom-typography: mat-typography-config(
+  $font-family: 'poppins'
+);
+
+@include mat-core($custom-typography);
+
+$primary: mat-palette($mat-blue, 600);
+$accent:  mat-palette($mat-grey, 100);
+$warn:    mat-palette($mat-red, A700);
+
+$theme: mat-light-theme($primary, $accent);
+
+
+@include angular-material-theme($theme);
+
+.m2app-dark {
+  $primary: mat-palette($mat-pink, 700, 500, 900);
+  $accent:  mat-palette($mat-blue-grey, A200, A100, A400);
+  $warn:    mat-palette($mat-red, A700);
+
+  $theme:   mat-dark-theme($primary, $accent, $warn);
+
+  @include angular-material-theme($theme);
+}
+
+$app-primary: mat-palette($mat-indigo);
+$app-accent: mat-palette($mat-green);
+
+// The warn palette is optional (defaults to red).
+$app-warn: mat-palette($mat-red);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);

@@ -1,0 +1,236 @@
+<!-- <div class="qc_box-n">
+    <mat-card class="matcard-nobg">
+        <mat-card-content>
+            <div class="matcard-custom-search search-bg">
+                <page-head [pageTitle]="pageTitle"></page-head>
+
+                <div>
+                    <stage-com [stageBO]="stageBO" (stageSelected)="stageSelected($event)" #stage></stage-com>
+
+                    <mat-grid-list cols="2" rowHeight="68px" gutterSize="30px">
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width pl-0 pr-0">
+                                <mat-label> Status</mat-label>
+                                <mat-select placeholder="Status" [(ngModel)]="statusID">
+                                    <mat-option *ngFor="let sta of statusList" [value]="sta.statusID">{{sta.status}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width pl-0 pr-0">
+                                <mat-label>Instrument Type</mat-label>
+                                <mat-select placeholder="Type" [(ngModel)]="purpose">
+                                    <mat-option *ngFor="let typ of typeList" [value]="typ.catItemID">{{typ.catItem}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                    </mat-grid-list>
+                    <div align="right" class="mt-1">
+                        <button type="button" mat-raised-button class="btnbase btn-blue"
+                            (click)="searchFilter('Search')">
+                            <i class="{{_global.icnSearch}}" aria-hidden="true"></i>&nbsp;Search</button>
+                        <button type="button" mat-raised-button class="btnbase btn-blue mr-0"
+                            (click)="searchFilter('ALL')">
+                            <i class="{{_global.icnSearchAll}}" aria-hidden="true"></i>&nbsp;Search All</button>
+                         <button mat-raised-button class="btnbase btn-green" (click)="export()"><i
+                                class="fas fa-file-export"></i>Export</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="mt-5 header-block">
+                <mat-card class="matcard-custom">
+                    <mat-card-content>
+                        <lims-grid (onActionClicked)="onActionClicked($event)" [headers]="headersData"
+                            [extraColumns]="extraColumns" [dataSource]="dataSource" [actions]="actions"
+                            [removeAction]="removeActions"></lims-grid>
+
+                        <div class="mt-1">
+                            <lims-paging (onPageIndexClicked)="onPageIndexClicked($event);"
+                                [totalRecords]="totalRecords" [currentSelectedIndex]="currentSelectedIndex">
+                            </lims-paging>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+
+        </mat-card-content> 
+    </mat-card>
+</div> -->
+
+<div class="qc_box-n">
+    <mat-card class="matcard-nobg">
+        <mat-card-content>
+            <div class="matcard-custom-search search-bg">
+                <page-head [pageTitle]="pageTitle"></page-head>
+                <mat-form-field appearance="outline" class="full-width pl-0 pr-0 qc_search-input">
+                    <mat-label>{{searchBy}}</mat-label>
+                    <input matInput [ngClass]="{'hide' : hasSearchVal()}" [(ngModel)]="advanceSearch"
+                        [readonly]="hasSearchVal()">
+                    <mat-chip-list class="mat-chip-list srch-chip" *ngIf="searchResult && searchResult.length > 0">
+                        <div class="mat-chip-list-wrapper">
+                            <mat-chip class="mat-chip mat-primary mat-standard-chip ng-star-inserted"
+                                *ngFor="let item of searchResult; let i = index" [matTooltip]="item.name">{{item.name}}
+                                &nbsp;&nbsp;
+                                <i class="{{_global.icnClear}}" style="color:red;" matTooltip="Clear"
+                                    (click)="clearOption(item.code, i)" aria-hidden="true"></i>
+                            </mat-chip>
+                        </div>
+                    </mat-chip-list>
+                    <button mat-button matSuffix mat-icon-button aria-label="Clear"
+                        (click)="openModal('mobilePhase-search')">
+                        <mat-icon>keyboard_arrow_down</mat-icon>
+                    </button>
+                </mat-form-field>
+                <srch-filter-modal id="mobilePhase-search" class="search-fields">
+                    <div class="cls-div">
+                        <i class="{{_global.icnClear}} cls-icon" aria-hidden="true" matTooltip="Close"
+                            (click)="closeModal('mobilePhase-search')"></i>
+                    </div>
+
+                    <mat-grid-list cols="2" rowHeight="68px">
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Preparation Type</mat-label>
+                                <mat-select placeholder="Preparation Type" [(ngModel)]="preparationType">
+                                    <mat-option *ngFor="let typ of getCatItemList('PREPARATION_TYPE')"
+                                        [value]="typ.catItemID">
+                                        {{typ.catItem}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width ">
+                                <mat-label>Instrument Type</mat-label>
+                                <mat-select placeholder="Type" [(ngModel)]="purpose">
+                                    <mat-option *ngFor="let typ of getCatItemList('MPHASE_PREP_TYPES')"
+                                        [value]="typ.catItemID">{{typ.catItem}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <div class="full-width ">
+                                <lims-lookup [info]="analystInfo" #analyst></lims-lookup>
+                            </div>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <div class="full-width ">
+                                <lims-lookup [info]="productsInfo" #products></lims-lookup>
+                            </div>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <div class="full-width ">
+                                <lims-lookup [info]="testInfo" #specTests></lims-lookup>
+                            </div>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <div class="full-width">
+                                <lims-lookup [info]="inventoryInfo" #inventoryData></lims-lookup>
+                            </div>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <div class="full-width">
+                                <lims-lookup [info]="specificationsInfo" #specifications (onSelect)="testLkp()">
+                                </lims-lookup>
+                            </div>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Validity From</mat-label>
+                                <input matInput [(ngModel)]="validityFrom" [max]="validityTo" [matDatepicker]="fromDate"
+                                    placeholder="Validity From">
+                                <mat-datepicker-toggle matSuffix [for]="fromDate"></mat-datepicker-toggle>
+                                <mat-datepicker #fromDate></mat-datepicker>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Validity To</mat-label>
+                                <input matInput [(ngModel)]="validityTo" [min]="validityFrom" [matDatepicker]="toDate"
+                                    placeholder="Validity To">
+                                <mat-datepicker-toggle matSuffix [for]="toDate"></mat-datepicker-toggle>
+                                <mat-datepicker #toDate></mat-datepicker>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <div class="full-width">
+                                <lims-lookup [info]="systemCodeInfo" #systemCode>
+                                </lims-lookup>
+                            </div>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <div class="full-width">
+                                <lims-lookup [info]="systemCodeFromInfo" #systemCodeFrom (onSelect)="systemCodeToLkp()">
+                                </lims-lookup>
+                            </div>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <div class="full-width">
+                                <lims-lookup [info]="systemCodeToInfo" #systemCodeTo (onSelect)="systemCodeFromLkp()">
+                                </lims-lookup>
+                            </div>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label> Status</mat-label>
+                                <mat-select placeholder="Status" [(ngModel)]="statusID">
+                                    <mat-option *ngFor="let sta of statusList" [value]="sta.statusID">{{sta.status}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </mat-grid-tile>
+
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Initiated On</mat-label>
+                                <input matInput [(ngModel)]="initiatedOn" [matDatepicker]="initiateOn" [max]="today"
+                                    placeholder="Initiated On">
+                                <mat-datepicker-toggle matSuffix [for]="initiateOn"></mat-datepicker-toggle>
+                                <mat-datepicker #initiateOn></mat-datepicker>
+                            </mat-form-field>
+                        </mat-grid-tile>
+
+                    </mat-grid-list>
+                    <div align="right">
+                        <button type="button" mat-raised-button class="btnbase btn-blue"
+                            (click)="searchFilter('Search')">
+                            <i class="{{_global.icnSearch}}" aria-hidden="true"></i>&nbsp; Search</button>
+                        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="searchFilter('ALL')">
+                            <i class="{{_global.icnSearchAll}}" aria-hidden="true"></i>&nbsp; Search All</button>
+                        <button type="button" mat-raised-button class="btnbase btn-blue "
+                            (click)="closeModal('mobilePhase-search')">
+                            <i class="{{_global.icnClear}}" aria-hidden="true"></i>&nbsp; Close</button>
+                    </div>
+                </srch-filter-modal>
+
+                <div align="right" class="mt-2">
+                    <button type="button" mat-raised-button class="btnbase btn-blue" (click)="searchFilter('Search')">
+                        <i class="{{_global.icnSearch}}" aria-hidden="true"></i>&nbsp; Search</button>
+                    <button type="button" mat-raised-button class="btnbase btn-blue" (click)="searchFilter('ALL')">
+                        <i class="{{_global.icnSearchAll}}" aria-hidden="true"></i>&nbsp; Search All</button>
+                    <button mat-raised-button class="btnbase btn-blue mr-0" (click)="export()" *ngIf="hasExpCap"><i
+                            class="fas fa-file-export"></i>&nbsp; Export</button>
+                </div>
+            </div>
+            <div class="mt-5 mb-5">
+                <mat-card class="matcard-custom pxy-2 qc_table-Analysis">
+                    <mat-card-content>
+                        <lims-grid (onActionClicked)="onActionClicked($event)" [headers]="headersData"
+                            [extraColumns]="extraColumns" [dataSource]="dataSource" [actions]="actions"
+                            [removeAction]="removeActions"></lims-grid>
+
+                        <lims-paging (onPageIndexClicked)="onPageIndexClicked($event);" [totalRecords]="totalRecords"
+                            [currentSelectedIndex]="currentSelectedIndex">
+                        </lims-paging>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div> 

@@ -1,0 +1,73 @@
+<div>
+    <mat-table #table class="dbdatatable " [dataSource]="dataSource" style="width:100%;" multiTemplateDataRows>
+        <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true">
+        </mat-header-row>
+        <mat-row id="ParentGrid" mousehoverout allowMouseEvt="true" *matRowDef="let row; columns: displayedColumns;"
+            (click)="onRowSelected(row)" class="{{row.class}}">
+        </mat-row>
+        <mat-row id="ChildGrid" [ngStyle]="{'display': row.showExtRows ? 'block': 'none'}"
+            *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></mat-row>
+
+        <ng-container matColumnDef="S.No">
+            <mat-header-cell *matHeaderCellDef class="maxWidth-15per"> S.No.
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element;let i=dataIndex" class="maxWidth-15per">
+                {{i+1}}
+            </mat-cell>
+        </ng-container>
+
+        <!-- <ng-container matColumnDef="reqCode">
+        <mat-header-cell *matHeaderCellDef class="minWidth-20per"> System
+            Code
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element;" class="minWidth-20per">
+            {{element.entityRefNumber}}
+        </mat-cell>
+    </ng-container> -->
+
+        <ng-container matColumnDef="reqNumber">
+            <mat-header-cell *matHeaderCellDef class="minWidth-30per"> Reference
+                Number
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element;" class="minWidth-30per">
+                {{element.referenceNumber || 'N / A'}}
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef class="maxWidth-30per">Status
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element;" class="maxWidth-30per">
+                {{element.status == null ? "N / A" : element.status}}
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="process">
+            <mat-header-cell *matHeaderCellDef class="maxWidth-15per"> Process
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element;" class="maxWidth-15per">
+                <a href="Javascript:" matTooltip="Get data" (click)="onActionClicked(element)">
+                    <i class="fas fa-chevron-circle-right" style="font-size: 20px;"></i>
+                </a>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="expandedDetail">
+            <div *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+                <div class="view-inv add-hr">
+                    <ul>
+
+                        <span *ngFor="let item of element | keyvalue">
+                            <li *ngIf="!show(item.key, element.sourceCode)" class="{{getClass(item.key)}}">
+                                <mat-label>
+                                    <span>{{ getKey(item.key, element.sourceCode) | titlecase}}</span>
+                                    <b>:</b>
+                                    <span> {{ getValue(item.key, element.sourceCode, item.value) || 'N / A'}}</span>
+                                </mat-label>
+                            </li>
+                        </span>
+                    </ul>
+                </div>
+            </div>
+        </ng-container>
+    </mat-table>
+</div>

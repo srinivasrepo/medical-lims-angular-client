@@ -1,0 +1,30 @@
+<form>
+    <div class="new-popupTitle" mat-dialog-title>
+        <h1 class="colorwhite">Switch Plant</h1>
+        <div class="popup-close">
+            <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="cancel()"></i>
+        </div>
+    </div>
+
+    <div mat-dialog-content class="mt-2 text-center">
+        <mat-form-field appearance="outline">
+            <mat-label>Select Plant</mat-label>
+            <mat-select placeholder="Select Plant" name="plant" [(ngModel)]="switchPlantObj.plantID"
+                (ngModelChange)="changePlant()">
+                <mat-option *ngFor="let pla of plantList" [value]="pla.plantID">{{pla.plantName}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Select Department</mat-label>
+            <mat-select placeholder="Select Department" name="department" [(ngModel)]="switchPlantObj.deptCode">
+                <mat-option *ngFor="let dep of plantDeptList" [value]="dep.deptCode">{{dep.deptName}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div align="end" class="mr-3 mb-2">
+        <button mat-raised-button color="primary" (click)="go()">Confirm</button>
+    </div>
+
+</form>

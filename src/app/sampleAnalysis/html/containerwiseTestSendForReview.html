@@ -1,0 +1,22 @@
+<div class="new-popupTitle" mat-dialog-title>
+    <h1 class="colorwhite">{{pageTitle}}</h1>
+    <div class="popup-close">
+        <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+    </div>
+</div>
+
+<div class="mt-2 mb-2 ml-2 mr-2 modal-over" mat-dialog-content>
+
+    <mat-card class="mat-card-c mt-3 mb-3" style="width: 99%">
+        <mat-card-content>
+            <mat-label><b>Test Name </b> : {{testName}}</mat-label>
+            <div>
+                <lims-grid [headers]="headerData" [dataSource]="dataSource" [isEnableCheckbox]="false" [isParentCheckBoxVisible]="true"></lims-grid>
+            </div>
+            <div align="right" *ngIf="dataSource && dataSource.data && dataSource.data.length > 0">
+                <button type="button" mat-raised-button class="btnbase btn-blue" (click)="sendForReview()">Send For Review</button>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+</div>

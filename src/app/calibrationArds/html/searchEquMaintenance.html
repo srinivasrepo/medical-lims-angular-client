@@ -1,0 +1,154 @@
+<div class="qc_box-n">
+    <mat-card class="matcard-nobg">
+        <mat-card-content>
+            <div class="matcard-custom-search search-bg">
+                <page-head [pageTitle]="pageTitle"></page-head>
+                <mat-form-field appearance="outline" class="full-width pl-0 pr-0 qc_search-input">
+                    <mat-label>{{searchBy}}</mat-label>
+                    <input matInput [ngClass]="{'hide' : hasSearchVal()}" [(ngModel)]="searchEquObj.advanceSearch"
+                        [readonly]="hasSearchVal()">
+                    <mat-chip-list class="mat-chip-list srch-chip" *ngIf="searchResult && searchResult.length > 0">
+                        <div class="mat-chip-list-wrapper">
+                            <mat-chip class="mat-chip mat-primary mat-standard-chip ng-star-inserted"
+                                *ngFor="let item of searchResult; let i = index" [matTooltip]="item.name">{{item.name}}
+                                &nbsp;&nbsp;
+                                <i class="{{_global.icnClear}}" style="color:red;" matTooltip="Clear"
+                                    (click)="clearOption(item.code, i)" aria-hidden="true"></i>
+                            </mat-chip>
+                        </div>
+                    </mat-chip-list>
+                    <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="openModal('eqp-srch')">
+                        <mat-icon>keyboard_arrow_down</mat-icon>
+                    </button>
+                </mat-form-field>
+                <srch-filter-modal id="eqp-srch">
+                    <div class="cls-div">
+                        <i class="{{_global.icnClear}} cls-icon" aria-hidden="true" matTooltip="Close"
+                            (click)="closeModal('eqp-srch')"></i>
+                    </div>
+                    <mat-grid-list cols="2" rowHeight="68px">
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width ">
+                                <mat-label> Schedule Type</mat-label>
+                                <mat-select [(ngModel)]="searchEquObj.schType" (ngModelChange)="getType()">
+                                    <mat-option *ngFor="let item of schTypeList" [value]=item.schTypeID>{{item.schType}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width ">
+                                <mat-label> Equipment / Instrument Category</mat-label>
+                                <mat-select [(ngModel)]="searchEquObj.category" (ngModelChange)="getType()"
+                                    [disabled]="true">
+                                    <mat-option *ngFor="let item of equipmentList" [value]=item.categoryID>
+                                        {{item.category}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </mat-grid-tile>
+
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Instrument Type</mat-label>
+                                <mat-select [(ngModel)]="searchEquObj.type" (ngModelChange)="getCondition($event)">
+                                    <mat-option *ngFor="let item of typeList" [value]=item.catItemID>{{item.catItem}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <div class="full-width ">
+                                <lims-lookup [info]="qcInstrTypesInfo" #qcInstrTypes></lims-lookup>
+                            </div>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Schedule Date</mat-label>
+                                <input matInput [(ngModel)]="searchEquObj.schDate" [matDatepicker]="schDate"
+                                    placeholder="Schedule Date">
+                                <mat-datepicker-toggle matSuffix [for]="schDate"></mat-datepicker-toggle>
+                                <mat-datepicker #schDate></mat-datepicker>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <div class="full-width ">
+                                <lims-lookup [info]="arNumInfo" #arNumbers>
+                                </lims-lookup>
+                            </div>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <div class="full-width ">
+                                <lims-lookup [info]="qcParameterInfo" #qcParameter></lims-lookup>
+                            </div>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Date From</mat-label>
+                                <input matInput [(ngModel)]="searchEquObj.dateFrom" [max]="searchEquObj.dateTo"
+                                    [matDatepicker]="fromDate" placeholder="Date From">
+                                <mat-datepicker-toggle matSuffix [for]="fromDate"></mat-datepicker-toggle>
+                                <mat-datepicker #fromDate></mat-datepicker>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width ">
+                                <mat-label>Date To</mat-label>
+                                <input matInput [(ngModel)]="searchEquObj.dateTo" [min]="searchEquObj.dateFrom"
+                                    [matDatepicker]="toDate" placeholder="Date To">
+                                <mat-datepicker-toggle matSuffix [for]="toDate"></mat-datepicker-toggle>
+                                <mat-datepicker #toDate></mat-datepicker>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label> Status</mat-label>
+                                <mat-select [(ngModel)]="searchEquObj.statusID">
+                                    <mat-option *ngFor="let item of statusList" [value]=item.statusID>{{item.status}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <mat-label>Show Date Crossed Records</mat-label>&nbsp;
+                            <mat-checkbox [(ngModel)]="searchEquObj.showDateCrossedRecords"></mat-checkbox>
+                        </mat-grid-tile>
+                    </mat-grid-list>
+                    <div align="right" class="search-actions">
+                        <button type="button" mat-raised-button class="btnbase btn-blue"
+                            (click)="searchEquMain('SEARCH')">
+                            <i class="{{_global.icnSearch}}" aria-hidden="true"></i>&nbsp; Search</button>
+                        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="searchEquMain('ALL')">
+                            <i class="{{_global.icnSearchAll}}" aria-hidden="true"></i>&nbsp;Search All</button>
+                        <button type="button" mat-raised-button class="btnbase btn-blue "
+                            (click)="closeModal('eqp-srch')">
+                            <i class="{{_global.icnClear}}" aria-hidden="true"></i>&nbsp;Close</button>
+                    </div>
+                </srch-filter-modal>
+                <div align="right" class="search-actions">
+                    <button type="button" mat-raised-button class="btnbase btn-blue" (click)="searchEquMain('SEARCH')">
+                        <i class="{{_global.icnSearch}}" aria-hidden="true"></i>&nbsp; Search</button>
+                    <button type="button" mat-raised-button class="btnbase btn-blue" (click)="searchEquMain('ALL')">
+                        <i class="{{_global.icnSearchAll}}" aria-hidden="true"></i>&nbsp;Search All</button>
+                    <button mat-raised-button class="btnbase btn-blue mr-0" (click)="export()" *ngIf="hasExpCap"><i
+                            class="fas fa-file-export"></i>Export</button>
+                    <button mat-raised-button class="btnbase btn-blue mr-0" (click)="newInstrument()"><i
+                            class="{{_global.icnAdd}}"></i>New</button>
+                </div>
+            </div>
+            <div class="mt-5 mb-5">
+                <mat-card class="matcard-custom pxy-2 qc_table-Analysis">
+                    <mat-card-content>
+                        <lims-grid (onActionClicked)="onActionClicked($event)" [headers]="headers"
+                            [removeAction]="removeActions" [dataSource]="dataSource" [actions]="actions"></lims-grid>
+
+                        <lims-paging (onPageIndexClicked)="onPage($event);" [totalRecords]="totalRecords"
+                            [currentSelectedIndex]="searchEquObj.pageIndex">
+                        </lims-paging>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+
+        </mat-card-content>
+    </mat-card>
+</div>

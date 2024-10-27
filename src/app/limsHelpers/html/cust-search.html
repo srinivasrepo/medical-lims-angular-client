@@ -1,0 +1,19 @@
+<div class="qc_box-n">
+    <mat-card class="matcard-nobg">
+        <mat-card-content>
+            <div class="matcard-custom-search search-bg">
+                <page-head [pageTitle]="pageTitle"></page-head>
+
+                <ng-content select=".search-fields"></ng-content>
+
+                <div align="right" class="mt-1">
+                    <ng-content select=".search-actions"></ng-content>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <div>
+        <ng-content select=".search-grid"></ng-content>
+    </div>
+</div>

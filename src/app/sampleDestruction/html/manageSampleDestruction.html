@@ -1,0 +1,123 @@
+<page-head [pageTitle]="pageTitle" viewBack="true" [backUrl]="backUrl" [status]="status" [refNo]="refNo"
+    [viewHistoryVisible]="viewHistoryVisible" [viewHistory]="viewHistory" [entityCode]="entityCode" showRpts="true"
+    [encRptEntActID]="encDestructionID"></page-head>
+
+<mat-card class="mat-card-c div-content mb-4 mt-1rem qc_mobp-main-tab">
+    <mat-card-content>
+        <div class="qc_heading_spce mt-3">
+            <mat-card class="mat-card-heading">
+                <mat-card-content>
+                    <h4 class="cardtitle"> Manage Sample Destruction</h4>
+                    <div class="pl-2 pr-2 mt-2">
+                        <mat-grid-list cols="2" rowHeight="68px">
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Select Source</mat-label>
+                                    <mat-select [disabled]="buttonType=='Update'"
+                                        [(ngModel)]="manageDestructionObj.destructionSourceCode">
+                                        <mat-option *ngFor="let d of getCatItemList('SAM_DEST_SOURCE')"
+                                            [value]="d.catItemCode">{{d.catItem}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Select Type of Waste</mat-label>
+                                    <mat-select [disabled]="buttonType=='Update'"
+                                        [(ngModel)]="manageDestructionObj.typeOfWaste">
+                                        <mat-option *ngFor="let l of getCatItemList('SAM_DEST_TYPE')"
+                                            [value]="l.catItemID">{{l.catItem}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile *ngIf='manageDestructionObj.destructionSourceCode=="MISC"'>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Reference No.</mat-label>
+                                    <input [disabled]="buttonType=='Update'" matInput maxlength="25"
+                                        [(ngModel)]="manageDestructionObj.refNumber">
+                                    <mat-hint align="end">{{manageDestructionObj.refNumber?.length || 0}} / 25
+                                    </mat-hint>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile *ngIf='manageDestructionObj.destructionSourceCode=="MISC"'>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Destruction Of Source</mat-label>
+                                    <input [disabled]="buttonType=='Update'" matInput
+                                        [(ngModel)]="manageDestructionObj.destructionOfSource" maxlength="25">
+                                    <mat-hint align="end">{{manageDestructionObj.destructionOfSource?.length || 0}} / 25
+                                    </mat-hint>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Select Nature of Waste</mat-label>
+                                    <mat-select [disabled]="buttonType=='Update'"
+                                        [(ngModel)]="manageDestructionObj.natureOfWaste">
+                                        <mat-option *ngFor="let l of getCatItemList('SAM_DEST_NATURE')"
+                                            [value]="l.catItemID">{{l.catItem}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Select Mode of Destruction</mat-label>
+                                    <mat-select [disabled]="buttonType=='Update'"
+                                        [(ngModel)]="manageDestructionObj.modeOfDestruction">
+                                        <mat-option *ngFor="let m of getCatItemList('SAM_DEST_MODE')"
+                                            [value]="m.catItemID">{{m.catItem}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Enter Quantity</mat-label>
+                                    <input [disabled]="buttonType=='Update'" matInput
+                                        [(ngModel)]="manageDestructionObj.quantity" maxlength="25">
+                                    <mat-hint align="end">{{manageDestructionObj.quantity?.length || 0}} / 25</mat-hint>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                        </mat-grid-list>
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Important notes</mat-label>
+                            <textarea matInput [disabled]="buttonType=='Update'"
+                                [(ngModel)]="manageDestructionObj.disposalRemarks" rows="3" maxlength="500"></textarea>
+                            <mat-hint align="end">{{manageDestructionObj.disposalRemarks?.length || 0}} / 500</mat-hint>
+                        </mat-form-field>
+                    </div>
+
+
+                    <div class="pl-3 pr-3 add_sroll_3">
+
+                        <lims-grid *ngIf='manageDestructionObj.destructionSourceCode=="DS"' [headers]="headers"
+                            [isEnableCheckbox]="isEnableCheckbox" [isParentCheckBoxVisible]="true"
+                            [dataSource]="dataSource" [allCheckboxSelected]="allCheckboxSelected">
+                        </lims-grid>
+                    </div>
+
+                    <div align="right" class="mt-2 pb-2 pr-2">
+                        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="save()" id="mngSample"
+                            btnLoader [isLoaderOn]="isLoaderStart">
+                            <i class="{{_global.icnSave}}" *ngIf="buttonType=='Save'" aria-hidden="true"></i>
+                            <i class="{{_global.icnUpdate}}" *ngIf="buttonType=='Update'" aria-hidden="true"></i>&nbsp;
+                            {{buttonType}}</button>
+
+                        <button type="button" mat-raised-button class="btnbase btn-blue"
+                            *ngIf="!encDestructionID && manageDestructionObj.destructionSourceCode!='MISC'"
+                            (click)="discard()" id="discrdSample" btnLoader [isLoaderOn]="isLoaderStartIcn">
+                            <i class="{{_global.icnCancel}}"></i>&nbsp;Revert Back</button>
+
+                        <button type="button" *ngIf="buttonType=='Update' && appBO.canApprove" mat-raised-button
+                            class="btnbase btn-blue" (click)="confirm()">
+                            <i class="{{_global.icnConfirm}}" aria-hidden="true"></i>&nbsp;&nbsp;Confirm</button>
+                    </div>
+
+
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </mat-card-content>
+</mat-card>

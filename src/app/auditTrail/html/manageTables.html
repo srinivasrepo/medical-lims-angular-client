@@ -1,0 +1,43 @@
+<page-head [pageTitle]="pageTitle" [viewBack]="'true'" [backUrl]="backUrl"></page-head>
+
+<div class="cust-container">
+    <mat-form-field appearance="outline" class="form-width">
+        <mat-label>Manage Type</mat-label>
+        <mat-select [disabled]="btnGOText == 'Change' && ddlType != ''" [(ngModel)]="ddlType" (ngModelChange)="changeType()">
+            <mat-option value="tab">Table</mat-option>
+            <mat-option value="col">Column</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+
+    <mat-form-field appearance="outline" class="form-width" *ngIf="ddlType == 'col'">
+        <mat-label>Tables</mat-label>
+        <mat-select [(ngModel)]="ddlTableID" [disabled]="btnGOText == 'Change' && ddlTableID !=0 ">
+
+            <mat-option *ngFor="let tab of ddltableList" value="{{tab.tableID}}">{{tab.objName}}</mat-option>
+
+        </mat-select>
+    </mat-form-field>
+
+    <div class="form-width">
+        <button mat-raised-button color="primary" (click)="go()" class="btn-margin">{{btnGOText}}</button> &nbsp;&nbsp;
+        <!-- <button mat-raised-button color="secondary" (click)="back()" class="btn-margin">Back</button> -->
+    </div>
+
+    <div *ngFor="let obj of tablesList; let i = index;">
+        <div>{{i+ 1}}.</div>
+        <div align="left">{{obj.objName}}</div>
+        <div align="right">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Friendly Name</mat-label>
+                <input matInput [(ngModel)]="tablesList[i].objFriendlyName">
+                <!-- <mat-icon matSuffix>sentiment_very_satisfied</mat-icon> -->
+            </mat-form-field>
+        </div>
+    </div>
+
+    <div  align="right" *ngIf="ddlType != '' && tablesList.length > 0 && btnBool">
+        <button type="submit" mat-raised-button class="btnbase btn-blue" (click)="manageTableData()"> <i class="{{_global.icnSave}}" *ngIf="buttonType=='Save'" aria-hidden="true"></i> &nbsp; Save</button>
+    </div>
+
+</div>

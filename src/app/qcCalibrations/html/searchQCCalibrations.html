@@ -1,0 +1,138 @@
+<div class="qc_box-n">
+    <mat-card class="matcard-nobg">
+        <mat-card-content>
+            <div class="matcard-custom-search search-bg">
+                <page-head [pageTitle]="pageTitle"></page-head>
+                <mat-form-field appearance="outline" class="full-width pl-0 pr-0 qc_search-input">
+                    <mat-label>{{searchBy}}</mat-label>
+                    <input matInput [ngClass]="{'hide' : hasSearchVal()}" [(ngModel)]="searchBO.advanceSearch"
+                        [readonly]="hasSearchVal()">
+                    <mat-chip-list class="mat-chip-list srch-chip" *ngIf="searchResult && searchResult.length > 0">
+                        <div class="mat-chip-list-wrapper">
+                            <mat-chip class="mat-chip mat-primary mat-standard-chip ng-star-inserted"
+                                *ngFor="let item of searchResult; let i = index" [matTooltip]="item.name">{{item.name}}
+                                &nbsp;&nbsp;
+                                <i class="{{_global.icnClear}}" style="color:red;" matTooltip="Clear"
+                                    (click)="clearOption(item.code, i)" aria-hidden="true"></i>
+                            </mat-chip>
+                        </div>
+                    </mat-chip-list>
+                    <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="openModal('qcCalib-srch')">
+                        <mat-icon>keyboard_arrow_down</mat-icon>
+                    </button>
+                </mat-form-field>
+                    <srch-filter-modal id="qcCalib-srch">
+                        <div class="cls-div">
+                            <i class="{{_global.icnClear}} cls-icon" aria-hidden="true" matTooltip="Close"
+                                (click)="closeModal('qcCalib-srch')"></i>
+                        </div>
+                        <mat-grid-list cols="2" rowHeight="68px">
+                            <mat-grid-tile>
+                                <div class="full-width ">
+                                    <lims-lookup [info]="qcInstrTypesInfo" #qcInstrTypes
+                                        (onSelect)="getInstruments($event)"></lims-lookup>
+                                </div>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <div class="full-width ">
+                                    <lims-lookup [info]="qcInstrInfo" #qcInstr></lims-lookup>
+                                </div>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width ">
+                                    <mat-label>Title</mat-label>
+                                    <input matInput placeholder="Title" [(ngModel)]="searchBO.title" maxlength="500"
+                                        rows="4" name="title">
+                                    <mat-hint align="end">{{searchBO.title?.length || 0}} / 500</mat-hint>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label> Status</mat-label>
+                                    <mat-select placeholder="Status" [(ngModel)]="searchBO.statusID">
+                                        <mat-option *ngFor="let sta of statusList" [value]="sta.statusID">{{sta.status}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </mat-grid-tile>
+
+                            <!-- <mat-grid-tile >
+                                <div class="full-width">
+                                    <lims-lookup [info]="systemCodeFromInfo" #systemCodeFrom
+                                        (onSelect)="systemCodeToLkp()">
+                                    </lims-lookup>
+                                </div>
+                            </mat-grid-tile>
+                            <mat-grid-tile >
+                                <div class="full-width">
+                                    <lims-lookup [info]="systemCodeToInfo" #systemCodeTo
+                                        (onSelect)="systemCodeFromLkp()">
+                                    </lims-lookup>
+                                </div>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <div class="full-width">
+                                    <lims-lookup [info]="systemCodeInfo" #systemCode>
+                                    </lims-lookup>
+                                </div>
+                            </mat-grid-tile> -->
+                            <mat-grid-tile>
+                                <div class="full-width ">
+                                    <lims-lookup [info]="intiatedUserInfo" #intiatedUser>
+                                    </lims-lookup>
+                                </div>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width ">
+                                    <mat-label>Initiated On</mat-label>
+                                    <input matInput [matDatepicker]="initDate" name="initDate"
+                                        [(ngModel)]="searchBO.initiatedOn" placeholder="Initiated On" [max]="getDateForIni">
+                                    <mat-datepicker-toggle matSuffix [for]="initDate"></mat-datepicker-toggle>
+                                    <mat-datepicker #initDate></mat-datepicker>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                        </mat-grid-list>
+                        <div align="right" class="mt-1">
+                            <button type="button" mat-raised-button class="btnbase btn-blue"
+                                (click)="searchFilter('Search')">
+                                <i class="{{_global.icnSearch}}" aria-hidden="true"></i>&nbsp;Search</button>
+                            <button type="button" mat-raised-button class="btnbase btn-blue     "
+                                (click)="searchFilter('ALL')">
+                                <i class="{{_global.icnSearchAll}}" aria-hidden="true"></i>&nbsp;Search All</button>
+                            <button type="button" mat-raised-button class="btnbase btn-blue "
+                                (click)="closeModal('qcCalib-srch')">
+                                <i class="{{_global.icnClear}}" aria-hidden="true"></i>&nbsp;Close</button>
+                        </div>
+                    </srch-filter-modal>
+
+                    <div align="right" class="mt-1">
+                        <button type="button" mat-raised-button class="btnbase btn-blue"
+                            (click)="searchFilter('Search')">
+                            <i class="{{_global.icnSearch}}" aria-hidden="true"></i>&nbsp;Search</button>
+                        <button type="button" mat-raised-button class="btnbase btn-blue     "
+                            (click)="searchFilter('ALL')">
+                            <i class="{{_global.icnSearchAll}}" aria-hidden="true"></i>&nbsp;Search All</button>
+                        <button mat-raised-button class="btnbase btn-blue mr-0" (click)="export()" *ngIf="hasExpCap"><i
+                                class="fas fa-file-export"></i>Export</button>
+                    </div>
+
+                </div>
+            
+
+            <div class="mt-5 mb-5">
+                <mat-card class="matcard-custom pxy-2 qc_table-Analysis">
+                    <mat-card-content>
+                        <lims-grid (onActionClicked)="onActionClicked($event)" [headers]="headersData"
+                            [dataSource]="dataSource" [actions]="actions" [removeAction]="removeActions"></lims-grid>
+
+                        <div class="mt-1">
+                            <lims-paging (onPageIndexClicked)="onPageIndexClicked($event);"
+                                [totalRecords]="totalRecords" [currentSelectedIndex]="searchBO.pageIndex"></lims-paging>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+
+        </mat-card-content>
+    </mat-card>
+</div>

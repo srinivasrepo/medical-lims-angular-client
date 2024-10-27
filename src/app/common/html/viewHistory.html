@@ -1,0 +1,76 @@
+<div class="modal-content">
+
+    <div class="new-popupTitle" *ngIf="showTitle" mat-dialog-title>
+        <h1> {{title}}</h1>
+        <div class="popup-close">
+            <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+        </div>
+    </div>
+
+    <mat-card class="mat-card-c mb-2 ml-2 mr-2 qc_popup-acc" [ngClass]="{'mat-dialog-content' : showTitle}">
+        <mat-card-content>
+            <!-- <ams-grid [headers]="headerData" [dataSource]="dataSource"></ams-grid> -->
+
+            <!-- <div class="mt-1 mb-3">
+                <mat-table #table [dataSource]="dataSource" *ngIf="dataSource && dataSource.data">
+
+                    <ng-container *ngFor="let column of headerData" [matColumnDef]="column.columnDef">
+                        <mat-header-cell *matHeaderCellDef class="{{column.width}}">
+                            {{ column.header }}
+                        </mat-header-cell>
+
+                        <mat-cell *matCellDef="let row" class="{{column.width}}"
+                            [ngClass]="{'grid-cell-noWrap': column.columnDef == 'actionRemarks'}">
+                            {{ formatString(column.cell(row)) }}
+                        </mat-cell>
+                    </ng-container>
+
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns;" tooltip="{{getToolTipData(row)}}"
+                        placement="bottom"></mat-row>
+                </mat-table>
+
+                <div *ngIf="dataSource && dataSource.data && dataSource.data.length < 1" class="textaligncenter pt-2">
+                    <p>No Records Found</p>
+                </div>
+            </div> -->
+
+
+            <mat-accordion>
+                <mat-expansion-panel *ngFor="let data of dataSource" (opened)="panelOpenState = true"
+                    (closed)="panelOpenState = false">
+
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <span >
+                                {{data.userName}}&nbsp;&nbsp; | {{data.actionDate}}
+                                <span class="appLevel {{getClass(data.actionCode)}}">{{data.appLevel}}</span>
+                            </span>
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+
+                    <div class="view-inv add-hr mt-2">
+                        <ul>
+                            <li>
+                                <mat-label>
+                                    <span>Action Taken </span>
+                                    <span> {{formatString(data.actionResult)}}</span>
+                                </mat-label>
+                            </li>
+                            <li class="w-66">
+                                <mat-label>
+                                    <span>Action Remarks </span>
+                                    <span> {{formatString(data.actionRemarks)}}</span>
+                                </mat-label>
+                            </li>
+                        </ul>
+                    </div>
+
+                </mat-expansion-panel>
+            </mat-accordion>
+            <!-- <div *ngIf="dataSource  && dataSource.length < 1" class="textaligncenter pt-2">
+                <p>No Records Found</p>
+            </div> -->
+        </mat-card-content>
+    </mat-card>
+</div>

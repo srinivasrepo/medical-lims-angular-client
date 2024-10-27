@@ -1,0 +1,28 @@
+<page-head [pageTitle]="pageTitle" viewBack="true" [backUrl]="backUrl" viewHistoryVisible="true"
+    [viewHistory]="viewHistory" [status]="status" [refNo]="refNo"></page-head>
+<mat-card class="mat-card-c div-content">
+    <mat-card-content>
+        <div class="view-reg mt-2">
+            <ul>
+                <li>
+                    <mat-label>
+                        <span>Analyst Name</span>:
+                        <span>{{analystName}}</span>
+                    </mat-label>
+                </li>
+                <li>
+                    <mat-label>
+                        <span>Qualifications</span>:
+                        <span>{{qualifications}}</span>
+                    </mat-label>
+                </li>
+                <li>
+                    <mat-label>
+                        <span>Reason</span>:
+                        <span>{{reason}}</span>
+                    </mat-label>
+                </li>
+            </ul>
+        </div>
+    </mat-card-content>
+</mat-card>

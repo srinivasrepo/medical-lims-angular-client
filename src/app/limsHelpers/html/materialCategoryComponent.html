@@ -1,0 +1,35 @@
+<div>
+    <mat-grid-list cols="2" rowHeight="68px">
+        <mat-grid-tile *ngIf="materialInfo.isCategoryShow">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>{{materialInfo.category}}</mat-label>
+                <mat-select placeholder="{{materialInfo.category}}" [(ngModel)]="category" [disabled]="disable"
+                    (ngModelChange)="selectCategory()">
+                    <!-- <mat-option value="">{{materialInfo.category}}</mat-option> -->
+                    <mat-option *ngFor="let cat of categories" [value]="cat.paramCode">{{cat.paramName}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-grid-tile>
+        <!-- <mat-grid-tile
+            *ngIf="entityCode != 'INDICATOR' && !(materialInfo.isCategoryShow) && entityCode != 'RINSING_SOL' && entityCode != 'VOLSOLUTION' && entityCode != 'MOBILE_PHASE' && entityCode != 'STOCK_SOL'  && entityCode != 'QC_INV'">
+            <div class="full-width empbox">
+                <mat-label>{{materialInfo.category}}: {{categoryName}}</mat-label>
+            </div>
+        </mat-grid-tile> -->
+        <mat-grid-tile *ngIf="materialInfo.isSubCategoryShow">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>{{getEntityControlNames('CAT')}}</mat-label>
+                <mat-select placeholder="{{getEntityControlNames('CAT')}}" [(ngModel)]="subCategory"
+                    [disabled]="disable" (ngModelChange)="selectSubCategory()">
+                    <mat-option *ngFor="let subCat of subCategories" [value]="subCat.caT_ITEMID">{{subCat.caT_ITEM}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="setCols()">
+            <div class="full-width">
+                <lims-lookup [info]="matInfo" #materials (onSelect)="onSelectedLookup($event)"></lims-lookup>
+            </div>
+        </mat-grid-tile>
+    </mat-grid-list>
+</div>

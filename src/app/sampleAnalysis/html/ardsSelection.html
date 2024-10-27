@@ -1,0 +1,268 @@
+<div class="qc_heading_spce">
+    <mat-card class="mat-card-heading">
+        <mat-card-content>
+            <h4 class="cardtitle" *ngIf="entityCode == 'QCSAMPASYS'"> ARDS Selection</h4>
+            <h4 class="cardtitle" *ngIf="entityCode != 'QCSAMPASYS'"> ARDS for Calibration</h4>
+            <div class="pl-1 pr-1">
+
+                <mat-grid-list cols="2" rowHeight="68px" class="mt-2"
+                    [ngClass]="{'hide': pageType != 'MNG' || !isDisplay}">
+                    <mat-grid-tile>
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Analysis Mode</mat-label>
+                            <mat-select placeholder="Analysis Mode" [(ngModel)]="manageArdsBO.analysisMode"
+                                [disabled]="disabledHeaders()" (ngModelChange)="changeSpecification('MODE')">
+                                <mat-option *ngFor="let item of ardsBO.specArdsApplicable" [value]="item.catItemCode">
+                                    {{item.catItem}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label> {{specificationName}}</mat-label>
+                            <mat-select placeholder="{{specificationName}}" [(ngModel)]="manageArdsBO.specID"
+                                [disabled]="disabledHeaders() || specDisable" (ngModelChange)="changeSpecification()">
+                                <mat-option *ngFor="let item of getSpecifications('COM')" [value]="item.specID">
+                                    {{item.displayName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile *ngIf="entityCode == 'QCSAMPASYS'">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Extraneous Matter Analysis Applicable</mat-label>
+                            <mat-select placeholder="Extraneous Matter Analysis Applicable"
+                                [(ngModel)]="manageArdsBO.extraneousAnalysis" [disabled]="disabledHeaders()">
+                                <mat-option value="YES">Yes</mat-option>
+                                <mat-option value="No">No</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile *ngIf="containerWiseAnalysisApp == 'App'|| containerWiseAnalysisApp == 'Yes'">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Container Wise Analysis Applicable</mat-label>
+                            <mat-select placeholder="Container Wise Analysis Applicable"
+                                [(ngModel)]="manageArdsBO.containerWiseAnalysisApp"
+                                [disabled]="disabledHeaders() || hide">
+                                <mat-option value="Yes">Yes</mat-option>
+                                <mat-option value="No">No</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                </mat-grid-list>
+                <div align="right" class="pb-2" [ngClass]="{'hide': pageType != 'MNG' || !isDisplay}">
+                    <h5 class=" mr-1 mt-0 mb-0" *ngIf="manageArdsBO.specID && entityCode == 'QCSAMPASYS'">
+                        <a class="qc_badge" href="javascript:" (click)="getSpec()">Specification Details</a>
+                    </h5>
+
+                    <h5 class="mt-0 mb-0 mr-1" *ngIf="manageArdsBO.specID && entityCode != 'QCSAMPASYS'">
+                        <a class="qc_badge" href="javascript:" (click)="getSpec()">Calibration
+                            Parameter Details</a>
+                    </h5>
+
+
+                </div>
+            </div>
+            <div class="view-inv pb-2" *ngIf="pageType == 'VIEW' || !isDisplay">
+                <ul>
+                    <li>
+                        <mat-label><span>Analysis Mode</span><span>{{formatString(manageArdsBO.analysis)}}</span>
+                        </mat-label>
+                    </li>
+                    <li *ngIf="entityCode == 'QCSAMPASYS'">
+                        <mat-label><span>Extraneous Matter Analysis
+                                Applicable</span><span>{{formatString(manageArdsBO.extraneousAnalysis)}}</span>
+                        </mat-label>
+                    </li>
+                    <li *ngIf="entityCode == 'QCSAMPASYS'">
+                        <mat-label><span>Container Wise Analysis
+                                Applicable</span><span>{{formatString(manageArdsBO.containerWiseAnalysisApp)}}</span>
+                        </mat-label>
+                    </li>
+                    <li class="w-100">
+                        <h4 class="cardtitle_sm pl-2 mt-2" *ngIf="manageArdsBO.specID">
+                            {{specificationName}} &nbsp; : &nbsp; <a class="qc_badge" href="javascript:"
+                                (click)="getSpec()">{{formatString(manageArdsBO.specNumber)}}</a>
+                        </h4>
+                        <mat-label *ngIf="!manageArdsBO.specID">
+                            <span>{{specificationName}}</span>
+                            <span>{{formatString(manageArdsBO.specNumber)}}</span>
+                        </mat-label>
+                    </li>
+
+                </ul>
+                <div style="clear: both;" class="mt-2 pl-2 pr-2" *ngIf="manageArdsBO.extraneousAnalysis == 'YES'">
+                    <lims-grid [headers]="headersData" [dataSource]="testDataSource">
+                    </lims-grid>
+                </div>
+
+            </div>
+            <div *ngIf="isAnalysisMode()" class="ardsDocList mt-3 pl-2 pr-2">
+                <ards-print [pageType]="pageType" [ardsBO]="ardsBO" (onActionClick)="onActionClicked($event, 'MAIN')"
+                    [usrActions]="usrActions" type="MAIN" [entityCode]="entityCode" [appBO]="appBO"></ards-print>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+<div class="qc_heading_spce"
+    [ngClass]="{'hide' : manageArdsBO.extraneousAnalysis != 'YES' || pageType != 'MNG' || !isDisplay}">
+    <mat-card class="mat-card-heading">
+        <mat-card-content>
+            <h4 class="cardtitle"> Extraneous Matter Analysis Tests</h4>
+            <div class="pl-1 pr-1 mt-2">
+
+                <mat-grid-list cols="2" rowHeight="68px" [ngClass]="{'hide': disabledHeaders()}">
+                    <mat-grid-tile>
+                        <div class="full-width">
+                            <lims-lookup [info]="lkpTestInfo" #tests></lims-lookup>
+                        </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile
+                        [ngClass]="{'hide': this.manageArdsBO.analysisMode != 'ONLINE' && this.manageArdsBO.analysisMode != 'OFFLINE'}">
+                        <div class="full-width">
+                            <lims-lookup [info]="stpInfo" #stpLkp></lims-lookup>
+                        </div>
+                    </mat-grid-tile>
+                </mat-grid-list>
+                <div align="right" [ngClass]="{'hide': disabledHeaders()}">
+                    <button type="button" mat-raised-button class="btnbase btn-blue" (click)="addTest()">
+                        <i class="{{_global.icnAdd}}" *ngIf="exBtnType == 'Add'" aria-hidden="true"></i>
+                        <i class="{{_global.icnUpdate}}" *ngIf="exBtnType == 'Update'" aria-hidden="true"></i>&nbsp;
+                        {{exBtnType}}</button>
+                </div>
+                <div class="full-width pl-1 pr-1" *ngIf="manageArdsBO.extraneousAnalysis == 'YES'">
+                    <lims-grid (onActionClicked)="onActionClicked($event, 'EXT')" [headers]="headersData"
+                        [dataSource]="testDataSource" [actions]="actions">
+                    </lims-grid>
+                </div>
+
+                <!-- <material-grid [entityCode]="entityCode" [dataSource]="analyTestDataSource" [columns]="analyheader" [checkboxField]="'isExclude'">
+    </material-grid> -->
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+<div align="right" class="mt-2 pb-2 pr-1" *ngIf="pageType == 'MNG' && isDisplay && manageArdsBO.analysisMode != 'YES'">
+    <button type="button" mat-raised-button class="btnbase btn-blue mr-0" (click)="getSpecTest()"
+        [disabled]="disabledBtn">
+        <i class="{{_global.icnSave}}" *ngIf="btnType == 'Save'" aria-hidden="true"></i>
+        <i class="{{_global.icnUpdate}}" *ngIf="btnType == 'Update'" aria-hidden="true"></i>&nbsp;{{btnType}}</button>
+    <button type="button" mat-raised-button class="btnbase btn-blue" (click)="manageArdsData()" id="mngArdsbtnLoaders"
+        btnLoader [isLoaderOn]="isLoaderStart" *ngIf="btnType == 'Update' && isDisplay" [disabled]="disabledBtn">
+        <i class="{{_global.icnConfirm}}" aria-hidden="true"></i>
+        &nbsp;Confirm</button>
+</div>
+
+<div class="qc_heading_spce"
+    [ngClass]="{'hide' : !manageArdsBO.containerWiseAnalysisApp || manageArdsBO.containerWiseAnalysisApp == 'No'}">
+    <mat-card class="mat-card-heading">
+        <mat-card-content>
+            <h4 class="cardtitle"> ARDS Selection for Container Analysis </h4>
+            <div class="pl-2 pr-2 mt-1">
+
+                <div class="grid-syn">
+                    <mat-grid-list cols="6" rowHeight="6:1" gutterSize="10px">
+                        <mat-grid-tile *ngFor="let item of packList">
+                            <mat-checkbox [(ngModel)]="item.isSelected" disabled>
+                                {{item.packNumber}}
+                            </mat-checkbox>
+                        </mat-grid-tile>
+                    </mat-grid-list>
+                </div>
+            </div>
+            <div class="pl-1 pr-1 mt-2">
+
+                <mat-grid-list cols="2" rowHeight="68px" class="mt-3" *ngIf="pageType != 'VIEW' && !hide">
+                    <mat-grid-tile>
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Analysis Mode</mat-label>
+                            <mat-select placeholder="Analysis Mode" [(ngModel)]="contArdsBO.ardsMode"
+                                (ngModelChange)="changeContainerSpecification('MODE')">
+                                <mat-option *ngFor="let item of ardsBO.specArdsApplicable" [value]="item.catItemCode">
+                                    {{item.catItem}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label> {{specificationName}}</mat-label>
+                            <mat-select placeholder="{{specificationName}}" [(ngModel)]="contArdsBO.specID"
+                                (ngModelChange)="changeContainerSpecification()">
+                                <mat-option *ngFor="let item of getSpecifications('CONT')" [value]="item.specID">
+                                    {{item.displayName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Type of Analysis</mat-label>
+                            <mat-select placeholder="Analysis Type" [(ngModel)]="contArdsBO.type">
+                                <mat-option value="Single Test">Single Test</mat-option>
+                                <mat-option value="Complete">Complete</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile [ngClass]="{'hide': contArdsBO.type == 'Complete'}">
+                        <div class="full-width">
+                            <lims-lookup [info]="testInfo" #specTests></lims-lookup>
+                        </div>
+                    </mat-grid-tile>
+                </mat-grid-list>
+                <div align="right" *ngIf="pageType != 'VIEW' && !hide">
+                    <h5 class="mt-1 mb-2 mr-1" *ngIf="contArdsBO.specID && entityCode == 'QCSAMPASYS'">
+                        <a class="qc_badge" href="javascript:" (click)="getConSpec()">Specification Details</a>
+                    </h5>
+                </div>
+
+                <div align="right" class="pb-2 mt-2"
+                    *ngIf="pageType != 'VIEW' && !hide && contArdsBO.ardsMode != 'YES'">
+                    <button type="button" mat-raised-button class="btnbase btn-blue" (click)="containerArds()"><i
+                            class="fas fa-chevron-circle-right"></i> &nbsp; Go</button>
+                </div>
+            </div>
+
+            <div class="view-inv" *ngIf="pageType == 'VIEW' || hide">
+                <ul>
+                    <li>
+                        <mat-label><span>Analysis Mode</span><span>{{formatString(contArdsBO.analysisType)}}</span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label><span>Type of Analysis</span><span>{{formatString(contArdsBO.type)}}</span>
+                        </mat-label>
+                    </li>
+                    <li *ngIf="contArdsBO.type != 'Complete'" class="w-100">
+                        <mat-label><span>Test Name</span><span>{{formatString(contArdsBO.testName)}}</span>
+                        </mat-label>
+                    </li>
+                    <li class="w-100">
+                        <h4 class="cardtitle_sm pl-2 mt-0 mb-0" *ngIf="manageArdsBO.specID">
+                            {{specificationName}} &nbsp; : &nbsp; <a class="qc_badge" href="javascript:"
+                                (click)="getSpec()">{{formatString(contArdsBO.specification)}}</a>
+                        </h4>
+                        <mat-label *ngIf="!manageArdsBO.specID">
+                            <span>{{specificationName}}</span>
+                            <span>{{formatString(contArdsBO.specification)}}</span>
+                        </mat-label>
+                    </li>
+                </ul>
+            </div>
+
+            <div *ngIf="isContainerAnalysisMode()" class="ardsDocList mt-3 pl-1 pr-1">
+                <ards-print [pageType]="pageType" [ardsBO]="containerBO"
+                    (onActionClick)="onActionClicked($event, 'CONT')" [conUsrActions]="conUsrActions" type="CONTAINER"
+                    [entityCode]="entityCode" [appBO]="appBO"></ards-print>
+            </div>
+
+        </mat-card-content>
+    </mat-card>
+</div>
+<div align="center" *ngIf="headerInfo.refSioCode">
+ <mat-label>Note : Reference Sample Inward No. - {{headerInfo.refSioCode}}</mat-label>
+</div>
+<div align="right">
+    <button type="button" mat-raised-button class="btnbase btn-blue" (click)="specReset()" id="btnLoadersSpec" btnLoader [isLoaderOn]="isLoaderStartSpecReset"
+    *ngIf="headerInfo.inwardType != 'AQUAL' && entityCode == 'QCSAMPASYS' && isResetAction && pageType != 'VIEW' && !isDisplay && (headerInfo.statusCode !='APP' && headerInfo.statusCode !='REJ')">
+    <i class="{{_global.icnChange}}" aria-hidden="true"></i>&nbsp;Spec Reset</button>
+</div>

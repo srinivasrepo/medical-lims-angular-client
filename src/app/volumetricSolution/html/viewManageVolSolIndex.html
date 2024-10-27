@@ -1,0 +1,60 @@
+<page-head [pageTitle]="viewPageTitle" [backUrl]="viewBackUrl" [viewBack]=true></page-head>
+
+<mat-card class="mat-card-c div-content mb-4 mt-1rem qc_mobp-main-tab">
+    <mat-card-content>
+        <div class="mt-2">
+            <div class="px-5">
+                <div class="qc_heading_spce">
+                    <mat-card class="mat-card-heading">
+                        <mat-card-content>
+                            <!-- <h4 class="cardtitle">Volumetric Solution Index </h4> -->
+
+                            <div class="view-inv pb-1">
+                                <ul>
+                                    <li class="w-100">
+                                        <mat-label>
+                                            <span>Created By</span>
+                                            <span>{{this.volSolutionIndex.createdBy || 'N/A'}}</span>
+                                        </mat-label>
+                                    </li>
+                                    <li class="w-100">
+                                        <mat-label>
+                                            <span>Created On</span>
+                                            <span> {{this.volSolutionIndex.createdOn || 'N/A'}}</span>
+                                        </mat-label>
+                                    </li>
+                                    <li class="w-100">
+                                        <mat-label>
+                                            <span>Last Updated By</span>
+                                            <span>{{this.volSolutionIndex.lastUpdatedBy || 'N/A'}}</span>
+                                        </mat-label>
+                                    </li>
+                                    <li class="w-100">
+                                        <mat-label><span>Comments</span>
+                                            <span>{{this.volSolutionIndex.comment || 'N/A'}}</span>
+                                        </mat-label>
+                                    </li>
+                                    <li class="w-100">
+                                        <mat-label><span>Preparation Procedure</span>
+                                            <span>{{this.volSolutionIndex.preparationProcedure || 'N/A'}}</span>
+                                        </mat-label>
+                                    </li>
+                                    <li class="w-100">
+                                        <mat-label><span>Standardization Procedure </span>
+                                            <span>{{this.volSolutionIndex.standardizationProcedure || 'N/A' }}</span>
+                                        </mat-label>
+                                    </li>
+                                </ul>
+                                <div class="px-5 mb-2">
+                                    <lims-grid [headers]="headers" [dataSource]="dataSource"></lims-grid>
+                                    <div align="center" *ngIf="solMgmtFormulaeList.length < 1 ">No records found</div>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>

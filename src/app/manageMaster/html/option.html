@@ -1,0 +1,26 @@
+<div class="new-popupTitle" mat-dialog-title>
+    <h1 class="colorwhite">{{pageTitle}}</h1>
+    <div class="popup-close">
+        <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="optionClose()"></i>
+    </div>
+</div>
+<div class="mt-3 ml-3 mr-3 mb-3" mat-dialog-content>
+    <mat-grid-list class="mt-2" cols="1" rowHeight="60px">
+        <mat-grid-tile>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Option</mat-label>
+                <mat-select [(ngModel)]="optionObj.configValue" *ngIf="dataType == 'LIST'">
+                    <mat-option *ngFor="let opt of optionList" [value]="opt">{{opt}}
+                    </mat-option>
+                </mat-select>
+                <input matInput [(ngModel)]="optionObj.configValue" *ngIf="dataType == 'STRING'" maxlength="25">
+                <input matInput [(ngModel)]="optionObj.configValue" *ngIf="dataType == 'NUMBER'" (keypress)="allowDecimals($event)"
+                    maxlength="10">
+            </mat-form-field>
+        </mat-grid-tile>
+    </mat-grid-list>
+    <div align="middle">
+        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="saveConfig()">
+            <i class="{{_global.icnSave}}" aria-hidden="true"></i>&nbsp;Save</button>
+    </div>
+</div>

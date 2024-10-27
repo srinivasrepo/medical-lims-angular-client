@@ -1,0 +1,92 @@
+<page-head [pageTitle]="pageTitle" viewBack="true" [backUrl]="backUrl" [status]="status" [refNo]="refNum" [viewHistoryVisible]="showViewHis"
+[viewHistory]="viewHistory" [encEntityActID]="encArdsExecID"
+[entityCode]="entityCode" showRpts="true" [encRptEntActID]="encID"></page-head>
+<mat-card class="mat-card-c div-content mb-4 mt-1rem qc_mobp-main-tab">
+    <mat-card-content>
+        <div align="right" class="qc_btnbase-confirm">
+            <button type="button" mat-raised-button class="btnbase-confirm" (click)="confirm()"
+                *ngIf="appBO && appBO.canApprove && showConfirm">
+                <i class="{{_global.icnConfirm}}" aria-hidden="true"></i>&nbsp;&nbsp;Confirm</button>
+        </div>
+        <mat-tab-group #calibArdsTab mat-align-tabs="center" class="ana-tab">
+            <mat-tab label="Initiation">
+                <div class="qc_heading_spce">
+                    <mat-card class="mat-card-heading">
+                        <mat-card-content>
+                            <h4 class="cardtitle"> Instrument Details</h4>
+                    <div class="view-inv pb-2">
+                        <ul>
+                            <li>
+                                <mat-label>
+                                    <span>Equipment Category </span>
+                                    <span>{{ headerInfo.eqpCategory  || 'N / A'}}</span>
+                                </mat-label>
+                            </li>
+                            <li>
+                                <mat-label><span>Equipment / Instrument type </span>
+                                    <span>{{ headerInfo.eqpType  || 'N / A'}}</span>
+                                </mat-label>
+                            </li>
+                            <li>
+                                <mat-label><span>Equipment / Instrument Title (ID) </span>
+                                    <span>{{ headerInfo.eqpTitle  || 'N / A'}}
+                                        ({{headerInfo.eqpCode  || 'N / A'}})</span>
+                                </mat-label>
+                            </li>
+                            <li>
+                                <mat-label><span>Schedule Type </span>
+                                    <span>{{ headerInfo.scheduleType  || 'N / A'}}</span>
+                                </mat-label>
+                            </li>
+                            <li>
+                                <mat-label><span>Schedule Date </span>
+                                    <span> {{ getDate(headerInfo.schDate)}}</span>
+                                </mat-label>
+                            </li>
+                            <li>
+                                <mat-label><span>Schedule Year</span>
+                                    <span>{{getyear(headerInfo.schDate)}}</span>
+                                </mat-label>
+                            </li>
+                            <li>
+                                <mat-label>
+                                    <span>Schedule start date</span>
+                                    <span> {{ getDate(headerInfo.schStartDate)}}</span></mat-label>
+                            </li>
+                            <li>
+                                <mat-label><span>Schedule end date </span>
+                                    <span>{{ getDate(headerInfo.schEndDate)}}</span>
+                                </mat-label>
+                            </li>
+                            <li>
+                                <mat-label><span>Execution Status</span>
+                                    <span>{{ headerInfo.status  || 'N / A'}}</span>
+                                </mat-label>
+                            </li>
+                            <li>
+                                <mat-label><span>Frequency Mode </span>
+                                    <span>{{ headerInfo.periodType  || 'N / A'}}</span>
+                                </mat-label>
+                            </li>
+                        </ul>
+                    </div>
+                    </mat-card-content>
+                    </mat-card>
+                </div>
+            </mat-tab>
+            <mat-tab label="ARDS">
+                <app-analysis-ards [encEntityActID]="encID" [entityCode]="'ENGGMNT'" [pageType]="pageType" (updStatus)="updateStatus($event)">
+                </app-analysis-ards>
+            </mat-tab>
+            <mat-tab label="Calibration">
+                <div align="right" class="mt-2" *ngIf="isDispay && pageType != 'VIEW'">
+                    <button type="button" mat-raised-button class="btnbase btn-blue" (click)="run()">
+                        <i class="{{_global.icnGo}}" aria-hidden="true"></i>&nbsp;Run Calibration</button>
+                </div>
+                <app-analysis [encEntityActID]="encID" [entityCode]="'ENGGMNT'" #analysis (emitArdsExecID)="getArdsExec($event)" [showBtns]="!isDispay" [pageType]="analysisPageType"
+                [appBO]="appBO">
+                </app-analysis>
+            </mat-tab>
+        </mat-tab-group>
+    </mat-card-content>
+</mat-card>

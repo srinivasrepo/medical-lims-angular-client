@@ -1,0 +1,338 @@
+<!-- <div>
+    <div align="center" class="mt-2 mb-2">
+        <mat-chip-list>
+            <mat-chip *ngFor="let item of dataSource" (click)="onActionClicked(item)"> {{item.dateReceived}}
+            </mat-chip>
+        </mat-chip-list>
+    </div>
+
+    <div class="dragDropHeader" cdkDropListGroup>
+        <div class="left-drop">
+            <mat-accordion displayMode="flat" [multi]="true">
+
+                <mat-expansion-panel [disabled]="true" [expanded]="true"
+                    *ngFor="let chapter of filteredDetailsList; let i = index" id="{{chapter.detailID}}"
+                    #chapterExpansionPanel (mouseenter)="mouseEnterHandler($event, chapterExpansionPanel)">
+                    <mat-expansion-panel-header>
+                        {{ chapter.inputDescription }}
+                    </mat-expansion-panel-header>
+
+                    <mat-list cdkDropList [cdkDropListConnectedTo]="doneList" #todoList="cdkDropList"
+                        [cdkDropListData]="selectedList" (cdkDropListDropped)="drop($event, chapter.detailID)">
+                        <mat-list-item cdkDrag *ngFor="let item of filterInputFieldsValues(chapter.detailID)">
+
+                            <span class="inputKey">{{ item.keyName}}</span> - <span class="inputValue">
+                                {{item.value }}</span>
+
+
+
+
+                            <i class="{{_global.icnDelete}}" aria-hidden="true" (click)="removeInputValue(item)"></i>
+                        </mat-list-item>
+                    </mat-list>
+
+                </mat-expansion-panel>
+
+            </mat-accordion>
+        </div>
+
+
+        <div class="right-drag">
+            <div>
+                <div class="example-container">
+                    <h2>Template Values : </h2>
+
+                    <div cdkDropList #doneList="cdkDropList" [cdkDropListData]="inputDetailsList" class="example-list">
+                        <div class="example-box" *ngFor="let item of inputDetailsList;let i = index;" cdkDrag
+                            id="Temp-{{i}}">
+                            <ul class="drag-ul">
+                                <li class="inputKey">{{ item.key}}</li>
+                                <li>-</li>
+                                <li class="inputValue">
+                                    {{item.value }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <div *ngIf="filteredDetailsList.length > 0">
+        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="updateInputList()"> <i
+                class="{{_global.icnList}}" aria-hidden="true"></i>&nbsp;Save</button>
+    </div>
+
+</div> -->
+
+
+
+<div class="mt-3 mb-3 pb-3 pt-3 pl-1 pr-1 view-inv add-hr">
+    <div class="row">
+
+        <div class="col-4">
+            <lims-lookup [info]="arNumInfo" #arNumbers (onSelect)="prepareTestLkp($event)">
+            </lims-lookup>
+        </div>
+
+        <div class="col-4">
+            <lims-lookup [info]="testInfo" #tests (onSelect)="prepareSdmsLkp()">
+            </lims-lookup>
+        </div>
+
+        <div class="col-4">
+            <lims-lookup [info]="sdmsInfo" #sdmsData>
+            </lims-lookup>
+        </div>
+    </div>
+    <div class="row">
+        <div align="right" class="mt-1 col-12">
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="getData('GO')"> <i
+                    class="fas fa-chevron-circle-right"></i> &nbsp; Go</button>
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="getData('CURRENT')"><i
+                    class="fas fa-chart-line"></i> &nbsp; Current
+                Analysis</button>
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="manageSDMSData()">&nbsp; SDMS Data
+            </button>
+        </div>
+
+    </div>
+
+    <!-- <mat-chip-list>
+        <mat-chip *ngFor="let item of chipDatasource;let i = index;" (click)="onActionClicked(item, i)">
+            {{item.dateReceived}}
+        </mat-chip>
+    </mat-chip-list> -->
+</div>
+
+<div class="dragDropHeader" cdkDropListGroup>
+
+
+    <div class="left-drop">
+        <div class="input-title">
+            <h2 class="nomargin">Inputs</h2>
+        </div>
+        <div class="input-acc">
+            <mat-accordion displayMode="flat" [multi]="true">
+
+                <mat-expansion-panel [disabled]="true" [expanded]="true"
+                    *ngFor="let chapter of filteredDetailsList; let i = index" id="{{chapter.detailID}}"
+                    #chapterExpansionPanel (mouseenter)="mouseEnterHandler($event, chapterExpansionPanel)">
+                    <mat-expansion-panel-header>
+                        {{ chapter.inputDescription }}
+                    </mat-expansion-panel-header>
+
+                    <div class="dropInputField" cdkDropList #todoList="cdkDropList" [cdkDropListData]="selectedList"
+                        (cdkDropListDropped)="drop($event, chapter.detailID)">
+                        <div cdkDrag *ngFor="let item of filterInputFieldsValues(chapter.detailID)">
+                            <ul class="input_values">
+                                <li class="inputKey">
+                                    <div>
+                                        {{ item.field}}
+                                    </div>
+                                    <div>
+                                        <i class="{{_global.icnDelete}}" aria-hidden="true"
+                                            (click)="removeInputValue(item)"></i>
+                                    </div>
+                                </li>
+
+                                <li class="inputValue">
+                                    {{item.value}}
+                                </li>
+                            </ul>
+
+                        </div>
+                    </div>
+
+
+
+
+
+                    <!-- <mat-list cdkDropList #todoList="cdkDropList" [cdkDropListData]="selectedList"
+                        (cdkDropListDropped)="drop($event, chapter.detailID)">
+                        <mat-list-item cdkDrag *ngFor="let item of filterInputFieldsValues(chapter.detailID)">
+                            <ul class="input_values">
+                                <li class="inputKey">
+                                    <div>
+                                        {{ item.field}}
+                                    </div>
+                                    <div>
+                                        <i class="{{_global.icnDelete}}" aria-hidden="true"
+                                            (click)="removeInputValue(item)"></i>
+                                    </div>
+                                </li>
+
+                                <li class="inputValue">
+                                    {{item.value}}
+                                </li>
+
+
+                            </ul>
+
+
+
+                        </mat-list-item>
+                    </mat-list> -->
+
+                </mat-expansion-panel>
+
+            </mat-accordion>
+        </div>
+    </div>
+
+
+    <div>
+        <mat-tab-group mat-align-tabs="center">
+            <mat-tab label="Single Values">
+
+                <div *ngIf="objectHeaders && objectHeaders.length > 0" class="middle-left-drag">
+                    <div cdkDropList #doneList1="cdkDropList" [cdkDropListConnectedTo]="todoList"
+                        class="example-list mapping-header">
+                        <div id="Temp-{{i}}" class="example-box"
+                            [cdkDragData]="{name: key.field, value: getObjectDataList(key.key, key.KeyField), Key: key.key, type:key.KeyField }"
+                            *ngFor="let key of objectHeaders;let i = index;" cdkDrag>
+                            <!-- {{key}} - {{getObjectDataList(key)}} -->
+
+                            <!-- <ul>
+                                <li class="inputKey">{{ key}}
+                                <li>-</li>
+                                <li class="inputValue"> {{getObjectDataList(key)}}</li>
+                            </ul> -->
+
+                            <ul class="input_values input_key_value">
+                                <li class="inputKey">
+                                    {{ key.field}}
+                                </li>
+                                <!-- <li>
+                                    -
+                                </li> -->
+                                <li class="inputValue">
+                                    {{getObjectDataList(key.key, key.KeyField)}}
+                                </li>
+                            </ul>
+
+                            <!-- <span class="inputKey">{{ key}}</span> -
+                            <span class="inputValue">
+                                {{getObjectDataList(key)}}</span> -->
+                        </div>
+                    </div>
+                </div>
+
+            </mat-tab>
+            <!-- <mat-tab label="Key - Value Pair">
+
+                <div *ngIf="dataSource && dataSource.length > 0" class="middle-left-drag">
+                    <div cdkDropList #doneList1="cdkDropList" [cdkDropListConnectedTo]="todoList"
+                        class="example-list mapping-header">
+                        <div id="Temp-{{i}}" class="example-box"
+                            [cdkDragData]="{Key: obj['key'], value: obj['value'], name: obj['key']}"
+                            *ngFor="let obj of dataSource;let i = index;" cdkDrag>
+
+
+                            <span class="inputKey">{{ obj['key'] }}</span> -
+                            <span class="inputValue">
+                                {{ obj['value'] }}</span>
+
+
+
+                        </div>
+                    </div>
+                </div>
+
+            </mat-tab> -->
+            <mat-tab label="Table Values">
+
+                <div class="addx-scroll qc_eards_tbl mapping_table">
+                    <div class="qc_n-table"
+                        *ngIf="dynamicDataSource && dynamicDataSource.data && dynamicDataSource.data.length > 0">
+                        <mat-table [dataSource]="dynamicDataSource">
+                            <ng-container *ngFor="let column of dynamicColumns; let i = index"
+                                [matColumnDef]="column.key">
+                                <mat-header-cell *matHeaderCellDef>
+                                    {{ column.field }}
+                                </mat-header-cell>
+                                <mat-cell cdkDropList cdkDrag #doneList="cdkDropList" class="drag_cell"
+                                    [cdkDragData]="{name: column.field, columIndex: i, value: row[column.key], Key: column.key }"
+                                    [cdkDropListConnectedTo]="todoList" *matCellDef="let row" id="Temp-{{i}}">
+                                    {{ row[column.key] }}
+                                </mat-cell>
+                            </ng-container>
+                            <mat-header-row *matHeaderRowDef="dynamicDisplayedColumns; sticky: true"></mat-header-row>
+                            <mat-row *matRowDef="let row; columns: dynamicDisplayedColumns;"></mat-row>
+                        </mat-table>
+                    </div>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!-- <div class="middle-left-drag">
+        <div *ngIf="objectHeaders && objectHeaders.length > 0">
+            <h2>Header : </h2>
+            <div cdkDropList #doneList1="cdkDropList" [cdkDropListConnectedTo]="todoList"
+                class="example-list mapping-header">
+                <div id="Temp-{{i}}" class="example-box" [cdkDragData]="{name: key, value: getObjectDataList(key)}"
+                    *ngFor="let key of objectHeaders;let i = index;" cdkDrag>
+                    {{key}} - {{getObjectDataList(key)}}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="middle-right-drag">
+
+        <div *ngIf="dataSource && dataSource.length > 0">
+            <h2>Key - Value Pair : </h2>
+            <div cdkDropList #doneList1="cdkDropList" [cdkDropListConnectedTo]="todoList"
+                class="example-list mapping-header">
+                <div id="Temp-{{i}}" class="example-box" [cdkDragData]="{Key: obj['key'], value: obj['value']}"
+                    *ngFor="let obj of dataSource;let i = index;" cdkDrag>
+                    {{ obj['key'] }} - {{ obj['value'] }}</div>
+            </div>
+        </div>
+
+     
+
+    </div>
+
+    <div class="right-drag">
+        <div class="calibration-grid"
+            *ngIf="dynamicDataSource && dynamicDataSource.data && dynamicDataSource.data.length > 0">
+            <h2>Dynamic List : </h2>
+            <mat-table [dataSource]="dynamicDataSource">
+                <ng-container *ngFor="let column of dynamicColumns; let i = index" [matColumnDef]="column.field">
+                    <mat-header-cell *matHeaderCellDef>
+                        {{ column.field }}
+                    </mat-header-cell>
+                    <mat-cell cdkDropList cdkDrag #doneList="cdkDropList" class="drag_cell"
+                        [cdkDragData]="{name: column.field, columIndex: i, value: row[column.field]}"
+                        [cdkDropListConnectedTo]="todoList" *matCellDef="let row" id="Temp-{{i}}">
+                        {{ row[column.field] }}
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="dynamicDisplayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: dynamicDisplayedColumns;"></mat-row>
+            </mat-table>
+        </div>
+    </div> -->
+
+
+    <div *ngIf="filteredDetailsList.length > 0" class="mt-4 textalign-right">
+        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="updateInputList()"> <i
+                class="{{_global.icnList}}" aria-hidden="true"></i>&nbsp;Save</button>
+    </div>
+
+</div>

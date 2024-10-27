@@ -1,0 +1,64 @@
+<div class="new-popupTitle" mat-dialog-title>
+    <h1>{{title}}</h1>
+    <div class="popup-close">
+        <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+    </div>
+</div>
+<div class="mt-0 mb-3 pl-3 pr-3" mat-dialog-content>
+
+    <div *ngIf="pageType != 'VIEW'">
+        <mat-form-field appearance="outline" class="full-width mt-1">
+            <mat-label>Select UOM</mat-label>
+            <mat-select [(ngModel)]="samplePack.secUomID" [disabled]="uomBtn != 'Go'">
+                <mat-option *ngFor="let uom of uomList" [value]="uom.uomID">{{uom.uom}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <div align="right">
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="getPacks()">
+                <i class="{{_global.icnGo}}" *ngIf="uomBtn == 'Go'" aria-hidden="true"></i>&nbsp;
+                <i class="{{_global.icnChange}}" *ngIf="uomBtn != 'Go'" aria-hidden="true"></i>&nbsp;{{uomBtn}}</button>
+        </div>
+    </div>
+    <div *ngIf=" uomBtn != 'Go'">
+        <div class="view-inv add-hr">
+            <ul>
+                <li class="w-100">
+                    <mat-label>
+                        <span>Material Name</span><span>{{materialName}}</span>
+                    </mat-label>
+                </li>
+                <li>
+                    <mat-label>
+                        <span>Material Code</span>
+                        <span>{{matCode}}</span>
+                    </mat-label>
+                </li>
+                <!-- <li>
+                <mat-label>
+                    <span>Requested Qty.</span><span>{{reqQty}} {{uom}}</span>
+                </mat-label>
+            </li> -->
+                <li>
+                    <mat-label>
+                        <span>AR Number</span><span> {{arNumber}}</span>
+                    </mat-label>
+                </li>
+            </ul>
+
+        </div>
+
+
+        <div class="qc_poup_table mt-2">
+            <lims-grid [headers]="headerData" [dataSource]="dataSource" (onDataChange)="packQtyChange($event)"
+                [isEnableCheckbox]="pageType == 'VIEW'"></lims-grid>
+        </div>
+        <div>
+            <mat-label><span>Total Pack Qty. : </span>{{getVal()}}</mat-label>
+        </div>
+        <div align="end" *ngIf="pageType == 'MNG'" class="mb-2">
+
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="save()">
+                <i class="{{_global.icnSave}}" *ngIf="btnType == 'Save'" aria-hidden="true"></i>&nbsp;Save</button>
+        </div>
+    </div>
+</div>

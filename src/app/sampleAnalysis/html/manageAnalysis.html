@@ -1,0 +1,105 @@
+<div *ngIf="showHidePageType == 'ARDS' || showHidePageType == 'MAPPING_ARDS'">
+    <app-rawData [encSamAnalysisTestID]="encSamAnalysisTestID" [entityCode]="entityCode"
+        [analysisMode]="testAnalysisMode" (hideRawDataEmitter)="hideRawDataEmit($event)" [sourceCode]="sourceCode"
+        [pageType]="pageType" [refNo]="appBO.referenceNumber" [updTestStatus]="updTestStatus">
+    </app-rawData>
+</div>
+
+<div *ngIf="showHidePageType == 'ANALYSIS'" class="qc_withselect mt-3">
+    <material-grid [checkboxField]="'isExclude'" [removeAction]="removeActions" [isEnableCheckbox]="isEnableCheckbox"
+        [entityCode]="entityCode" [dataSource]="dataSource" [columns]="headersData" [actions]="actions"
+        (onActionClicked)="onActionClick($event)" [pageType]="actPageType">
+    </material-grid>
+    <div *ngIf="extrandataSource && extrandataSource.data && extrandataSource.data.length > 0" class="mt-3">
+        <h4 class="cardtitle_md mb-2 pl-1">Extraneous Matter Analysis Tests</h4>
+        <material-grid [checkboxField]="'isExclude'" [removeAction]="removeActions" #extGrid
+            [isEnableCheckbox]="isEnableCheckbox" [entityCode]="entityCode" [dataSource]="extrandataSource"
+            [columns]="headersData" [actions]="actions" (onActionClicked)="onActionClick($event)"
+            [pageType]="actPageType">
+        </material-grid>
+    </div>
+
+    <div *ngIf="dataSource && dataSource.data.length > 0 && sourceCode != 'OOS_TEST'">
+        <div class="mt-2 pb-0">
+            <div *ngIf="entityCode == 'QCSAMPASYS' && actPageType == 'MNG' && sourceCode != 'CONT_WISE_ANA'">
+                <mat-label> <span class="qc_lable-txt pr-5">Status &nbsp; :</span> </mat-label>
+                <mat-radio-group [(ngModel)]="analysisStatus" [disabled]="disStatus || btnType == 'Update'">
+                    <mat-radio-button color="primary" value="Approved" ngDefaultControl class="mr-5"> Approved
+                    </mat-radio-button>
+                    <mat-radio-button color="primary" value="Rejected" ngDefaultControl>Rejected
+                    </mat-radio-button>
+                </mat-radio-group>
+            </div>
+            <mat-label
+                *ngIf="entityCode != 'OOSPROC' && (actPageType != 'MNG' || entityCode != 'QCSAMPASYS' || sourceCode == 'CONT_WISE_ANA')">
+                <span class="qc_lable-txt pr-1">Status &nbsp; :</span> {{analysisStatus || 'N / A'}}
+            </mat-label>
+            <mat-form-field appearance="outline" class="full-width mt-2 pl-0 pr-0" *ngIf="actPageType != 'VIEW' ">
+                <mat-label>{{remarksType}}</mat-label>
+                <textarea matInput placeholder="{{remarksType}}" [(ngModel)]="remarks" maxlength="1000"
+                    [disabled]="btnType == 'Update' && disableRemarks"></textarea>
+                <mat-hint align="end">{{remarks?.length || 0}} / 1000</mat-hint>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width mt-2 pl-0 pr-0"
+                *ngIf="headerInfo.analysisTypeCode == 'SPC_WORK' || headerInfo.analysisTypeCode == 'SPEC_REFSTD' && actPageType != 'VIEW'">
+                <mat-label>Special Precautions</mat-label>
+                <textarea matInput placeholder="Special Precautions" [(ngModel)]="specPrecautions"
+                    [disabled]="btnType == 'Update'" maxlength="250"></textarea>
+                <mat-hint align="end">{{specPrecautions?.length || 0}} / 250</mat-hint>
+            </mat-form-field>
+            <div *ngIf="actPageType == 'VIEW'" class="view-inv add-hr pt-1 mt-2">
+                <ul>
+                    <li class="w-100"
+                        *ngIf="headerInfo.analysisTypeCode == 'SPC_WORK' || headerInfo.analysisTypeCode == 'SPEC_REFSTD'">
+                        <mat-label><span>Special Precautions</span> <span>{{specPrecautions || 'N / A'}}</span>
+                        </mat-label>
+                    </li>
+                    <li class="w-100 no-border">
+                        <mat-label><span>{{remarksType}}</span> <span>{{remarks || 'N / A'}}</span></mat-label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div align="right" class="mt-4 pb-2" *ngIf="showBtns">
+
+            <button type="button" [disabled]="actionButtonDisabled" mat-raised-button class="btnbase btn-blue"
+                *ngIf="headerInfo.inwardType != 'AQUAL' && entityCode != 'SPEC_VALID' && entityCode != 'OOSPROC' && entityCode != 'CALIB_VALIDATION' && actPageType != 'VIEW' && headerInfo.statusCode !='APP' && headerInfo.statusCode !='REJ'"
+                (click)="includeExcludeTest()" id="btnLoadersInc" btnLoader
+                [isLoaderOn]="isLoaderObj.isLoaderStartInclExclTest">
+                <i class="{{_global.icnIncludeExclude}}" aria-hidden="true"></i>&nbsp;{{btnInc}}
+            </button>
+
+            <button type="button" mat-raised-button class="btnbase btn-blue"
+                *ngIf="(headerInfo.analysisTypeCode == 'SPC_WORK' || headerInfo.analysisTypeCode == 'SPEC_REFSTD') && sourceCode != 'CONT_WISE_ANA'"
+                (click)="additionalTest()"> <i class="{{_global.icnList}}" aria-hidden="true"></i>&nbsp;Additional
+                Test</button>
+
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="saveAnalysis()" id="btnAnaLoaders"
+                btnLoader [isLoaderOn]="isLoaderObj.isLoaderStart"
+                *ngIf="actPageType != 'VIEW' && headerInfo.statusCode !='APP' && headerInfo.statusCode !='REJ'">
+                <i class="{{_global.icnSave}}" *ngIf="btnType == 'Save'" aria-hidden="true"></i>
+                <i class="{{_global.icnUpdate}}" *ngIf="btnType == 'Update'"
+                    aria-hidden="true"></i>&nbsp;{{btnType}}</button>
+
+            <!-- <button type="button" mat-raised-button class="btnbase btn-blue" (click)="specReset()" id="btnLoadersSpec" btnLoader [isLoaderOn]="isLoaderObj.isLoaderStartSpecReset"
+                *ngIf="headerInfo.inwardType != 'AQUAL' && isResetAction && actPageType != 'VIEW' && (headerInfo.statusCode !='APP' && headerInfo.statusCode !='REJ') && sourceCode != 'CONT_WISE_ANA'">
+                <i class="{{_global.icnChange}}" aria-hidden="true"></i>&nbsp;Spec Reset</button> -->
+
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="updateRemarks()"
+                id="btnLoadersFinal" btnLoader [isLoaderOn]="isLoaderObj.isLoaderFinalRemarks"
+                *ngIf="actPageType != 'VIEW' && (headerInfo.statusCode=='APP' || headerInfo.statusCode=='REJ') && sourceCode != 'CONT_WISE_ANA'">
+                <i class="{{_global.icnUpdate}}" aria-hidden="true"></i>&nbsp;{{remarksBtn}}</button>
+
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="saveChecklist()"
+                *ngIf="isCompChkApp">
+                <i class="{{_global.icnList}}" aria-hidden="true"></i>&nbsp;Comprehensive Checklist</button>
+
+            <button type="button" mat-raised-button class="btnbase btn-blue mr-0" (click)="Uploadfiles(entityCode)">
+                <i class="{{_global.icnView}}" *ngIf="btnUpload != 'Upload'" aria-hidden="true"></i>
+                <i class="{{_global.icnUpload}}" *ngIf="btnUpload == 'Upload'"
+                    aria-hidden="true"></i>&nbsp;{{btnUpload}}</button>
+            <button type="button" mat-raised-button class="btnbase btn-blue mr-0" (click)="close()" *ngIf="showCancel">
+                <i class="{{_global.icnCancel}}" aria-hidden="true"></i>&nbsp;Cancel</button>
+        </div>
+    </div>
+</div>

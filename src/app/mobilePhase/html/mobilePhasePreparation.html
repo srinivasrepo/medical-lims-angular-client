@@ -1,0 +1,69 @@
+<div class="qc_heading_spce" *ngFor="let phse of phasePrepation;let i = index;">
+    <mat-card class="mat-card-heading">
+        <mat-card-content>
+            <h4 class="cardtitle">{{phse.preparationName}}</h4>
+            <div class="pl-1 pr-1 mt-2">
+                <mat-grid-list cols="1" rowHeight="110px">
+                    <mat-grid-tile>
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>{{phse.preparationName}}</mat-label>
+                            <textarea [disabled]="disabledControls || disableAll" matInput
+                                name="{{phse.preparationName}}" cols="30" rows="3" maxlength="8000"
+                                [(ngModel)]="phse.preparation"></textarea>
+                            <mat-hint align="end">{{ phse.preparation?.length || 0 }} / 8000</mat-hint>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                </mat-grid-list>
+                <mat-grid-list cols="2" rowHeight="68px" *ngIf="purposeType != typeCode">
+                    <mat-grid-tile>
+                        <mat-form-field appearance="outline" class="full-width" rs232
+                            [mngObj]="prepareRs232('Solution PH', phse, 'MOBILE_SOL_PH', 'prep' + i)"
+                            (emitValue)="getRS232Values($event)" [pageAction]='buttonType'>
+                            <mat-label>Solution PH</mat-label>
+                            <input matInput (keypress)="allowDecimal($event)" name="{{phse.preparationName}} solutionPH"
+                                [disabled]="disabledControls || disableAll" [(ngModel)]="phse.preparationSolPH">
+
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                        <mat-form-field appearance="outline" class="full-width" rs232
+                            [mngObj]="prepareRs232('Weight', phse, 'MOBILE_SOL_WEIGHT', 'Weight' + i)"
+                            (emitValue)="getRS232Values($event)" [pageAction]='buttonType'>
+                            <mat-label>Weight</mat-label>
+                            <input matInput name="{{phse.preparationName}} Weight"
+                                [disabled]="disabledControls || disableAll" [(ngModel)]="phse.weight" maxlength="10">
+                        </mat-form-field>
+                    </mat-grid-tile>
+                </mat-grid-list>
+                <div align="right" class="mt-2 pb-2 " *ngIf="purposeType != typeCode">
+                    <button type="button" mat-raised-button class="btnbase btn-blue" (click)="openOccupancy(phse)">
+                        <i class="{{_global.icnThermometer}}" aria-hidden="true"></i>&nbsp; Occupancy
+                    </button>
+                </div>
+
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+<div align="right" class="mt-2 pb-2">
+
+    <!-- <button type="button" mat-raised-button class="btnbase btn-blue" btnAddNewField
+        [disabled]="buttonType=='Update' || disableAll" [obj]="rs232Obj" [mngCustFields]="mngCustField">
+    </button> -->
+
+    <button type="button" mat-raised-button class="btnbase btn-blue" (click)="masterData()"
+        [disabled]="buttonType=='Update' || disableAll">
+        <i class="{{_global.icnMaster}}" aria-hidden="true"></i>&nbsp;Master Data</button>
+    <button type="button" mat-raised-button class="btnbase btn-blue" (click)="Uploadfiles()">
+        <i class="{{_global.icnViewFiles}}" *ngIf="btnUpload != 'Upload'" aria-hidden="true"></i>
+        <i class="{{_global.icnUpload}}" *ngIf="btnUpload == 'Upload'"
+            aria-hidden="true"></i>&nbsp;{{btnUpload}}</button>
+    <button type="button" mat-raised-button class="btnbase btn-blue" (click)="savePreparation()" *ngIf="isVisBtnDisable"
+        [disabled]="disableAll" id="mpPrepBtnLoaders" btnLoader [isLoaderOn]="isLoaderStart">
+        <i class="{{_global.icnSave}}" *ngIf="buttonType=='Save'" aria-hidden="true"></i>
+        <i class="{{_global.icnUpdate}}" *ngIf="buttonType=='Update'"
+            aria-hidden="true"></i>&nbsp;{{buttonType}}</button>
+</div>
+
+<manage-add-field [obj]="rs232Obj" [sectionCode]="'MP_REQ'" [isViewPage]="disableAll" #mngCustField></manage-add-field>

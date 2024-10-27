@@ -1,0 +1,63 @@
+<div class="new-popupTitle" mat-dialog-title>
+    <h1 class="colorwhite">{{pageTitle}}</h1>
+    <div class="popup-close">
+        <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+    </div>
+</div>
+
+<div class="mt-2 mb-2 ml-2 mr-2 modal-over" mat-dialog-content>
+
+    <mat-card class="mat-card-c mt-3 mb-3" style="width: 99%">
+        <mat-card-content>
+            <div class="auditrep">
+                <ul>
+                    <li *ngIf="rptObj.requestFrom != 'ANALYST_QUALIFICATION' && mode == 'MANAGE'">
+                        <div>
+                            <!-- <mat-label>Report Template : </mat-label> -->
+                            <div class="mt-1"></div>
+                            <div align="center">
+                                <button type="button" mat-raised-button class="btnbase btn-blue"
+                                    (click)="generateReport('GEN')" *ngIf="!rptObj.dmsReportID"> <i class="fas fa-file-invoice"></i>  &nbsp;Generate
+                                    Report</button>&nbsp;
+                                <button type="button" mat-raised-button class="btnbase btn-blue" (click)="uploadFiles()"
+                                    *ngIf="rptObj.dmsReportID"><i class="fas fa-upload"></i>  &nbsp; Upload</button>&nbsp;
+                            </div>
+                        </div>
+                    </li>
+                    <li *ngIf="title">
+                        <div align="center" *ngIf="title" style="padding:0px 0px 10px 0px;">
+                            <mat-label><span class="cardtitle_sm"> Title :  </span> <span style="display:inline-block; padding-top:5px; font-weight: 500;">{{ title }}</span>
+                            </mat-label>
+                        </div>
+                        <!-- <div class="" *ngIf="documentID"
+                            style="border-top:1px solid rgba(0,0,0,0.1); padding:10px 0px 0px 0px;">
+                            <mat-label>Doc. Number :<br><span
+                                    style="display:inline-block; padding-top:5px; font-weight: 500;">{{ documentID }}
+                                </span></mat-label>
+                        </div> -->
+                    </li>
+                    <li *ngIf="rptObj.dmsReportID">
+                        <div class="mt-1">
+                            <!-- <mat-label>Report Template : </mat-label>
+                            <div class="mt-1"></div> -->
+                            <div align="center" class="mt-2">
+                                <button type="button" mat-raised-button (click)="generateReport('VIEW')"
+                                    class="btnbase btn-blue"><i class="fas fa-eye"></i>  &nbsp;  View Report</button>
+                                <button type="button" mat-raised-button class="btnbase btn-blue"
+                                    *ngIf="rptObj.requestFrom != 'ANALYST_QUALIFICATION' && mode == 'MANAGE'"
+                                    (click)="generateReport('RESET')"><i class="fas fa-redo"></i>  &nbsp; Reset</button>
+                                <button type="button" mat-raised-button class="btnbase btn-blue"
+                                    *ngIf="rptObj.requestFrom != 'ANALYST_QUALIFICATION'"
+                                    (click)="updatePlaceholder()"> <i class="fas fa-sync-alt"></i>  &nbsp; Refresh</button>
+
+                                <button type="button" mat-raised-button class="btnbase btn-blue"
+                                    (click)="downloadReport()"> <i class="fas fa-file-download"></i>  &nbsp; Download</button>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+</div>

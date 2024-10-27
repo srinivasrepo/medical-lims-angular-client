@@ -1,0 +1,80 @@
+<div>
+
+    <div class="mt-2">
+        <div class="view-inv add-hr">
+            <ul>
+                <li>
+                    <mat-label>
+                        <span>
+                            {{entityCode == 'ENGGMNT' || entityCode == 'CALIB_VALIDATION' ? 'Parameter' : 'Test Title' }}
+                        </span>
+
+                        <span>{{getArdsInputsInfo.testTitle || 'N / A'}}</span>
+                    </mat-label>
+                </li>
+                <li>
+                    <mat-label>
+                        <span>STP Title </span>
+                        <span>{{getArdsInputsInfo.stpTitle || 'N / A'}}</span></mat-label>
+                </li>
+                <li>
+                    <mat-label>
+                        <span>Last Updated By </span>
+
+                        <span>{{getArdsInputsInfo.rawdataUpdatedBy || 'N / A'}}</span>
+                    </mat-label>
+                </li>
+                <li>
+                    <mat-label>
+                        <span>Last Updated On</span>
+                        <span>{{getDateTime(getArdsInputsInfo.rawdataUpdOn)}}</span></mat-label>
+                </li>
+                <li class="no-border">
+                    <mat-label>
+                        <span>Confirmed By </span>
+
+                        <span>{{getArdsInputsInfo.rawDataConfirmedBy || 'N / A'}}</span>
+                    </mat-label>
+                </li>
+                <li class="no-border">
+                    <mat-label>
+                        <span>Confirmed On</span>
+                        <span>{{getDateTime(getArdsInputsInfo.rawdataConfOn)}}</span></mat-label>
+                </li>
+            </ul>
+
+        </div>
+
+        <div align="right" class="rw-header-actions mt-3">
+            <button mat-raised-button *ngIf="pageType != 'VIEW' && pageType != 'UPD' && (entityCode == 'QCSAMPASYS' || entityCode == 'ENGGMNT') "
+                class="btnbase btn-blue" matTooltip="Common Data Mapping" (click)="commonDataMap()">
+                <i class="{{_global.icnMap}}"></i>&nbsp; Common Data Mapping</button>
+
+            <button mat-raised-button *ngIf="pageType != 'VIEW' && pageType != 'UPD' && !isInvalidated && entityCode != 'SPEC_VALID' && entityCode != 'CALIB_VALIDATION'" class="btnbase btn-blue" matTooltip="Invalid" (click)="raiseInvalidation()">
+                <i class="{{_global.icnCancel}}"></i>&nbsp; Invalid</button>
+
+            <button mat-raised-button matTooltip="Ards Confirm" class="btnbase btn-blue" (click)="confirm()"
+                *ngIf="(pageType == 'MNG' || (pageType == 'UPD' && updTestStatus == 'APP')) && (entityCode == 'SPEC_VALID' || entityCode == 'CALIB_VALIDATION' || (occSub && !isInvalidated))">
+                <i class="{{_global.icnConfirm}}"></i>&nbsp; Confirm</button>
+
+            <button mat-raised-button class="btnbase btn-blue" matTooltip="Back" (click)="close()">
+                <i class="{{_global.icnArrowBack}}"></i>&nbsp; Back</button>
+
+            <!-- <button type="button" mat-raised-button class="btnbase btn-blue mr-0 ml-0" matTooltip="Mapping To SDMS"
+                (click)="mappingSDMS()" *ngIf="showHidePageType == 'ARDS' && !isInvalidated">
+                <i class="{{_global.icnMap}}" aria-hidden="true"></i>
+            </button> -->
+
+            <!-- <button type="button" mat-raised-button class="btnbase btn-blue mr-0 ml-0" matTooltip="Refresh"
+                (click)="getMappingDetails()" *ngIf="showHidePageType == 'MAPPING_ARDS'">
+                <i class="{{_global.icnSync}}" aria-hidden="true"></i>
+            </button> -->
+
+        </div>
+
+    </div>
+    <div class="mt-3 qc_containerp-0">
+        <raw-sec [samAnaTestID]="encSamAnalysisTestID" [entityCode]="entityCode" [sourceCode]="sourceCode"
+            [pageType]="pageType" [analysisMode]="analysisMode" [refNo]="refNo" [updTestStatus]="updTestStatus"></raw-sec>
+    </div>
+</div>

@@ -1,0 +1,102 @@
+<div class="new-popupTitle" mat-dialog-title>
+    <h1> Formula Execution</h1>
+    <div class="popup-close">
+        <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+    </div>
+</div>
+<div class=" mt-0 mb-3 pl-3 pr-3 modal_body" mat-dialog-content>
+    <lims-grid [headers]="headersData" [dataSource]="dataSource"></lims-grid>
+    <div class="view-inv add-hr">
+        <ul>
+            <li class="w-100 no-border">
+                <span>Acceptance Criteria</span>
+                <span>{{acceptanceCriteria}}</span>
+            </li>
+            <li class="w-100 no-border">
+                <span>Formula</span>
+                <span>{{formula}}</span>
+            </li>
+        </ul>
+    </div>
+
+    <div class="mt-2" *ngIf="!isMultiFormula">
+        <mat-label><span class="qc_lable-txt pr-5">Actual Value : &nbsp; </span><span>{{actValue}}</span></mat-label>
+        <mat-form-field appearance="outline" *ngIf="actValue">
+            <mat-label>Value</mat-label>
+            <input matInput placeholder="Value" [(ngModel)]="value" [disabled]="value == 'DR' || value == 'ND'"
+                (keypress)="allowNumbers($event)" maxlength="256">
+            <!-- <mat-hint>{{acceptanceCriteria}}</mat-hint> -->
+        </mat-form-field>
+    </div>
+
+    <div class="mt-2" *ngIf="isMultiFormula">
+        <mat-table #table class="dbdatatable bgtranspatent" [dataSource]="multipleValues" style="width:100%;">
+            <mat-header-row *matHeaderRowDef="displayedActColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedActColumns;"></mat-row>
+
+            <ng-container matColumnDef="inputDescription">
+                <mat-header-cell *matHeaderCellDef  class="maxWidth-35per minWidth-20per"> Description
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element;let i=index" class="maxWidth-35per minWidth-20per">
+                    {{element.inputDescription}}
+                    <span>
+                        <span class="formula-F2" [ngClass]="{'formula-assign' : element.formulaResultFlag && element.formulaResultFlag == 'F2'}"
+                            *ngIf="element.type != 'SKIP' && testType == 'R'">
+                            <i (click)="manageIsFinalFormula(element.detailID, 'F2', element)" style="color: #fff;">F2</i>
+                        </span>
+                        <span class="formula-F1" [ngClass]="{'formula-assign' : element.formulaResultFlag && element.formulaResultFlag == 'F1'}"
+                            *ngIf="element.type != 'SKIP'">
+                            <i (click)="manageIsFinalFormula(element.detailID, 'F1', element)" style="color: #fff;">F1</i>
+                        </span>
+                    </span>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="actValue">
+                <mat-header-cell *matHeaderCellDef class="maxWidth-15per minWidth-15per"> Actual Value
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element;let i=index" class="maxWidth-15per minWidth-15per">
+                    {{element.actualValue}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="value">
+                <mat-header-cell *matHeaderCellDef class="maxWidth-20per minWidth-20per"> Value
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element;" class="maxWidth-20per minWidth-20per">
+                    <mat-form-field appearance="outline" class="full-width grid-txt">
+                        <input matInput placeholder="Value"
+                            [disabled]="element.value == 'DR' || element.value == 'ND' || element.isDisable"
+                            [(ngModel)]="element.value" (keypress)="allowNumbers($event)" maxlength="256">
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="type">
+                <mat-header-cell *matHeaderCellDef class="maxWidth-35per minWidth-35per"> Type
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element;" class="maxWidth-35per minWidth-35per">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Type</mat-label>
+                        <mat-select placeholder="Type" [(ngModel)]="element.type" (ngModelChange)="typeChange(element)">
+                            <mat-option value="SKIP">Skip</mat-option>
+                            <mat-option value="ND">Not Detected</mat-option>
+                            <mat-option value="DR">Disregard</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <button type="button" mat-raised-button class="btnbase btn-blue" *ngIf="element.isDisable" (click)="remove(element)">
+                        Remove </button>
+                </mat-cell>
+            </ng-container>
+        </mat-table>
+
+    </div>
+
+    <div align="right" *ngIf="dataSource && dataSource.data.length > 0 && showBtn" class="mt-2">
+
+        <button type="button" mat-raised-button class="btnbase btn-blue"
+            *ngIf="(value || (multipleValues && multipleValues.length > 0)) && updFlag != 'UPD'" (click)="save()">
+            <i class="{{_global.icnSave}}"></i>&nbsp; Save</button>
+        <button type="button" mat-raised-button class="btnbase btn-blue mr-0" 
+            (click)="evaluate()">
+            <i class="{{_global.icnGo}}"></i>&nbsp; Execute</button>
+    </div>
+</div>

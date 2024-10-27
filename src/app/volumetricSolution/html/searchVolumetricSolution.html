@@ -1,0 +1,158 @@
+<div class="qc_box-n">
+    <mat-card class="matcard-nobg">
+        <mat-card-content>
+            <div class="matcard-custom-search search-bg">
+                <page-head [pageTitle]="pageTitle"></page-head>
+                <mat-form-field appearance="outline" class="full-width pl-0 pr-0 qc_search-input">
+                    <mat-label>{{searchBy}}</mat-label>
+                    <input matInput [ngClass]="{'hide' : hasSearchVal()}" [(ngModel)]="advanceSearch"
+                        [readonly]="hasSearchVal()">
+                    <mat-chip-list class="mat-chip-list srch-chip" *ngIf="searchResult && searchResult.length > 0">
+                        <div class="mat-chip-list-wrapper">
+                            <mat-chip class="mat-chip mat-primary mat-standard-chip ng-star-inserted"
+                                *ngFor="let item of searchResult; let i = index" [matTooltip]="item.name">{{item.name}}
+                                &nbsp;&nbsp;
+                                <i class="{{_global.icnClear}}" style="color:red;" matTooltip="Clear"
+                                    (click)="clearOption(item.code, i)" aria-hidden="true"></i>
+                            </mat-chip>
+                        </div>
+                    </mat-chip-list>
+                    <button mat-button matSuffix mat-icon-button aria-label="Clear"
+                        (click)="openModal('volumetric-search')">
+                        <mat-icon>keyboard_arrow_down</mat-icon>
+                    </button>
+                </mat-form-field>
+                <div>
+                    <srch-filter-modal id="volumetric-search" class="search-fields qc_wr-07">
+                        <div class="cls-div">
+                            <i class="{{_global.icnClear}} cls-icon" aria-hidden="true" matTooltip="Close"
+                                (click)="closeModal('volumetric-search')"></i>
+                        </div>
+                        <mat-grid-list cols="2" rowHeight="68px">
+                            <mat-grid-tile>
+                                <div class="full-width">
+                                    <lims-lookup [info]="materialInfo" #material></lims-lookup>
+                                </div>
+                            </mat-grid-tile>
+                            <!-- <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Instrument Type</mat-label>
+                                    <mat-select placeholder="Type" [(ngModel)]="formulaType">
+                                        <mat-option value="Normality">Normality</mat-option>
+                                        <mat-option value="Molarity">Molarity</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </mat-grid-tile> -->
+                            <mat-grid-tile>
+                                <div class="full-width">
+                                    <lims-lookup [info]="batchNumberInfo" #batchNumber></lims-lookup>
+                                </div>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Validity From</mat-label>
+                                    <input matInput [(ngModel)]="validityFrom" [max]="validityTo"
+                                        [matDatepicker]="fromDate" placeholder="Validity From">
+                                    <mat-datepicker-toggle matSuffix [for]="fromDate"></mat-datepicker-toggle>
+                                    <mat-datepicker #fromDate></mat-datepicker>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Validity To</mat-label>
+                                    <input matInput [(ngModel)]="validityTo" [min]="validityFrom"
+                                        [matDatepicker]="toDate" placeholder="Validity To">
+                                    <mat-datepicker-toggle matSuffix [for]="toDate"></mat-datepicker-toggle>
+                                    <mat-datepicker #toDate></mat-datepicker>
+                                </mat-form-field>
+                            </mat-grid-tile>   
+                            <mat-grid-tile>
+                                <div class="full-width">
+                                    <lims-lookup [info]="systemCodeFromInfo" #systemCodeFrom
+                                        (onSelect)="systemCodeToLkp()">
+                                    </lims-lookup>
+                                </div>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <div class="full-width">
+                                    <lims-lookup [info]="systemCodeToInfo" #systemCodeTo
+                                        (onSelect)="systemCodeFromLkp()">
+                                    </lims-lookup>
+                                </div>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <div class="full-width">
+                                    <lims-lookup [info]="systemCodeInfo" #systemCode>
+                                    </lims-lookup>
+                                </div>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label> Status</mat-label>
+                                    <mat-select placeholder="Status" [(ngModel)]="statusID">
+                                        <mat-option *ngFor="let sta of statusList" [value]="sta.statusID">{{sta.status}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <div class="full-width">
+                                    <lims-lookup [info]="intiatedUserInfo" #intiatedUser>
+                                    </lims-lookup>
+                                </div>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Initiated On</mat-label>
+                                    <input matInput [(ngModel)]="initiatedOn" [max]="today"
+                                        [matDatepicker]="initOn" placeholder="Initiated On">
+                                    <mat-datepicker-toggle matSuffix [for]="initOn"></mat-datepicker-toggle>
+                                    <mat-datepicker #initOn></mat-datepicker>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                        </mat-grid-list>
+                        <div align="right">
+                            <button type="button" mat-raised-button class="btnbase btn-blue"
+                                (click)="searchFilter('Search')">
+                                <i class="{{_global.icnSearch}}" aria-hidden="true"></i> &nbsp;Search</button>
+                            <button type="button" mat-raised-button class="btnbase btn-blue"
+                                (click)="searchFilter('ALL')">
+                                <i class="{{_global.icnSearchAll}}" aria-hidden="true"></i>&nbsp;Search All</button>
+                            <button type="button" mat-raised-button class="btnbase btn-blue "
+                                (click)="closeModal('volumetric-search')">
+                                <i class="{{_global.icnClear}}" aria-hidden="true"></i>&nbsp;Close</button>
+                        </div>
+                    </srch-filter-modal>
+
+                    <div align="right">
+                        <button type="button" mat-raised-button class="btnbase btn-blue"
+                            (click)="searchFilter('Search')">
+                            <i class="{{_global.icnSearch}}" aria-hidden="true"></i> &nbsp;Search</button>
+                        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="searchFilter('ALL')">
+                            <i class="{{_global.icnSearchAll}}" aria-hidden="true"></i>&nbsp;Search All</button>
+                        <button type="button" mat-raised-button class="btnbase btn-blue " *ngIf="hasManageIndexCap"
+                            (click)="addIndex()">
+                            <i class="{{_global.icnAdd}}" aria-hidden="true"></i>&nbsp;Manage Solution
+                            Index</button>
+                        <button mat-raised-button class="btnbase btn-blue mr-0" (click)="export()" *ngIf="hasExpCap"><i
+                                class="fas fa-file-export"></i>Export</button>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-5 mb-5">
+                <mat-card class="matcard-custom pxy-2 qc_table-Analysis">
+                    <mat-card-content>
+                        <lims-grid (onActionClicked)="onActionClicked($event)" [headers]="headerData"
+                            [dataSource]="dataSource" [actions]="actions" [removeAction]="removeAction"></lims-grid>
+
+                        <div class="mt-1">
+                            <lims-paging (onPageIndexClicked)="onPageIndexClicked($event);"
+                                [totalRecords]="totalRecords" [currentSelectedIndex]="currentSelectedIndex">
+                            </lims-paging>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

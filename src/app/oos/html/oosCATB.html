@@ -1,0 +1,56 @@
+<mat-card class="mat-card-heading">
+    <mat-card-content>
+        <h4 class="cardtitle"> {{phaseTitle}}</h4>
+        <div *ngIf="pageType == 'MNG'" class="pl-1 pr-1">
+            <mat-form-field appearance="outline" class="full-width mt-2">
+                <mat-label>Justification to skip hypothesis testing</mat-label>
+                <textarea matInput placeholder="Justification to skip hypothesis testing"
+                    [(ngModel)]="mngOosCatB.justificationToSkip" [disabled]="btnType == 'Update'"
+                    maxlength="8000"></textarea>
+                <mat-hint align='end'>{{mngOosCatB.justificationToSkip?.length || 0}} / 8000</mat-hint>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width mt-2">
+                <mat-label>Correct the error</mat-label>
+                <textarea matInput placeholder="Correct the error" [(ngModel)]="mngOosCatB.correctError"
+                    [disabled]="btnType == 'Update'" maxlength="8000"></textarea>
+                <mat-hint align='end'>{{mngOosCatB.correctError?.length || 0}} / 8000</mat-hint>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width mt-2">
+                <mat-label>Corrective action </mat-label>
+                <textarea matInput placeholder="Corrective action" [(ngModel)]="mngOosCatB.correctiveAction"
+                    [disabled]="btnType == 'Update'" maxlength="8000"></textarea>
+                <mat-hint align='end'>{{mngOosCatB.correctiveAction?.length || 0}} / 8000</mat-hint>
+            </mat-form-field>
+            <div align="right" class="mt-2 pb-2">
+                <button type="button" mat-raised-button class="btnbase btn-blue" (click)="save()" id="btnLoaders"
+                    btnLoader [isLoaderOn]="isLoaderStart">
+                    <i class="{{_global.icnSave}}" *ngIf="btnType=='Save'" aria-hidden="true"></i>
+                    <i class="{{_global.icnUpdate}}" *ngIf="btnType=='Update'"
+                        aria-hidden="true"></i>&nbsp;{{btnType}}</button>
+            </div>
+        </div>
+
+        <div class="view-inv add-hr mt-2" *ngIf="pageType=='VIEW'">
+            <ul>
+                <li class="w-100">
+                    <mat-label>
+                        <span>Justification to skip hypothesis testing</span>
+                        <span>{{mngOosCatB.justificationToSkip}}</span>
+                    </mat-label>
+                </li>
+                <li class="w-100">
+                    <mat-label>
+                        <span>Correct the error</span>
+                        <span>{{mngOosCatB.correctError}}</span>
+                    </mat-label>
+                </li>
+                <li class="w-100">
+                    <mat-label>
+                        <span>Corrective action</span>
+                        <span>{{mngOosCatB.correctiveAction}}</span>
+                    </mat-label>
+                </li>
+            </ul>
+        </div>
+    </mat-card-content>
+</mat-card>

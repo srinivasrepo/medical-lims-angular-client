@@ -1,0 +1,143 @@
+<mat-card class="mat-card-heading">
+    <mat-card-content>
+        <h4 class="cardtitle"> {{phaseTitle}}</h4>
+        <div *ngIf="pageType=='MNG'">
+            <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Select Category</mat-label>
+                <mat-select placeholder="Select Category" [(ngModel)]="chkCatID" [disabled]="catBtnType=='Change'">
+                    <mat-option *ngFor="let cat of checkCategories" [value]="cat.categoryID">{{cat.category}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="getChecklist()" id="btnLoaders"
+                btnLoader [isLoaderOn]="isLoaderObj.isLoaderForCheckList">
+                <i class="{{_global.icnGo}}" *ngIf="catBtnType=='Go'" aria-hidden="true"></i>
+                <i class="{{_global.icnChange}}" *ngIf="catBtnType=='Change'"
+                    aria-hidden="true"></i>&nbsp;{{catBtnType}}
+            </button>
+        </div>
+        <div class="pl-2 pr-2 mt-2">
+            <mat-table [dataSource]="dataSource" class="oos-grid">
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                <ng-container matColumnDef="Sno">
+                    <mat-header-cell *matHeaderCellDef class="maxWidth-4per"> S.No.</mat-header-cell>
+                    <mat-cell *matCellDef="let element;let i = index" class="maxWidth-4per">{{element.sno}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="checkCatID">
+                    <mat-header-cell *matHeaderCellDef class="maxWidth-20per"> Category</mat-header-cell>
+                    <mat-cell *matCellDef="let element;let i = index" class="maxWidth-20per">
+                        <mat-label [style.display]="getRowSpan('checkCatID', i) ? '' : 'none'">
+                            {{getCategory(element.checkCatID)}}</mat-label>
+                    </mat-cell>
+
+                </ng-container>
+
+
+
+                <ng-container matColumnDef="Check Point">
+                    <mat-header-cell *matHeaderCellDef> Check Point</mat-header-cell>
+                    <mat-cell *matCellDef="let element;let i = index">{{element.question}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="Answer" class="maxWidth-20per">
+                    <mat-header-cell *matHeaderCellDef>
+                        <ul class="header-lst">
+                            <li>Result</li>
+                            <li>
+                                <span style="margin:0px 15px 0px 0px">Yes</span>
+                                <span style="margin:0px 15px 0px 15px">No</span>
+                                <span style="margin:0px 0px 0px 15px"> N / A </span>
+                            </li>
+                        </ul>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element;let i = index" class="maxWidth-20per">
+                        <mat-radio-group class="mat-radio-btn" [(ngModel)]="element.answer"
+                            [disabled]="btnType=='Update'">
+                            <mat-radio-button color="primary" value="p">
+                            </mat-radio-button>
+                            <mat-radio-button color="primary" value="f">
+                            </mat-radio-button>
+                            <mat-radio-button color="primary" value="n">
+                            </mat-radio-button>
+                        </mat-radio-group>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="Remarks">
+                    <mat-header-cell *matHeaderCellDef class="maxWidth-20per">Remarks</mat-header-cell>
+                    <mat-cell *matCellDef="let element;let i = index" class="maxWidth-20per">
+                        <mat-form-field appearance="outline" *ngIf="btnType !='Update'" class="full-width">
+                            <mat-label>Remarks</mat-label>
+                            <textarea matInput placeholder="Remarks" [(ngModel)]="element.remarks" maxlength="500"
+                                [disabled]="btnType=='Update'" ngDefaultControl></textarea>
+                            <mat-hint align="end">{{element.remarks?.length || 0}} / 500</mat-hint>
+                        </mat-form-field>
+                        <div *ngIf="btnType =='Update'">
+                            <mat-label>{{element.remarks}}</mat-label>
+                        </div>
+                    </mat-cell>
+                </ng-container>
+            </mat-table>
+        </div>
+        <div class="mt-2 pl-2 pr-2 pb-2">
+            <mat-form-field appearance="outline" class="full-width" *ngIf="pageType != 'VIEW' && !phaseCompleted">
+                <mat-label>Root Cause / Probable Causes</mat-label>
+                <textarea matInput placeholder="Root Cause / Probable Causes" [(ngModel)]="remarks"
+                    [disabled]="btnType=='Update'" maxlength="8000"></textarea>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width"
+                *ngIf="!canShowCapa && pageType != 'VIEW' && !phaseCompleted">
+                <mat-label>Proposed Corrective / Preventive Actions</mat-label>
+                <textarea matInput placeholder="Proposed Corrective / Preventive Actions" [(ngModel)]="proposedCapa"
+                    [disabled]="btnType=='Update'" maxlength="8000"></textarea>
+            </mat-form-field>
+            <div class="view-inv add-hr mt-3 " *ngIf="pageType == 'VIEW' || phaseCompleted">
+                <ul>
+                    <li class="w-100" *ngIf="!canShowCapa">
+                        <mat-label>
+                            <span>Proposed Corrective / Preventive Actions</span>
+                            <span>{{proposedCapa || 'N/A'}}</span>
+                        </mat-label>
+                    </li>
+                    <li class="w-100 no-border">
+                        <mat-label>
+                            <span>Root Cause / Probable Causes</span>
+                            <span>{{remarks || 'N/A'}}</span>
+                        </mat-label>
+                    </li>
+                   
+                </ul>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>
+<mat-card class="mat-card-heading mt-3" *ngIf="canShowCapa">
+    <mat-card-content>
+        <h4 class="cardtitle"> Corrective Actions</h4>
+        <div class=" pl-1 pr-1 pb-1 add_sroll_4">
+        <mng-capa capaType='C' moduleCode='PROD' capaSourceCode='CAPA_OOS' [sourceReferenceID]="encOosTestID"
+            [pageType]="capaPageType">
+        </mng-capa>
+    </div>
+    </mat-card-content>
+</mat-card>
+
+<mat-card class="mat-card-heading mt-3" *ngIf="canShowCapa">
+    <mat-card-content>
+        <h4 class="cardtitle">Preventive Actions</h4>
+        <div class=" pl-1 pr-1 pb-1 add_sroll_4">
+        <mng-capa capaType='P' moduleCode='PROD' capaSourceCode='CAPA_OOS' [sourceReferenceID]='encOosTestID'
+            [pageType]="capaPageType">
+        </mng-capa>
+    </div>
+    </mat-card-content>
+</mat-card>
+
+<div align="right" *ngIf="pageType == 'MNG' && !phaseCompleted">
+    <button type="button" mat-raised-button class="btnbase btn-blue" (click)="save()" id="btnLoadersOosProcess"
+        btnLoader [isLoaderOn]="isLoaderObj.isLoaderOosProcess">
+        <i class="{{_global.icnSave}}" *ngIf="btnType=='Save'" aria-hidden="true"></i>
+        <i class="{{_global.icnUpdate}}" *ngIf="btnType=='Update'" aria-hidden="true"></i>&nbsp;{{btnType}}</button>
+</div>

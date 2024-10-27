@@ -1,0 +1,52 @@
+<mat-toolbar class="menu-bar mat-toolbar mat-toolbar-single-row">
+
+  <div class="container-fluid ">
+
+    <div *ngIf="pageTitle" class="row">
+
+      <div class="col-6 pagetitlestyle">{{pageTitle}}</div>
+
+      <div class="col-6 pagestatusstyle">
+        <span>{{ status}}</span>
+        <span class="pagestatusslashstyle" *ngIf="refNo">/</span>
+        <span>{{ refNo}}</span>
+        <span class="pagestatusslashstyle" *ngIf="viewHistoryVisible">/</span>
+        <span *ngIf="viewHistoryVisible">
+          <button type="button" mat-mini-fab color="primary" mat-raised-button class="btnhistory" (click)="view()">
+            <!-- <mat-icon style="margin-top: 3px;">history</mat-icon> -->
+            <i class="{{_global.icnHistory}}" aria-hidden="true"></i>
+          </button>
+        </span>
+        <span class="pagestatusslashstyle" *ngIf="showRpts && encRptEntActID">/</span>
+        <span *ngIf="showRpts && encRptEntActID">
+          <button type="button" mat-mini-fab color="primary" mat-raised-button class="btnhistory" matTooltip="View Reports" (click)="reports()">
+            <!-- <mat-icon style="margin-top: 3px;">history</mat-icon> -->
+            <i class="{{_global.icnPdf}}" aria-hidden="true"></i>
+          </button>
+        </span>
+
+        <span *ngIf="getRSIntegrationStatus()" matTooltip="RS232 Integration Mode">
+          <i class="pl-2 fas fa-toggle-on cust-color-green cust-cursor" *ngIf="getRSIntegrationReqStatus()"
+            (click)="toggleRS232Status()"></i>
+          <i class="pl-2 fas fa-toggle-off cust-color-blue cust-cursor" *ngIf="!getRSIntegrationReqStatus()"
+            (click)="toggleRS232Status()"></i>
+        </span>
+
+        &nbsp;&nbsp;
+        <span *ngIf="viewBack" class="ml-3">
+          <button type="button" class="mat-elevation-z4" mat-mini-fab color="secondary" (click)="back()">
+            <!-- <mat-icon>arrow_back</mat-icon> -->
+            <i class="{{_global.icnArrowBack}}" aria-hidden="true"></i>
+          </button>
+        </span>
+
+        <!-- <span (click)="advancedSearch()">Advance Search</span> -->
+
+      </div>
+
+
+
+
+    </div>
+  </div>
+</mat-toolbar>

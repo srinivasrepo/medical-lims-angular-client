@@ -1,0 +1,61 @@
+<mat-card class="mat-card-heading">
+    <mat-card-content>
+        <h4 class="cardtitle"> {{phaseTitle}}</h4>
+        <div class="mt-1">
+            <mat-label class="cardtitle_dark mr-3 pl-2 "> Select Department(s) for Review : </mat-label>
+            <mat-checkbox color="primary" *ngFor="let dept of deptList" [(ngModel)]="dept.isSelected"
+                [disabled]="dept.defaultSelection || reviewCompleted || btnType == 'Update'">{{dept.moduleName}}
+            </mat-checkbox>
+            <mat-form-field appearance="outline" *ngIf="pageType != 'VIEW' && !phaseCompleted">
+                <input matInput placeholder="Other Department Name" [(ngModel)]="othDeptName"
+                    [disabled]="getOthDeptEnable() || reviewCompleted || btnType == 'Update'" maxlength="50">
+                <mat-hint align="end">{{othDeptName?.length || 0}} / 50</mat-hint>
+            </mat-form-field>
+            <div class="view-inv mt-1" *ngIf="pageType == 'VIEW' || phaseCompleted">
+                <ul>
+                    <li class="w-100">
+                        <mat-label>
+                            <span>Other Department Name</span>
+                            <span>{{othDeptName || 'N/A'}}</span>
+                        </mat-label>
+                    </li>
+                    <li class="w-100">
+                        <mat-label>
+                            <span>QC Comments</span>
+                            <span>{{remarks || 'N/A'}}</span>
+                        </mat-label>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="pl-1 pr-1">
+            <mat-form-field appearance="outline" class="full-width" *ngIf="pageType != 'VIEW' && !phaseCompleted">
+                <mat-label>QC Comments</mat-label>
+                <textarea matInput placeholder="QC Comments" [(ngModel)]="remarks" maxlength="8000"
+                    [disabled]="btnType == 'Update'"></textarea>
+                <mat-hint align="end">{{remarks?.length || 0}} / 8000</mat-hint>
+            </mat-form-field>
+        </div>
+
+        <div *ngIf="actionValidity">
+            <mat-label> {{validityObj.title}} : </mat-label>
+            <mat-radio-group [(ngModel)]="actionValidity" class="mat-radio-btn" [disabled]="btnType == 'Update'">
+                <mat-radio-button color="primary" *ngFor="let va of validityObj.list" [value]="va.code"> {{va.name}}
+                </mat-radio-button>
+            </mat-radio-group>
+            <mat-label *ngIf="btnType =='Update'"> {{rootCause}}</mat-label>
+        </div>
+        <div align="right" class="mt-2 pb-3 pl-1 pr-1">
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="viewComments()">
+                <i class="{{_global.icnView}}" aria-hidden="true"></i> View Comments
+            </button>
+
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="save()"
+                *ngIf="pageType == 'MNG'  && !phaseCompleted" id="btnLoaders" btnLoader [isLoaderOn]="isLoaderStart">
+                <i class="{{_global.icnSave}}" *ngIf="btnType=='Save'" aria-hidden="true"></i>
+                <i class="{{_global.icnUpdate}}" *ngIf="btnType=='Update'"
+                    aria-hidden="true"></i>&nbsp;{{btnType}}</button>
+        </div>
+    </mat-card-content>
+</mat-card>

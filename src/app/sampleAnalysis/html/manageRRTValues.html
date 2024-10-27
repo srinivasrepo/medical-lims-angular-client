@@ -1,0 +1,49 @@
+<div class="new-popupTitle" mat-dialog-title>
+    <h1 class="colorwhite">{{title}}</h1>
+    <div class="popup-close">
+        <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+    </div>
+</div>
+
+<div class="mt-2 mb-2 ml-2 mr-2 modal-over" mat-dialog-content>
+
+    <mat-grid-list cols="1" rowHeight="68px" *ngIf="mode == 'MNG'">
+        <mat-grid-tile>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Test Description</mat-label>
+                <input matInput name="testDesc" [(ngModel)]="manageRRTValuesBO.testDesc" maxlength="200">
+                <mat-hint align="end">{{manageRRTValuesBO.testDesc?.length || 0}}/200</mat-hint>
+            </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile [rowspan]="2">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Acceptance Criteria</mat-label>
+                <textarea matInput name="acceptanceCriteria" [(ngModel)]="manageRRTValuesBO.acceptenceCriteria"
+                    maxlength="8000" class="textarea_size_fix" rows="6" cols="10"></textarea>
+                <mat-hint align="end">{{manageRRTValuesBO.acceptenceCriteria?.length || 0}}/8000</mat-hint>
+            </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Result</mat-label>
+                <input matInput name="result" [(ngModel)]="manageRRTValuesBO.result" maxlength="200">
+                <mat-hint align="end">{{manageRRTValuesBO.result?.length || 0}}/200</mat-hint>
+            </mat-form-field>
+        </mat-grid-tile>
+
+    </mat-grid-list>
+
+
+    <div class="textalign-right mt-2 mb-2" *ngIf="mode == 'MNG'">
+        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="manageRRTValues('I')">
+            <i class="{{_global.icnSave}}" aria-hidden="true"></i>&nbsp;Save</button> &nbsp;
+        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="clear()">
+            <i class="{{_global.icnClear}}" aria-hidden="true"></i>&nbsp;Clear</button>
+    </div>
+
+    <div class="qc_varscroll-in">
+        <lims-grid (onActionClicked)="onActionClicked($event)" [headers]="headersData" [dataSource]="dataSource"
+            [actions]="actions" [extraColumns]="extraColumns">
+        </lims-grid>
+    </div>
+</div>

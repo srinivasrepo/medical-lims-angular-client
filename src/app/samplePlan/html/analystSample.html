@@ -1,0 +1,139 @@
+<form id="sample_analy">
+    
+
+    <div align="right" class="pr-2 workallotmentinfo">
+        <mat-label ><span>Total Analysts</span> : <span>{{totalAnalysts}}</span></mat-label>
+        <mat-label ><span>Available Analysts</span> : <span>{{availabelAnalyst}}</span></mat-label>
+        <mat-label ><span>Not Available Analysts</span> : <span>{{notAvailableAnalyst}}</span></mat-label>
+    </div>
+    <div class="matcard-custom">
+    <div class="sampleplan-ul pr-2 pl-2 mt-4">
+        <ul>
+          
+            <li *ngFor="let ana of getAnalystsList('AVAILABLE'); let i = index;">
+
+                <div class="sampleplan-uldiv">
+
+                    <span class="spaninlinefirstlevel ana-avail"></span>
+
+                    <span class="spaninlinefirstlevel">
+                        <mat-checkbox id="{{ana.userRoleID}} {{i}}" (change)="changeAnalQua($event, ana)"
+                            [disabled]="btnSaveType == 'Update'" [checked]="ana.isSelected"></mat-checkbox>
+                    </span>
+
+
+                    <span class="spaninlinefirstlevel" matTooltip="{{ana.qualifications}}">
+                        <div class="analysysnameoth">
+                            <span class="sampleplan-aname">{{ana.userName}}</span>
+                            <span>{{ana.roleName}}</span>
+                            <span>{{ana.employeeCode}}</span>
+                        </div>
+
+                    </span>
+
+                    <span class="spaninlinefirstlevel"><i class="{{_global.icnExecute}} moreinfoicon" aria-hidden="true"  matTooltip = "Analyst occupancy"
+                            (click)="getAalystsDetails(ana.encUserRoleID)"></i></span>
+
+
+                    <span class="spaninlinefirstlevel">
+                        <div class="analysyscount">
+                            <span matTooltip="On going tasks">{{ana.underAnalysis}}</span>
+                            <span>/</span>
+                            <span matTooltip="Assigned tasks">{{ana.toBeStart}}</span>
+                        </div>
+                    </span>
+
+                </div>
+
+            </li>
+
+           
+            <li *ngFor="let ana of getAnalystsList('NOT_AVAILABLE'); let i = index;"
+                matTooltip="{{ana.qualifications}}">
+                <div class="sampleplan-uldiv">
+
+                    <span class="spaninlinefirstlevel ana-notavail"></span>
+
+                    <span class="spaninlinefirstlevel">
+                        <mat-checkbox id="{{ana.userRoleID}} {{i}}" (change)="changeAnalQua($event, ana)"
+                            [disabled]="btnSaveType == 'Update'" [checked]="ana.isSelected"></mat-checkbox>
+                    </span>
+
+
+                    <span class="spaninlinefirstlevel">
+                        <div class="analysysnameoth">
+                            <span class="sampleplan-aname">{{ana.userName}}</span>
+                            <span>{{ana.roleName}}</span>
+                            <span>{{ana.employeeCode}}</span>
+                        </div>
+
+                    </span>
+
+                    <span class="spaninlinefirstlevel"><i class="{{_global.icnExecute}} moreinfoicon" aria-hidden="true"
+                            (click)="getAalystsDetails(ana.encUserRoleID)"></i></span>
+
+
+                    <span class="spaninlinefirstlevel">
+                        <div class="analysyscount">
+                            <span>{{ana.underAnalysis}}</span>
+                            <span>/</span>
+                            <span>{{ana.toBeStart}}</span>
+                        </div>
+                    </span>
+
+                </div>
+            </li>
+        </ul>
+    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- <div class="btn-sampleplan mt-2" align="right">
+    <button type="button" mat-raised-button class="btnbase btn-green" (click)="saveAnalysts()"
+        [disabled]="disableBtn"><i class="{{_global.icnSave}}" *ngIf="btnSaveType == 'Save'" aria-hidden="true"></i>
+        <i class="{{_global.icnUpdate}}" *ngIf="btnSaveType == 'Update'"
+            aria-hidden="true"></i>&nbsp;{{btnSaveType}}</button>
+</div> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</form>

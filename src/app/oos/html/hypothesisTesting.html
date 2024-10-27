@@ -1,0 +1,67 @@
+<mat-card class="mat-card-heading">
+    <mat-card-content>
+        <h4 class="cardtitle"> {{phaseTitle}}</h4>
+        <div *ngIf="!phaseCompleted">
+            <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Select Analysis Phase for Investigation</mat-label>
+                <mat-select placeholder="Select Analysis Phase for Investigation" [(ngModel)]="phaseID">
+                    <mat-option *ngFor="let ana of analysisPhaseList" [value]="ana.phaseID"> {{ana.phaseTitle}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="addPhase()"
+                id="btnLoadersForPhase" btnLoader [isLoaderOn]="isLoaderObj.isLoaderForPhase">
+                <i class="{{_global.icnAdd}}"></i> &nbsp; Add</button>
+        </div>
+        <div class="pl-2 pr-2 pb-2">
+            <lims-grid [dataSource]="dataSource" [headers]="headers" [actions]="gridActions" applyRowCss='true'
+                (onActionClicked)="onActionClicked($event)"></lims-grid>
+
+            <div *ngIf="showAnalysis" class="qc_cycle-spec ">
+                <app-analysis [encEntityActID]="entityActID" [entityCode]="entityCode" [pageType]="anaPageType"
+                    [appBO]="appBo" [sourceCode]="'OOS_HYPOTEST'" #samAna (closeAnalysis)="closeAnalysis($event)"
+                    [showCancel]="'true'">
+                </app-analysis>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>
+<mat-card class="mat-card-heading mt-3">
+    <mat-card-content>
+        <h4 class="cardtitle"> Justification</h4>
+        <div *ngIf="dataSource && dataSource.data && dataSource.data.length > 0" class="mt-2">
+
+            <mat-form-field appearance="outline" class="full-width" *ngIf="pageType == 'MNG' && btnType == 'Save'">
+                <mat-label>Any Other Hypothesis Testing Plan & Justification</mat-label>
+                <textarea matInput placeholder="Any Other Hypothesis Testing Plan & Justification" [(ngModel)]="remarks"
+                    [disabled]="btnType == 'Update'" maxlength="8000"></textarea>
+                <mat-hint align="end">{{remarks?.length || 0}}/8000</mat-hint>
+            </mat-form-field>
+
+            <div class="view-inv" *ngIf="pageType != 'MNG' || btnType=='Update'">
+                <ul>
+                    <li class="w-100">
+                        <mat-label>
+                            <span>Any Other Hypothesis Testing Plan & Justification</span>
+                            <span>{{remarks}}</span>
+                        </mat-label>
+                    </li>
+                </ul>
+            </div>
+
+            <div align="right" class="pr-2 pb-2 mt-2">
+                <button type="button" mat-raised-button class="btnbase btn-blue mr-0" (click)="Uploadfiles()">
+                    <i class="{{_global.icnView}}" *ngIf="btnUpload != 'Upload'" aria-hidden="true"></i>
+                    <i class="{{_global.icnUpload}}" *ngIf="btnUpload == 'Upload'"
+                        aria-hidden="true"></i>&nbsp;{{btnUpload}}</button>
+
+                <button type="button" mat-raised-button class="btnbase btn-blue" (click)="save()"
+                    *ngIf="!phaseCompleted && pageType == 'MNG'" id="btnLoaders" btnLoader
+                    [isLoaderOn]="isLoaderObj.isLoaderForOosProcess">
+                    <i class="{{_global.icnSave}}" *ngIf="btnType=='Save'" aria-hidden="true"></i>
+                    <i class="{{_global.icnUpdate}}" *ngIf="btnType=='Update'"
+                        aria-hidden="true"></i>&nbsp;{{btnType}}</button>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>

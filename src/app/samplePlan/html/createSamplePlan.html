@@ -1,0 +1,159 @@
+<page-head [pageTitle]="pageTitle" viewBack="true" [backUrl]="backUrl" [status]="status" [refNo]="refNumber"
+[viewHistoryVisible]="viewHistoryVisible" [viewHistory]="viewHistory"
+[entityCode]="entityCode" [showRpts]="showRpts" [encRptEntActID]="encSamplePlanID">
+</page-head>
+
+<div *ngIf="!encSamplePlanID" align="center" class="mt-3 shift-dp search-fields"> 
+    <mat-form-field appearance="outline" class="half-width">
+        <mat-label style="color: rgb(25, 22, 190);">Select Work shift</mat-label>
+        <mat-select placeholder="Select Work Shift" [(ngModel)]="shiftID">
+            <mat-option *ngFor="let item of shiftList" [value]="item.catItemID"> {{item.catItem}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>
+
+<div *ngIf="!encSamplePlanID" align="center" class="create-plan">
+
+
+
+    <span>
+        <mat-label>Note*: Make sure that once you click create plan , work allotment will create, do you want to create
+            ?
+        </mat-label>
+    </span>
+
+
+
+
+    <span>
+        <button type="button" mat-raised-button class="mat-elevation-z6 btn-green-white create-btn"
+            (click)="addSamplePlan()" [disabled]="disableBtn">
+            <i class="{{_global.icnAdd}}" aria-hidden="true"></i>Create Plan</button>
+    </span>
+
+
+
+</div>
+
+
+<div *ngIf="encSamplePlanID" class="sampleplanstep-tabs">
+    <div class="sample_header_stepper">
+        <ul>
+            <!-- <li>
+                {{stepName}}
+            </li>
+            <li (click)="selectedTab('left')">
+
+                <i class="{{_global.icnArrowLeft}}" aria-hidden="true"></i>
+
+
+            </li>
+            <li (click)="selectedTab('right')">
+                <i class="{{_global.icnArrowRight}}" aria-hidden="true"></i>
+            </li> -->
+            <li *ngIf="selectedTabIndex != 4">
+                <button type="button" mat-raised-button class="btnbase btn-white" (click)="save(selectedTabIndex)"
+                    [disabled]="isDisable(selectedTabIndex)" id="saveBtnType" btnLoader [isLoaderOn]="isLoaderStart">
+                    <i class="{{_global.icnSave}}" *ngIf="btnSaveType == 'Save'" aria-hidden="true"></i>
+                    <i class="{{_global.icnUpdate}}" *ngIf="btnSaveType == 'Update'" aria-hidden="true"></i>
+                    &nbsp;{{btnSaveType}}</button>
+                <button type="button" mat-raised-button class="btnbase btn-white" *ngIf="selectedTabIndex != 0"
+                    (click)="goToNextTab()">
+                    <i class="{{_global.icnSkip}}" aria-hidden="true"></i>&nbsp; Skip</button>
+            </li>
+            <li *ngIf="selectedTabIndex == 4">
+                <button type="button" mat-raised-button class="btnbase btn-white" (click)="save(selectedTabIndex)"
+                id="planningLoader" btnLoader [isLoaderOn]="isLoaderStartIcn">
+                    <i class="{{_global.icnSave}}" *ngIf="btnSaveType == 'Save'" aria-hidden="true"></i>
+                    <i class="{{_global.icnUpdate}}" *ngIf="btnSaveType == 'Update'" aria-hidden="true"></i>
+                    &nbsp;{{btnSaveType}}</button>
+                <button type="button" mat-raised-button class="btnbase btn-white" *ngIf="samples_Planning.showResetBtn"
+                    (click)="samples_Planning.autoGenPlan('RESET')" [disabled]="samples_Planning.disableBtn"
+                    id="reset" btnLoader [isLoaderOn]="isLoaderReset">
+                    <i class="{{_global.icnAdd}}" aria-hidden="true"></i>&nbsp;Reset Plan</button>
+
+                <button type="button" mat-raised-button class="btnbase btn-white"
+                    (click)="samples_Planning.autoGenPlan('GENERATE')" [disabled]="samples_Planning.disableBtn"
+                    id="generate" btnLoader [isLoaderOn]="isLoaderGenerate">
+                    <i class="{{_global.icnAdd}}" aria-hidden="true"></i>&nbsp;Generate Plan</button>
+
+                <button type="button" mat-raised-button *ngIf="appBO.canApprove" class="btnbase btn-white"
+                    (click)="samples_Planning.confirm()">
+                    <i aria-hidden="true" class="{{_global.icnConfirm}}"></i>&nbsp;Confirm</button>
+
+            </li>
+        </ul>
+    </div>
+
+    <!-- (selectedTabChange)="selectedTab($event)" -->
+
+    <mat-tab-group #sampTab mat-align-tabs="left" [selectedIndex]="selectedTabIndex"
+        (selectedIndexChange)="setTabIndex($event)">
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <div>
+                    <i class="{{_global.icnAnalyst}} sam-plan"
+                        [ngClass]="{'mat-tab-label-com': analysts.btnSaveType == 'Update' && selectedTabIndex != 0}"
+                        aria-hidden="true" matTooltip="Analysts"></i>
+                    <div class="tab-title">
+                        Analysts
+                    </div>
+                </div>
+            </ng-template>
+            <sample-analyst [encSamplePlanID]="encSamplePlanID" [appBO]="appBO" #analysts (loader)="isLoaderOn($event)"></sample-analyst>
+        </mat-tab>
+        <mat-tab> <!--[disabled]="isDisabledTab(1)"-->
+            <ng-template mat-tab-label>
+                <div>
+                    <i class="{{_global.icnSample}} sam-plan"
+                        [ngClass]="{'mat-tab-label-com': samples.btnSaveType == 'Update' && selectedTabIndex != 1}"
+                        aria-hidden="true" matTooltip="Samples"></i>
+                    <div class="tab-title">
+                        Samples
+                    </div>
+                </div>
+            </ng-template>
+            <plan-samples [encSamplePlanID]="encSamplePlanID" #samples [appBO]="appBO" (loader)="isLoaderOn($event)"></plan-samples>
+        </mat-tab>
+        <mat-tab > <!--[disabled]="isDisabledTab(2)"-->
+            <ng-template mat-tab-label>
+                <div>
+                    <i class="{{_global.icnSpec}} sam-plan"
+                        [ngClass]="{'mat-tab-label-com': samples_spec.btnSaveType == 'Update' && selectedTabIndex != 2}"
+                        aria-hidden="true" matTooltip="Specifications"></i>
+                    <div class="tab-title">
+                        Specifications
+                    </div>
+                </div>
+            </ng-template>
+            <sample-specifications [encSamplePlanID]="encSamplePlanID" #samples_spec [appBO]="appBO" (loader)="isLoaderOn($event)">
+            </sample-specifications>
+        </mat-tab>
+        <mat-tab > <!--[disabled]="isDisabledTab(3)"-->
+            <ng-template mat-tab-label>
+                <div>
+                    <i class="{{_global.icnTests}} sam-plan"
+                        [ngClass]="{'mat-tab-label-com': samples_Test.btnSaveType == 'Update' && selectedTabIndex != 3}"
+                        aria-hidden="true" matTooltip="Sample Test"></i>
+                    <div class="tab-title">
+                        Work Selection
+                    </div>
+                </div>
+            </ng-template>
+            <plan-samplesTest [encSamplePlanID]="encSamplePlanID" #samples_Test [appBo]="appBO" (loader)="isLoaderOn($event)"></plan-samplesTest>
+        </mat-tab>
+        <mat-tab [disabled]="isDisabledTab(4) && !enablePlanningTab">
+            <ng-template mat-tab-label>
+                <div>
+                    <i class="{{_global.icnPlanning}} sam-plan" aria-hidden="true" matTooltip="Planning"></i>
+                    <div class="tab-title">
+                        Allocation
+                    </div>
+                </div>
+            </ng-template>
+            <sample-planning [encSamplePlanID]="encSamplePlanID" #samples_Planning [appBO]="appBO" (loader)="samplePlanLoader($event)"></sample-planning>
+        </mat-tab>
+        <!-- <mat-tab label="{{stepName}}"></mat-tab> -->
+    </mat-tab-group>
+
+</div>

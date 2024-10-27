@@ -1,0 +1,112 @@
+<div class="sampleplan_planning mt-4">
+    <div class="qc_heading_spce pr-4 pl-4 mb-3" *ngFor="let usrDetails of planningDetails.userPlanDet">
+        <mat-card class="mat-card-heading">
+            <mat-card-content>
+                <h4 class="cardtitle"> {{usrDetails.userName}}
+                    <div class="mt-0 mb-0 ml-0 float-right">
+                        <ul class="qc_divul">
+                            <li>
+                                <span matTooltip="Ongoing" class="orange-ongoing"> {{usrDetails.onging}}</span>
+                                <span matTooltip="Planned" class="blue-planned"> {{usrDetails.planned}}</span>
+                                <span matTooltip="New" class="green-new"> {{usrDetails.currentPlan}}</span>
+                                <span matTooltip="Total" class="pink-total mr-2"> {{usrDetails.total}}</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-exchange-alt qc_icon-btn " aria-hidden="true"
+                                    (click)="manageUserTestPlan(usrDetails)" matTooltip="Manage / Assign Tasks"></i>
+                            </li>
+                        </ul>
+
+                    </div>
+                </h4>
+                <div class="pl-2 pr-2">
+                    <div class="sampleplan-samples-grid mt-2">
+                        <lims-grid (onActionClicked)="onActionClicked($event, 'ASSINGED')" [headers]="headersData"
+                            [activityStatusLst]="activityStatusLst" [dataSource]="getDataSource(usrDetails.userRoleID)"
+                            [actions]="actions" [isDisabled]="isDisabled"></lims-grid>
+                    </div>
+
+                    <div align="right" class="occ-hrs" [ngStyle]="{'color': usrDetails.overTime ? 'red': '#1b2b86'}">
+                        Occupany in Hours & Mins : {{usrDetails.occHours}}
+                    </div>
+
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div class="qc_heading_spce pr-4 pl-4 mb-3">
+        <mat-card class="mat-card-heading">
+            <mat-card-content>
+                <h4 class="cardtitle"> Not Assigned Samples</h4>
+                <div class="pl-2 pr-2 mt-2">
+                    <div class="sampleplan-samples-grid qc_acoodintable">
+                        <lims-grid (onActionClicked)="onActionClicked($event, 'NOT_ASSINGED')" [isParentCheckBoxVisible]='true'
+                            [headers]="notHeadersData" [dataSource]="getNotAssDataSource()" [actions]="notAssAction"
+                            [isDisabled]="isDisabled"></lims-grid>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+        <div align="right" class="mt-2" *ngIf="getNotAssDataSource() && getNotAssDataSource().data && getNotAssDataSource().data.length > 0">
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="removeFromPlan()" id="removePlan" btnLoader [isLoaderOn]="isLoaderStart">Remove from Plan</button>
+        </div>
+    </div>
+    <!-- <ul>
+        <li *ngFor="let usrDetails of planningDetails.userPlanDet" class="valigntop mt-2">
+            <div class="col-3 float-left pl-0">
+            <div class="divul ">
+                <ul>
+                    <li>
+                        <i class="fas fa-exchange-alt qc_icon-btn" aria-hidden="true" (click)="manageUserTestPlan(usrDetails)" matTooltip="Manage / Assign Tasks"></i>
+                        {{usrDetails.userName}}
+                    </li>
+                    <li>
+                        <span matTooltip="Ongoing" class="orange-ongoing"> {{usrDetails.onging}}</span>
+                        <span matTooltip="Planned" class="blue-planned"> {{usrDetails.planned}}</span>
+                        <span matTooltip="New" class="green-new"> {{usrDetails.currentPlan}}</span>
+                        <span matTooltip="Total" class="pink-total mr-2"> {{usrDetails.total}}</span>
+                        
+
+                    </li>
+                </ul>
+                <div class="occ-hrs" [ngStyle]="{'color': usrDetails.overTime ? 'red': '#1b2b86'}">
+                    Occupany in Hours & Mins : {{usrDetails.occHours}}
+                </div>
+            </div>
+           
+        </div>
+        <div class="col-9 pl-0 float-left">
+            <div class="sampleplan-samples-grid mt-2">
+                <lims-grid (onActionClicked)="onActionClicked($event, 'ASSINGED')" [headers]="headersData" [activityStatusLst]="activityStatusLst"
+                    [dataSource]="getDataSource(usrDetails.userRoleID)" [actions]="actions" [isDisabled]="isDisabled"></lims-grid>
+            </div>
+        </div>
+
+        </li> 
+
+        <li>
+            <div class="mt-3">
+                <h3 class="cardtitle_md">Not Assigned Samples</h3>
+            </div>
+
+
+            <div class="sampleplan-samples-grid qc_acoodintable">
+                <lims-grid (onActionClicked)="onActionClicked($event, 'NOT_ASSINGED')" [headers]="notHeadersData"
+                    [dataSource]="getNotAssDataSource()" [actions]="notAssAction" [isDisabled]="isDisabled"></lims-grid>
+            </div>
+
+        </li>
+
+    </ul>-->
+</div>
+
+
+<!-- <div class="btn-sampleplan mt-2" align="right">
+    <button type="button" mat-raised-button class="btnbase btn-green" (click)="autoGenPlan()" [disabled]="disableBtn">
+        <i class="{{_global.icnAdd}}" aria-hidden="true"></i>&nbsp;Generate Plan</button>
+
+    <button type="button" mat-raised-button *ngIf="appBO.canApprove" class="btnbase btn-green" (click)="confirm()">
+        <i aria-hidden="true" class="{{_global.icnConfirm}}"></i>&nbsp;Confirm</button>
+
+
+</div> -->

@@ -1,0 +1,59 @@
+<div class="new-popupTitle" mat-dialog-title>
+    <h1 class="colorwhite">{{pageTitle}}</h1>
+    <div class="popup-close">
+        <i class="material-icons" (click)="close()">
+            cancel
+        </i>
+
+    </div>
+</div>
+<div class="mt-2 mb-2 ml-1 mr-1 modal-over" mat-dialog-content>
+
+    <mat-grid-list cols="2" rowHeight="68px">
+        <!-- <mat-grid-tile>
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Category</mat-label>
+            <mat-select placeholder="Category" name="category" [(ngModel)]="manageData.categoryID"
+                (ngModelChange)="chngCategory()">
+                <mat-option *ngFor="let ddl of ddlCategory" [value]="ddl.categoryID">{{ddl.category}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </mat-grid-tile> -->
+        <mat-grid-tile>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Module</mat-label>
+                <mat-select placeholder="Module" [(ngModel)]="manageData.entityID" (ngModelChange)="selectModule()">
+                    <mat-option *ngFor="let cat of entityList" [value]="cat.entityID">{{cat.entityName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-grid-tile>
+
+        <mat-grid-tile>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Period Type</mat-label>
+                <mat-select placeholder="Period Type" [(ngModel)]="manageData.catItemID">
+                    <mat-option *ngFor="let cat of catItemList" [value]="cat.catItemID">{{cat.catItem}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-grid-tile>
+    </mat-grid-list>
+    <mat-grid-list cols="1" rowHeight="68px">
+        <mat-grid-tile>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Period Value</mat-label>
+                <input matInput placeholder="Period Value" (keypress)="allowNumbers($event)"
+                    [(ngModel)]="manageData.value" maxlength="5">
+            </mat-form-field>
+        </mat-grid-tile>
+    </mat-grid-list>
+    <div align="right">
+        <button mat-raised-button class="btnbase btn-blue" (click)="save()">
+            <i class="{{_global.icnAdd}}"></i>&nbsp;Add</button>
+    </div>
+    <div>
+        <lims-grid [dataSource]="dataSource" [headers]="headerData"></lims-grid>
+    </div>
+</div>

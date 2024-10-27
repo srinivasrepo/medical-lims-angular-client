@@ -1,0 +1,36 @@
+<div class="modal-content">
+    <div class="new-popupTitle">
+        <h1 mat-dialog-title> {{pageTitle}}</h1>
+        <div class="popup-close">
+            <i class="material-icons" (click)="closeModel()">close</i>
+        </div>
+    </div>
+    <div class="mt-3 ml-3 mr-3 mb-3" mat-dialog-content>
+        <mat-grid-list class="mt-2" cols="2" rowHeight="70px">
+            <mat-grid-tile>
+                <div class="full-width ">
+                    <lims-lookup [info]="scheduleInfo" #schedule (onSelect)="selectedSchdule($event)"></lims-lookup>
+                </div>
+            </mat-grid-tile>
+
+            <mat-grid-tile>
+                <div class="full-width ">
+                    <lims-lookup [info]="equipmentInfo" #equipment></lims-lookup>
+                </div>
+            </mat-grid-tile>
+            <mat-grid-tile>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Schedule Date</mat-label>
+                    <input matInput [(ngModel)]="schduleDate" [matDatepicker]="scheduleDate" placeholder="Date" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="scheduleDate"></mat-datepicker-toggle>
+                    <mat-datepicker #scheduleDate></mat-datepicker>
+                </mat-form-field>
+            </mat-grid-tile>
+        </mat-grid-list>
+        <div align="end">
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="save()" 
+            id="btnLoader" btnLoader [isLoaderOn]="isLoaderStart">
+                <i class="{{_global.icnSave}}" aria-hidden="true"></i>&nbsp; Save</button>
+        </div>
+    </div>
+</div>

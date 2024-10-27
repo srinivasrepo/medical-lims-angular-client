@@ -1,0 +1,73 @@
+<mat-card class="mat-card-heading">
+    <mat-card-content>
+        <h4 class="cardtitle"> {{phaseTitle}}</h4>
+        <div class="pl-2 pr-2 pb-2 mt--2">
+            <app-analysis [encEntityActID]="encOosTestDetID" [entityCode]="entityCode" [pageType]="anaPageType"
+                [appBO]="appBo" [sourceCode]="'OOS_TEST'" #samAna (emitArdsExecID)="getArdsExec($event)">
+            </app-analysis>
+        </div>
+    </mat-card-content>
+</mat-card>
+<mat-card class="mat-card-heading mt-3">
+    <mat-card-content>
+        <h4 class="cardtitle"> Result</h4>
+        <div *ngIf="pageType == 'MNG' && btnType=='Save' && !phaseCompleted" class="pl-2 pr-2">
+            <div class="mt-2">
+                <mat-label class="cardtitle_dark mr-3">Test Result : </mat-label>
+                <mat-radio-group [(ngModel)]="testResult" (change)="gethandler()" [disabled]="btnType=='Update'"
+                    class="mat-radio-btn">
+                    <mat-radio-button color="primary" value="a"> Pass
+                    </mat-radio-button>
+                    <mat-radio-button color="primary" value="r"> Fail
+                    </mat-radio-button>
+                </mat-radio-group>
+            </div>
+            <div *ngIf="validityObj" class="mt-2">
+                <mat-label class="cardtitle_dark mr-3"> {{validityObj.title}} : </mat-label>
+                <mat-radio-group [(ngModel)]="condition" class="mat-radio-btn" [disabled]="btnType == 'Update'">
+                    <mat-radio-button color="primary" *ngFor="let va of validityObj.list" [value]="va.code"> {{va.name}}
+                    </mat-radio-button>
+                </mat-radio-group>
+            </div>
+            <mat-form-field appearance="outline" class="full-width mt-2 pl-0 pr-0">
+                <mat-label>Corrective Action</mat-label>
+                <textarea matInput [(ngModel)]="remarks" [disabled]="btnType=='Update'" maxlength="8000"></textarea>
+            </mat-form-field>
+        </div>
+        <div class="view-inv mt-1" *ngIf="pageType != 'MNG' || btnType=='Update' || phaseCompleted">
+            <ul>
+                <li class="w-100">
+                    <mat-label>
+                        <span>Test Result</span>
+                        <span>{{testResult == 'a' ? 'Pass' : 'Fail'}}</span>
+                    </mat-label>
+                </li>
+                <li class="w-100">
+                    <mat-label>
+                        <span>Corrective Action</span>
+                        <span>{{remarks}}</span>
+                    </mat-label>
+                </li>
+            </ul>
+            <div *ngIf="validityObj" class="mt-3 pl-2 pr-2 ">
+                <mat-label class="cardtitle_dark mr-3"> {{validityObj.title}} : </mat-label>
+                <mat-radio-group [(ngModel)]="condition" class="mat-radio-btn" [disabled]="true">
+                    <mat-radio-button color="primary" *ngFor="let va of validityObj.list" [value]="va.code"> {{va.name}}
+                    </mat-radio-button>
+                </mat-radio-group>
+            </div>
+        </div>
+        <div align="right" class="mt-2 pb-3 pr-1">
+            <button type="button" mat-raised-button class="btnbase btn-blue " (click)="Uploadfiles()">
+                <i class="{{_global.icnView}}" *ngIf="btnUpload != 'Upload'" aria-hidden="true"></i>
+                <i class="{{_global.icnUpload}}" *ngIf="btnUpload == 'Upload'"
+                    aria-hidden="true"></i>&nbsp;{{btnUpload}}</button>
+
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="save()"
+                *ngIf="!phaseCompleted && pageType == 'MNG'" id="btnLoaders" btnLoader [isLoaderOn]="isLoaderStart">
+                <i class="{{_global.icnSave}}" *ngIf="btnType=='Save'" aria-hidden="true"></i>
+                <i class="{{_global.icnUpdate}}" *ngIf="btnType=='Update'"
+                    aria-hidden="true"></i>&nbsp;{{btnType}}</button>
+        </div>
+    </mat-card-content>
+</mat-card>

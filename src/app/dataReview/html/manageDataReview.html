@@ -1,0 +1,151 @@
+<page-head [pageTitle]="pageTitle" viewBack="true" [backUrl]="backUrl" [status]="status" [refNo]="refNo"
+    [viewHistoryVisible]="viewHistoryVisible" [viewHistory]="viewHistory" [entityCode]="entityCode" showRpts="true"
+    [encRptEntActID]="encReviewID"></page-head>
+<mat-card class="mat-card-c div-content mb-4 mt-1rem qc_mobp-main-tab">
+    <mat-card-content>
+        <div [ngClass]="{'hide': encReviewID}">
+            <div>
+                <mat-grid-list cols="2" rowHeight="60px">
+                    <mat-grid-tile>
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Select Request Type</mat-label>
+
+                            <mat-select placeholder="Select Request Type" [(ngModel)]="sourceID"
+                                (ngModelChange)="getRequests()" [disabled]="btntype == 'Change'">
+                                <mat-option *ngFor="let source of getCatItemList('ARDS_SOURCES')"
+                                    [value]="source.catItemID">
+                                    {{source.catItem}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                        <div class="full-width">
+                            <lims-lookup [info]="requestInfo" #requestLkp></lims-lookup>
+                        </div>
+                    </mat-grid-tile>
+                </mat-grid-list>
+            </div>
+            <div align="right" class="mt-2">
+                <button type="button" mat-raised-button class="btnbase btn-blue" (click)="getTests()"><i
+                        class="{{_global.icnGo}}" *ngIf="btntype == 'Go'" aria-hidden="true"></i>&nbsp;
+                    <i class="{{_global.icnChange}}" *ngIf="btntype == 'Change'"
+                        aria-hidden="true"></i>&nbsp;{{btntype}}</button>
+            </div>
+            <div *ngIf="btntype == 'Change'">
+                <lims-grid [headers]="testHeader" [dataSource]="testDataSource" [isParentCheckBoxVisible]="true">
+                </lims-grid>
+            </div>
+            <div align="right" class="mt-2" *ngIf="btntype == 'Change'">
+                <button type="button" mat-raised-button class="btnbase btn-blue" (click)="saveRequest()" id="btnLoaders"
+                    btnLoader [isLoaderOn]="isLoaderStart"><i class="{{_global.icnSave}}"
+                        aria-hidden="true"></i>&nbsp;Proceed</button>
+            </div>
+        </div>
+        <div *ngIf="encReviewID">
+            <div align="right" class="qc_btnbase-confirm">
+                <button type="button" mat-raised-button class="btnbase-confirm"
+                    *ngIf="appBo && appBo.canApprove && displayConfirm" (click)="confirm()">
+                    <i class="{{_global.icnConfirm}}" aria-hidden="true"></i>&nbsp;&nbsp;Confirm</button>
+            </div>
+            <mat-tab-group #mbTab mat-align-tabs="center" class="qc_mobp-main-tab"
+                (selectedIndexChange)="setTabIndex($event)">
+                <mat-tab label="Initiation">
+                    <div *ngIf="requestTypeCode == 'SAMANA'">
+                        <analy-header [headerInfo]="analysisHeader" [screenCode]="analysisHeader.screenCode"
+                            [entityCode]="entityCode"></analy-header>
+                    </div>
+                    <div class="px-5" *ngIf="requestTypeCode == 'CALIB'">
+                        <div class="qc_heading_spce">
+                            <mat-card class="mat-card-heading">
+                                <mat-card-content>
+                                    <h4 class="cardtitle"> Instrument Details</h4>
+                                    <div class="view-inv add-hr mt-2">
+                                        <ul>
+                                            <li>
+                                                <mat-label>
+                                                    <span>Equipment Category </span>
+                                                    <span>{{ headerInfo.eqpCategory || 'N / A'}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li>
+                                                <mat-label><span>Equipment / Instrument type </span>
+                                                    <span>{{ headerInfo.eqpType || 'N / A'}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li>
+                                                <mat-label><span>Equipment / Instrument Title (ID) </span>
+                                                    <span>{{ headerInfo.eqpTitle || 'N / A'}}
+                                                        ({{headerInfo.eqpCode || 'N / A'}})</span>
+                                                </mat-label>
+                                            </li>
+                                            <hr>
+                                            <li>
+                                                <mat-label><span>Schedule Type </span>
+                                                    <span>{{ headerInfo.scheduleType || 'N / A'}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li>
+                                                <mat-label><span>Schedule Date </span>
+                                                    <span> {{ getDate(headerInfo.schDate)}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li>
+                                                <mat-label><span>Schedule Year</span>
+                                                    <span>{{ getyear(headerInfo.schDate)}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <hr>
+                                            <li>
+                                                <mat-label>
+                                                    <span>Schedule start date</span>
+                                                    <span> {{ getDate(headerInfo.schStartDate)}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li>
+                                                <mat-label><span>Schedule end date </span>
+                                                    <span>{{ getDate(headerInfo.schEndDate)}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li>
+                                                <mat-label><span>Report Status </span>
+                                                    <span>{{ headerInfo.status || 'N / A'}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <hr>
+                                            <li>
+                                                <mat-label><span>Frequency Mode </span>
+                                                    <span>{{ headerInfo.periodType || 'N / A'}}</span>
+                                                </mat-label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                    </div>
+                    <div *ngIf="requestTypeCode == 'OOS_TEST'">
+                        <oos-header [encOosTestID]="requestID" [oosPageType]="'VIEW'" [conditionCode]="'OOS_APP'">
+                        </oos-header>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Containerwise Analysis Details" *ngIf="packList && packList.length > 0">
+                    <con-ana [encSioID]="requestID" #conAnalysis [pageType]="'VIEW'"></con-ana>
+                </mat-tab>
+                <mat-tab label="Analysis Details">
+                    <div *ngIf="requestTypeCode != 'OOS_TEST'">
+                        <app-analysis [encEntityActID]="requestID" #samAnalysis [entityCode]="requestEntityCode"
+                            [pageType]="'VIEW'" [appBO]="appBo"></app-analysis>
+                    </div>
+
+                    <div *ngIf="requestTypeCode == 'OOS_TEST'">
+                        <oos-analysis [encOosTestID]="requestID" [pageType]="'VIEW'"></oos-analysis>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Data Review">
+                    <data-chk></data-chk>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </mat-card-content>
+</mat-card>

@@ -1,0 +1,70 @@
+<div class="poptitile">
+    <h1 mat-dialog-title>{{pageTitle}}</h1>
+    <button type="button" class="popbtn" matTooltip="Close" mat-flat-button (click)="closeModal()">
+        <!-- <mat-icon class="material-icons">close</mat-icon> -->
+        <i class="{{_global.icnCancel}}" aria-hidden="true"></i>
+    </button>
+</div>
+
+<div mat-dialog-content>
+    <div id="collapID">
+
+        <div class="collap" id="c{{i}}" *ngFor="let inf of dataSourceInfo;let i=index">
+            <div class="collap-head" (click)="expandCollap(inf.encAuditTableID, 'n'+ i, 'b'+ i)">
+
+
+                <div class="demo-grid-2 mdl-grid">
+
+                    <div class="mdl-cell mdl-cell--10-col">
+
+
+                        <div align="left">
+                            {{convertTableName(inf.auditSourceTable)}} ( {{inf.auditDmlType}} )
+                        </div>
+                    </div>
+
+                    <div class="mdl-cell mdl-cell--2-col">
+                        <div class="coll-right" align="right">
+                            <span id="n{{i}}">{{collap_icon}}</span>
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+            <div class="{{collap_class}}" id="b{{i}}">
+
+                <table mat-table class="collap-table" [dataSource]="dataSource">
+
+                    <ng-container matColumnDef="Column">
+                        <th mat-header-cell *matHeaderCellDef> Column </th>
+                        <td mat-cell *matCellDef="let dat"> {{formatString(dat.columnName)}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="Old Data">
+                        <th mat-header-cell *matHeaderCellDef> Old Data </th>
+                        <td mat-cell *matCellDef="let dat"> {{formatString(dat.oldData)}}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="New Data">
+                        <th mat-header-cell *matHeaderCellDef> New Data </th>
+                        <td mat-cell mat-cell *matCellDef="let dat"> {{formatString(dat.newData)}} </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+                        <tr>
+
+                </table>
+
+
+
+            </div>
+        </div>
+    </div>
+
+</div>

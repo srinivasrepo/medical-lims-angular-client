@@ -1,0 +1,169 @@
+<div class="mt-2 mb-3 mr-0 ml-0" class="common-grid" [ngClass]="{'sam_ana_mng': getAnaColDesign}">
+    <mat-table #table [dataSource]="dataSource" class="grid-table qc_custom-grid"
+        *ngIf="dataSource && dataSource.data && dataSource.data.length > 0">
+        <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDef">
+            <mat-header-cell *matHeaderCellDef>{{ column.header }}</mat-header-cell>
+            <mat-cell *matCellDef="let row;let idx = index;"
+                [ngClass]="column.columnDef == 'specDesc' ? 'spec-descr':null">
+
+                <mat-label *ngIf="manageHideValues(row, column.columnDef)" class="{{column.class}}">
+                    <span [ngClass]="passOrFail(row, column.columnDef)">
+                        {{ formatValue(column.cell(row), column.columnDef) }}
+                      
+                        <span *ngIf="column.columnDef == 'testDesc'" innerHTML="{{row['testUom']}}"></span>
+                    </span>
+
+                    <span class="qc_tblbadag" *ngIf="row['userArdsExecID'] && column.columnDef == 'testName'">
+                        {{row['userArdsExecID']}}
+                    </span>
+
+                </mat-label>
+
+                <mat-checkbox [disabled]="isEnableCheckbox" [(ngModel)]="row[checkboxField]" class="{{column.class}}"
+                    *ngIf="isShowCheckBox(column.columnDef, row)" (change)="selectSingleChk($event, row)">
+                </mat-checkbox>
+
+                <!-- <div class="qc_tblbadag" *ngIf="isShowCheckBox(column.columnDef, row) && row['showSpecTestID']">
+                    {{row['samAnaTestID']}}
+                </div> -->
+
+                <!-- <div *ngIf="column.columnDef == 'testDesc'">
+                    <span innerHTML="{{row['testUom']}}"></span>
+                </div> -->
+
+                <!-- <i *ngIf="!manageHideValues(row, column.columnDef) && column.columnDef == 'passOrFail'"
+                    class="{{getDisplayIcon(row, column.columnDef)}}" aria-hidden="true"></i> -->
+                <!-- <i *ngIf="!manageHideValues(row, column.columnDef) && column.columnDef == 'resultAPP' && !row['isSelected']"
+                    class="{{_global.icnNotAllow}}" aria-hidden="true"></i> -->
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="actions" stickyEnd>
+            <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+            <mat-cell *matCellDef="let row;let idx = index" class="analysisGrid">
+
+                <div class="actions-icons"
+                    *ngIf="actions.length > 0 && checkUserActions(row, idx).length > 0 && rowActions == 'ANALYSIS'">
+
+                    <span *ngIf="row['statusCode']" style="margin-right: 7px;"
+                        matTooltip="{{getIconTooltip(row['statusCode'])}}">
+                        <img src="{{getIcon(row['statusCode'])}}">
+                    </span>
+
+                    <a class="action-item fail-analysis" *ngIf="row['passOrFail'] == 'N'">
+                        <i class="{{_global.icnNotAllow}}" aria-hidden="true"></i>
+                    </a>
+                    <a class="action-item fail-analysis" *ngIf="row['invalidationID']">
+                        <i class="fas fa-question-circle" matTooltip="Invalidation Under Process"></i>
+                    </a>
+
+                    <a href="Javascript:" id="c{{idx}}" [ngClass]="changeBasicStyle(row, act.code)"
+                        *ngFor="let act of checkUserActions(row, idx)"
+                        (click)="(!row['hasOccSubmitted'] && (((entityCode == 'SPEC_VALID' || entityCode == 'CALIB_VALIDATION') && act.code !='METHOD_RES' && act.code !='RAW' ) || ( (entityCode != 'SPEC_VALID' && entityCode != 'CALIB_VALIDATION') && act.code !='MNG_OCC' && act.code !='RAW'))) ? $event.preventDefault() : onActionClick(act.code, row)">
+                        <!-- <i class="material-icons" matTooltip="{{actiontoolTip.get(act.code)}}"
+                            *ngIf="act.code !='RRT' && act.code !='SDMS_DATA' && act.code !='INVALID'">
+                            {{act.icon}}
+                        </i> -->
+                        <span *ngIf="act.code =='MNG_OCC' && !isSubmitedData(row, act.code)" class="png-icons"
+                            matTooltip="{{actiontoolTip.get(act.code)}}"><img src="~/../assets/images/no-occup.png">
+                        </span>
+                        <span *ngIf="act.code =='MNG_OCC' && isSubmitedData(row, act.code)" class="png-icons"
+                            matTooltip="{{actiontoolTip.get(act.code)}}"><img src="~/../assets/images/has-occup.png">
+                        </span>
+                        <span *ngIf="act.code =='METHOD_RES' && !isSubmitedData(row, act.code) && !row['specTestValid']" class="png-icons"
+                            matTooltip="{{actiontoolTip.get(act.code)}}"><img src="~/../assets/images/no-result.png">
+                        </span>
+                        <span *ngIf="act.code =='METHOD_RES' && isSubmitedData(row, act.code)" class="png-icons"
+                            matTooltip="{{actiontoolTip.get(act.code)}}"><img src="~/../assets/images/has-result.png">
+                        </span>
+                        <span *ngIf="act.code =='METHOD_RES' && (entityCode == 'SPEC_VALID' || entityCode == 'CALIB_VALIDATION') && !isSubmitedData(row, act.code) && row['specTestValid']" class="png-icons"
+                            matTooltip="Valid Result"><img src="~/../assets/images/has-result-green.png">
+                        </span>
+                        <span *ngIf="act.code =='UPLOAD' && !isSubmitedData(row, act.code)" class="png-icons"
+                            matTooltip="{{pageType == 'MNG' ? actiontoolTip.get(act.code) : 'View Documents'}}"><img src="~/../assets/images/no-files.png">
+                        </span>
+                        <span *ngIf="act.code =='UPLOAD' && isSubmitedData(row, act.code)" class="png-icons"
+                            matTooltip="{{pageType == 'MNG' ? actiontoolTip.get(act.code) : 'View Documents'}}"><img src="~/../assets/images/has-files.png">
+                        </span>
+                        <span
+                            *ngIf="act.code =='RAW' && (entityCode == 'QCSAMPASYS' || entityCode == 'SPEC_VALID' || entityCode == 'OOSPROC') && !isSubmitedData(row, act.code) && !row['stpValid']"
+                            class="png-icons" matTooltip="{{actiontoolTip.get(act.code)}}"><img
+                                src="~/../assets/images/no-analysis.png">
+                        </span>
+                        <span
+                            *ngIf="act.code =='RAW' && (entityCode == 'QCSAMPASYS' || entityCode == 'SPEC_VALID' || entityCode == 'OOSPROC') && isSubmitedData(row, act.code)"
+                            class="png-icons" matTooltip="{{actiontoolTip.get(act.code)}}"><img
+                                src="~/../assets/images/has-analysis.png">
+                        </span>
+                        <span
+                            *ngIf="act.code =='RAW' && entityCode == 'SPEC_VALID' && !isSubmitedData(row, act.code) && row['stpValid']"
+                            class="png-icons" matTooltip="Valid STP"><img
+                                src="~/../assets/images/has-analysis-green.png">
+                        </span>
+                        <span
+                            *ngIf="act.code =='RAW' && (entityCode == 'ENGGMNT' || entityCode == 'CALIB_VALIDATION') && !isSubmitedData(row, act.code)"
+                            class="png-icons" matTooltip="{{actiontoolTip.get(act.code)}}"><img
+                                src="~/../assets/images/no-calibration.png">
+                        </span>
+                        <span
+                            *ngIf="act.code =='RAW' && (entityCode == 'ENGGMNT' || entityCode == 'CALIB_VALIDATION') && isSubmitedData(row, act.code)"
+                            class="png-icons" matTooltip="{{actiontoolTip.get(act.code)}}"><img
+                                src="~/../assets/images/has-calibration.png">
+                        </span>
+
+                    </a>
+
+
+                </div>
+
+
+                <div
+                    *ngIf="actions.length > 1 && checkUserActions(row, idx).length > 1 && displayIcon(checkUserActions(row, idx))">
+
+                    <a href="Javascript:" [matMenuTriggerFor]="menu">
+                        <i class="material-icons">
+                            more_horiz
+                        </i>
+                    </a>
+
+                    <mat-menu #menu="matMenu">
+                        <span *ngFor="let act of checkUserActions(row, idx);let index = index" id="act{{index + 1}}">
+                            <a href="Javascript:" mat-menu-item
+                                *ngIf="act.code != 'RAW' && act.code != 'UPLOAD' && act.code != 'METHOD_RES' && act.code != 'MNG_OCC'"
+                                (click)=" (!row['hasOccSubmitted'] && (((entityCode == 'SPEC_VALID' || entityCode == 'CALIB_VALIDATION') && act.code !='METHOD_RES' && act.code !='RAW' && act.code != 'CALIB_REPORT' ) || ((entityCode != 'SPEC_VALID' && entityCode != 'CALIB_VALIDATION') && act.code !='MNG_OCC' && act.code !='RAW' && act.code !='INVALID' && act.code != 'SWITCH_STP' && act.code !='SEND_FOR_REVIEW') ) ) ? $event.preventDefault() : onActionClick(act.code, row)">
+                                <i class="material-icons">
+                                    {{act.icon}}
+                                </i>
+                                <div>{{actiontoolTip.get(act.code)}}</div>
+                            </a>
+                        </span>
+                    </mat-menu>
+
+                </div>
+
+                <div *ngIf="checkUserActions(row, idx).length == 1">
+
+                    <a href="Javascript:" id="c{{idx}}" *ngFor="let act of checkUserActions(row, idx)"
+                        (click)="onActionClick(act.code, row)">
+                        <i class="material-icons" matTooltip="{{actiontoolTip.get(act.code)}}"
+                            *ngIf="act.code != 'RAW' && act.code != 'UPLOAD' && act.code != 'METHOD_RES' && act.code != 'MNG_OCC'">
+                            {{act.icon}}
+                        </i>
+                    </a>
+
+                </div>
+
+            </mat-cell>
+        </ng-container>
+
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row [ngClass]="changeBgColor(row)" *matRowDef="let row; columns: displayedColumns;"
+            [matTooltip]="row.analystName" matTooltipClass="section-tool"></mat-row>
+    </mat-table>
+
+    <div *ngIf="dataSource && dataSource.data.length < 1" class="textaligncenter">
+        <p>No Records Found</p>
+    </div>
+
+</div>

@@ -1,0 +1,9 @@
+<page-head [pageTitle]="pageTitle" viewBack="'true'" [backUrl]="backUrl"></page-head>
+<div class="mt-5 qc_n-table ">
+    <mat-card class="matcard-custom">
+        <mat-card-content>
+            <lims-grid [headers]="headersData" [dataSource]="dataSource" 
+            [actions]="actions" (onActionClicked)="onActionCLicked($event)"></lims-grid>
+        </mat-card-content>
+    </mat-card>
+</div>

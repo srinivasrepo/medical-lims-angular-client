@@ -1,0 +1,33 @@
+<div [ngClass]="{'mt-3' : !isPopUp}">
+
+    <div class="new-popupTitle" *ngIf="isPopUp" mat-dialog-title>
+        <h1 class="colorwhite">Department Comments</h1>
+        <div class="popup-close">
+            <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+        </div>
+    </div>
+
+    <div class="view-inv">
+        <ul>
+            <li *ngFor="let dr of deptRemarksList" class="w-100">
+                <mat-form-field *ngIf="showAndHide(dr.deptCode, dr.userDeptCode) && btnType == 'Save'"
+                    appearance="outline" class="full-width">
+                    <mat-label>{{dr.deptName}} Comments</mat-label>
+                    <textarea matInput placeholder="{{dr.deptName}} Comments" [(ngModel)]="dr.comments" rows="5"
+                        maxlength="8000"></textarea>
+                    <mat-hint align="end">{{dr.comments?.length || 0}} / 8000</mat-hint>
+                </mat-form-field>
+                <mat-label *ngIf="!showAndHide(dr.deptCode, dr.userDeptCode) || btnType == 'Update'">
+                    <span>{{dr.deptName}} Comments</span>
+                    <span>{{dr.comments || 'N / A'}}</span>
+                </mat-label>
+            </li>
+        </ul>
+
+    </div>
+    <div align="right" *ngIf="pageType == 'MNG'">
+        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="save()" id="btnLoaders" btnLoader [isLoaderOn]="isLoaderStart">
+            <i class="{{_global.icnSave}}" *ngIf="btnType=='Save'" aria-hidden="true"></i>
+            <i class="{{_global.icnUpdate}}" *ngIf="btnType=='Update'" aria-hidden="true"></i>&nbsp;{{btnType}}</button>
+    </div>
+</div>

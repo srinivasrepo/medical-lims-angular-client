@@ -1,0 +1,16 @@
+<div class="new-popupTitle" mat-dialog-title>
+    <h1 class="colorwhite">{{pageTitle}}</h1>
+    <div class="popup-close">
+        <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+    </div>
+</div>
+<div class="mt-3 pl-3 pr-3 mb-3" mat-dialog-content>
+    <lims-lookup [info]="sendSampleInfo" #sendSample>
+    </lims-lookup>
+
+    <div align="right">
+        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="go()" 
+        id="sendSample" btnLoader [isLoaderOn]="isLoaderStart">
+            <i class="fas fa-chevron-circle-right"></i> &nbsp;Go</button>
+    </div>
+</div>

@@ -1,0 +1,268 @@
+<!-- TITLE START -->
+<div class="new-popupTitle" mat-dialog-title>
+    <h1 class="colorwhite">Device Integration</h1>
+    <div class="popup-close">
+        <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+    </div>
+</div>
+
+<!-- TITLE END -->
+
+<!-- BODY START -->
+
+
+
+<!-- Drag & Drop -->
+
+<div class="ml-2 mr-2">
+
+    <!-- MANAGE SELECT EQUIPMENT START -->
+
+    <div class="full-width px-in-0 rs232_mode" [ngClass]="{'hide': pageType != 'MNG' }">
+        <ul class="mt-0">
+            <li class="cust-width-60per">
+                <mat-label>
+                    <span class="cardtitle_dark ">RS232 Mode : </span>
+                    <span>
+
+                        <mat-radio-group [(ngModel)]="rsObj.rs232Mode" name="rs232MMode">
+                            <mat-radio-button color="primary" value="RS232"> Rs232 </mat-radio-button>
+                            <mat-radio-button color="primary" value="FILE"> File Based </mat-radio-button>
+                        </mat-radio-group>
+
+                    </span>
+                </mat-label>
+            </li>
+
+            <div class="sdms_post row">
+                <div class="col-md-4 p-0">
+                    <lims-lookup [info]="equipmentInfo" #equipment (onSelect)="changeSelectInstrument($event)">
+                    </lims-lookup>
+                </div>
+
+                <div class="col-md-3 pt-1">
+                    <mat-checkbox [checked]="isRefEqpOcc" (change)="prepareRefLkp($event)">
+                        Refer existing occupancy?
+                    </mat-checkbox>
+                </div>
+
+                <div class="col-md-4" [ngClass]="{'hide': !isRefEqpOcc}">
+                    <lims-lookup [info]="refOccuInfo" #refOccu>
+                    </lims-lookup>
+                </div>
+
+                <div class="col-md-1 p-0 post-btn">
+                    <button type="button" mat-raised-button class="btnbase btn-blue mr-0" tabindex="-1"
+                        (click)="proceed()" id="btnRsPost" btnLoader [isLoaderOn]="isLoaderStart"><i
+                            class="{{_global.icnConfirm}}" aria-hidden="true"></i>&nbsp;Post</button>
+
+                </div>
+
+
+            </div>
+
+        </ul>
+
+    </div>
+
+    <!-- MANAGE SELECT EQUIPMENT END -->
+
+    <!-- VIEW EQUIPMWNT DETAILS -->
+
+    <div class="mt-2 mat-card" [ngClass]="{'hide': pageType == 'MNG'}" style="border: none;">
+
+        <mat-accordion>
+            <mat-expansion-panel class="view-inv">
+
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Equipment Details
+                        <span class="ml-1"> | </span>
+                        <span class="ml-1"> Spec Test ID : {{rsObjDetails.specTestID || rsObjDetails.rsIntegrationID }}
+                        </span>
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <ul>
+
+                    <li class="cust-width-60per">
+                        <mat-label>
+                            <span>Equipment</span>
+                            <span>{{rsObjDetails.equipment || 'N / A'}} <label *ngIf="rsObjDetails.equipment">
+                                    ( {{ rsObjDetails.eqpCode || rsObjDetails.equipmentUserCode }} ) </label> </span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label>
+                            <span>RS232 Mode</span>
+                            <span>{{rsObjDetails.rS232Mode == 'RS232' ? 'RS232' : rsObjDetails.rS232Mode == 'FILE' ?
+                                'File Base' : null}}</span>
+
+                        </mat-label>
+
+                    </li>
+                    <li>
+                        <mat-label>
+                            <span>From Date </span>
+                            <span>{{rsObjDetails.fromDate | datePipe:'datetime'}} </span>
+                        </mat-label>
+                    </li>
+
+                    <li>
+                        <mat-label>
+                            <span>To Date</span>
+                            <span>{{rsObjDetails.toDate | datePipe:'datetime'}}</span>
+
+                        </mat-label>
+
+                    </li>
+
+                    <!-- <li>
+                        <mat-label>
+                            <span>Spec Test ID</span>
+                            <span>{{rsObjDetails.specTestID || rsObjDetails.rsIntegrationID }}</span>
+
+                        </mat-label>
+
+                    </li> -->
+
+                    <li class="btn_span">
+                        <button type="button" mat-raised-button class="btnbase mr-0 btn-red" id="btnRsRest" btnLoader
+                            [isLoaderOn]="isLoaderStart" (click)="reset()">
+                            <i class="{{_global.icnSync}}" aria-hidden="true"></i>
+                            Reset</button>
+
+                    </li>
+
+
+
+                </ul>
+
+            </mat-expansion-panel>
+        </mat-accordion>
+
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-8 pl-0" [ngClass]="{'remove_padding': pageType == 'MNG'}">
+
+            <lims-lookup [info]="sdmsInfo" #sdmsData (onSelect)="getSDMSData($event)">
+            </lims-lookup>
+
+        </div>
+
+    </div>
+
+
+    <!-- IMPLEMENTED MAPPING FUNCATINALITY START  -->
+
+
+    <div class="dragDropHeader" cdkDropListGroup [ngClass]="{'hide': !dataPrepared}">
+
+        <div class="left-drop" style="width: 30%;">
+
+            <div class="input-acc rs232_list">
+
+                <div class="col-md-12 p-0 cust-border mt-2">
+                    <h2 class="cust-border-bottom p-1 mt-0 ml-2 mr-2 mb-0"> Considered Value</h2>
+
+                    <div cdkDropList #considerValList="cdkDropList" (cdkDropListDropped)="drop($event)"
+                        class="example-list cust-border-none">
+                        <div class="example-box cust-border-none" *ngFor="let item of filteredDetailsList" cdkDrag>
+
+                            <ul class="input_values" style="width: 100%;">
+                                <li style="display: none;"></li>
+                                <li class="inputValue">
+                                    <input [matTooltip]="item.Key" matInput name="quantity" placeholder="Quantity"
+                                        [(ngModel)]="item.value" (keypress)="Allowdecimal($event)">
+
+                                    <i class="{{_global.icnDelete}}" aria-hidden="true"
+                                        (click)="removeInputValue(item)"></i>
+
+                                </li>
+                            </ul>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div align="end" class="mt-2" *ngIf="filteredDetailsList && filteredDetailsList.length > 0">
+                    <button type="button" mat-raised-button class="btnbase btn-blue mr-0" (click)="updateValue()">
+                        <i class="{{_global.icnSave}}" aria-hidden="true"></i>
+                        Save</button>
+                </div>
+
+
+            </div>
+        </div>
+
+        <div class="rs232_table">
+            <mat-tab-group mat-align-tabs="center">
+                <mat-tab label="Single Values">
+
+                    <div [ngClass]="{'hide' : objectHeaders.length == 0 }" class="middle-left-drag">
+                        <div cdkDropList #doneList1="cdkDropList" [cdkDropListConnectedTo]="[considerValList]"
+                            class="example-list mapping-header">
+                            <div id="Temp-{{i}}" class="example-box"
+                                [cdkDragData]="{name: key.field, value: getObjectDataList(key.key, key.KeyField), Key: key.key, type:key.KeyField }"
+                                *ngFor="let key of objectHeaders;let i = index;" cdkDrag>
+
+                                <ul class="input_values input_key_value">
+                                    <li class="inputKey">
+                                        {{ key.field}}
+                                    </li>
+
+                                    <li class="inputValue">
+                                        {{getObjectDataList(key.key, key.KeyField)}}
+                                    </li>
+                                </ul>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </mat-tab>
+
+                <mat-tab label="Table Values">
+
+                    <div class="addx-scroll qc_eards_tbl">
+                        <div class="pb-4 mt-2 qc_n-table"
+                            [ngClass]="{'hide': !dynamicDataSource || !dynamicDataSource.data || dynamicDataSource.data.length == 0 }">
+                            <mat-table [dataSource]="dynamicDataSource">
+                                <ng-container *ngFor="let column of dynamicColumns; let i = index"
+                                    [matColumnDef]="column.key">
+                                    <mat-header-cell *matHeaderCellDef>
+                                        {{ column.field }}
+                                    </mat-header-cell>
+
+                                    <mat-cell cdkDropList cdkDrag #doneList="cdkDropList" class="drag_cell"
+                                        [cdkDragData]="{name: column.field, columIndex: i, value: row[column.key], Key: column.key }"
+                                        [cdkDropListConnectedTo]="[considerValList]" *matCellDef="let row"
+                                        id="Temp-{{i}}">
+                                        {{ row[column.key] }}
+                                    </mat-cell>
+                                </ng-container>
+
+                                <mat-header-row *matHeaderRowDef="dynamicDisplayedColumns; sticky: true">
+                                </mat-header-row>
+
+                                <mat-row *matRowDef="let row; columns: dynamicDisplayedColumns;"></mat-row>
+
+                            </mat-table>
+                        </div>
+                    </div>
+
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+
+    </div>
+
+    <!-- IMPLEMENTED MAPPING FUNCATINALITY END  -->
+
+</div>
+
+
+<!-- BODY END -->

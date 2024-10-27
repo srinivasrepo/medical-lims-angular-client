@@ -1,0 +1,22 @@
+<div class="modal-content">
+    <div class="new-popupTitle">
+        <h1 mat-dialog-title> Add Field</h1>
+        <div class="popup-close">
+            <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+        </div>
+    </div>
+    <div class="pxy-2 ">
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Title</mat-label>
+            <input matInput placeholder="Title" [(ngModel)]="obj.keyTitle" maxlength="50">
+            <mat-hint align="end">{{obj.keyTitle?.length || 0}}/50</mat-hint>
+        </mat-form-field>
+
+        <div align="right" class="mb-1 mt-2">
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="saveTitle()" id="titleBtnLoader" btnLoader [isLoaderOn]="isLoaderStart">
+                <i class="{{_global.icnSave}}" aria-hidden="true"></i>
+                &nbsp;Save</button>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,93 @@
+<div class="new-popupTitle" mat-dialog-title>
+    <h1>{{pageTitle}}</h1>
+    <div class="popup-close">
+        <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+    </div>
+</div>
+
+<div class="mt-3 mb-3 pl-3 pr-3 qc_n-table" mat-dialog-content>
+    <mat-table [dataSource]="dataSource" class="chk-grid qc_table-3">
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+        <ng-container matColumnDef="S.No.">
+            <mat-header-cell *matHeaderCellDef class="maxWidth-5per"> S.No.</mat-header-cell>
+            <mat-cell *matCellDef="let element;let i = index" class="maxWidth-5per">{{i+1}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="Check Point">
+            <mat-header-cell *matHeaderCellDef class="maxWidth-35per"> Check Point</mat-header-cell>
+            <mat-cell *matCellDef="let element;let i = index" class="maxWidth-35per">{{element.question}}</mat-cell>
+        </ng-container>
+
+
+        <ng-container matColumnDef="Yes">
+            <mat-header-cell *matHeaderCellDef class="maxWidth-10per"> Yes</mat-header-cell>
+            <mat-cell *matCellDef="let element;let i = index" class="maxWidth-10per">
+                <mat-radio-group [(ngModel)]="element.answer" [disabled]="isDisabled">
+                    <mat-radio-button color="primary" name="{{i}}" [disabled]="isDisabled" value="Yes" ngDefaultControl>
+                    </mat-radio-button>
+                </mat-radio-group>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="No">
+            <mat-header-cell *matHeaderCellDef class="maxWidth-10per"> No</mat-header-cell>
+            <mat-cell *matCellDef="let element;let i = index" class="maxWidth-10per">
+                <mat-radio-group [(ngModel)]="element.answer" [disabled]="isDisabled">
+                    <mat-radio-button color="primary" name="{{i}}" [disabled]="isDisabled" value="No" ngDefaultControl>
+                    </mat-radio-button>
+                </mat-radio-group>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="Not Applicable">
+            <mat-header-cell *matHeaderCellDef class="maxWidth-10per"> N / A</mat-header-cell>
+            <mat-cell *matCellDef="let element;let i = index" class="maxWidth-10per">
+                <mat-radio-group [(ngModel)]="element.answer" [disabled]="isDisabled">
+                    <mat-radio-button color="primary" name="{{i}}" [disabled]="isDisabled" value="N/A" ngDefaultControl>
+                    </mat-radio-button>
+                </mat-radio-group>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="Remarks">
+            <mat-header-cell *matHeaderCellDef class="maxWidth-25per">Remarks</mat-header-cell>
+            <mat-cell *matCellDef="let element;let i = index" class="maxWidth-25per">
+                <mat-form-field appearance="outline" class="full-width" *ngIf="type == 'MANAGE'">
+                    <mat-label>Remarks</mat-label>
+                    <textarea matInput placeholder="Remarks" [(ngModel)]="element.remarks" [disabled]="isDisabled"
+                        maxlength="250" ngDefaultControl></textarea>
+                    <mat-hint align="end">{{element.remarks?.length || 0}} / 250</mat-hint>
+                </mat-form-field>
+                <mat-label *ngIf="type != 'MANAGE'">{{element.remarks || 'N / A'}}</mat-label>
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="Answer">
+            <mat-header-cell *matHeaderCellDef class="maxWidth-10per"> Answer</mat-header-cell>
+            <mat-cell *matCellDef="let element;let i = index" class="maxWidth-10per">{{element.answer}}</mat-cell>
+        </ng-container>
+    </mat-table>
+    <div *ngIf="overAllRemarksMandatory">
+        <mat-form-field appearance="outline" class="full-width mt-2" *ngIf="type == 'MANAGE'">
+            <mat-label>Remarks</mat-label>
+            <textarea matInput placeholder="Remarks" [(ngModel)]="remarks" [disabled]="isDisabled"
+                maxlength="1000" ngDefaultControl></textarea>
+            <mat-hint align="end">{{remarks?.length || 0}} / 1000</mat-hint>
+        </mat-form-field>
+        <div class="view-inv add-hr" *ngIf="type != 'MANAGE'">
+            <ul>
+                <li>
+                    <mat-label>
+                        <span>Remarks</span>
+                        <span>{{remarks || 'N/A'}}</span>
+                    </mat-label>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div align="right" class="mt-3">
+        <button type="button" mat-raised-button class="btnbase btn-blue" *ngIf="type=='MANAGE'"
+            (click)="saveChecklist()" id="btnLoadersCheck" btnLoader [isLoaderOn]="isLoaderStart" [disabled]="disableBtn">
+            <i class="{{_global.icnSave}}" *ngIf="btnType=='Save'" aria-hidden="true"></i>
+            <i class="{{_global.icnUpdate}}" *ngIf="btnType=='Update'" aria-hidden="true"></i>&nbsp;{{btnType}}</button>
+    </div>
+</div>

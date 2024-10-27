@@ -1,0 +1,432 @@
+<page-head [pageTitle]="pageTitle" viewBack="true" [backUrl]="backUrl" [viewHistoryVisible]="true"
+    [entityCode]="entityCode" [viewHistory]="viewHistory" [status]="status" [refNo]="refNo"
+    [encEntityActID]="encMobilePhaseID" [encRptEntActID]="encMobilePhaseID" showRpts="true"></page-head>
+
+
+<mat-card class="mat-card-c div-content mb-4 mt-1rem qc_mobp-main-tab">
+    <mat-card-content>
+        <mat-tab-group mat-align-tabs="center">
+            <mat-tab label="Initiation">
+                <div class="qc_heading_spce">
+                    <mat-card class="mat-card-heading">
+                        <mat-card-content>
+                            <h4 class="cardtitle">Initiation Details</h4>
+
+                            <div class="view-inv">
+                                <div>
+                                    <ul>
+
+                                        <span *ngIf="mobileRe.preparationTypeCode != 'CALIBRATION'">
+                                            <li class="w-100">
+                                                <mat-label>
+                                                    <span>Material Name</span>
+                                                    <span>{{mobileRe.material || 'N / A'}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li class="w-100">
+                                                <mat-label>
+                                                    <span>Product Name</span>
+                                                    <span>{{mobileRe.productName || 'N / A'}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li class="w-100">
+                                                <mat-label>
+                                                    <span>Test Name</span>
+                                                    <span>{{mobileRe.specTestName || 'N / A'}}</span>
+                                                </mat-label>
+                                            </li>
+
+
+                                        </span>
+
+
+                                        <li>
+                                            <mat-label>
+                                                <span>Preparation Type</span>
+                                                <span>{{mobileRe.preparationType}}</span>
+                                            </mat-label>
+                                        </li>
+                                        <li>
+                                            <mat-label>
+                                                <span>Instrument Type</span>
+                                                <span>{{mobileRe.purpose}}</span>
+                                            </mat-label>
+                                        </li>
+                                        <li *ngIf="mobileRe.preparationTypeCode == 'CALIBRATION'">
+                                            <mat-label>
+                                                <span>Manual No.</span>
+                                                <span>{{mobileRe.manual || 'N / A'}}</span>
+                                            </mat-label>
+                                        </li>
+
+                                        <li *ngIf="mobileRe.preparationTypeCode != 'CALIBRATION'">
+                                            <mat-label>
+                                                <span>Material Category</span>
+                                                <span>{{mobileRe.materialCategory || 'N / A'}}</span>
+                                            </mat-label>
+                                        </li>
+
+                                        <li *ngIf="mobileRe.preparationTypeCode != 'CALIBRATION'">
+                                            <mat-label>
+                                                <span>Material Code</span>
+                                                <span>{{mobileRe.materialCode || 'N / A'}}</span>
+                                            </mat-label>
+                                        </li>
+
+                                        <li *ngIf="mobileRe.preparationTypeCode != 'CALIBRATION'">
+                                            <mat-label>
+                                                <span>Stage</span>
+                                                <span>{{mobileRe.stage || 'N / A'}}</span>
+                                            </mat-label>
+                                        </li>
+
+
+
+
+
+
+                                        <li *ngIf="mobileRe.preparationTypeCode == 'CALIBRATION'">
+                                            <mat-label>
+                                                <span>Parameter Name</span>
+                                                <span>{{mobileRe.specTestName || 'N / A'}}</span>
+                                            </mat-label>
+                                        </li>
+                                        <!-- <li *ngIf="mobileRe.preparationTypeCode == 'CALIBRATION'">
+                                    <mat-label>
+                                        <span>Calibration Reference</span>
+                                        <span *ngIf="mobileRe.calibrationReference"><a href="javascript:" class="green"
+                                                (click)="getSpec()">{{mobileRe.calibrationReference || 'N / A'}}</a></span>
+                                        <span
+                                            *ngIf="!mobileRe.calibrationReference">{{mobileRe.calibrationReference || 'N / A'}}</span>
+                                    </mat-label>
+                                </li> -->
+
+                                        <span *ngIf="mobileRe.discardedBy">
+
+                                            <li>
+                                                <mat-label>
+                                                    <span>Discarded By</span>
+                                                    <span>{{mobileRe.discardedBy || 'N / A'}}</span>
+                                                </mat-label>
+                                            </li>
+
+                                            <li>
+                                                <mat-label>
+                                                    <span>Discarded On</span>
+                                                    <span>{{mobileRe.discardedOn | date : 'dd/MMM/yyyy'}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li>
+                                                <mat-label>
+                                                    <span>Comment</span>
+                                                    <span>{{mobileRe.comment || 'N / A'}}</span>
+                                                </mat-label>
+                                            </li>
+                                        </span>
+                                        <li *ngIf="mobileRe.preparationTypeCode == 'CALIBRATION'">
+                                            <h4 class="cardtitle_sm pl-2 mt-2" *ngIf="mobileRe.calibrationReference">
+                                                Calibration Reference No. &nbsp; : &nbsp; <a class="qc_badge"
+                                                    href="javascript:"
+                                                    (click)="getSpec()">{{mobileRe.calibrationReference || 'N / A'}}</a>
+                                            </h4>
+                                            <mat-label *ngIf="!mobileRe.calibrationReference">
+                                                <span>Calibration Reference No.</span>
+                                                <span>{{mobileRe.calibrationReference || 'N / A'}}</span>
+                                            </mat-label>
+                                        </li>
+                                        <li class="w-100" *ngIf="mobileRe.preparationTypeCode != 'CALIBRATION'">
+                                            <h4 class="cardtitle_sm pl-2 mt-2" *ngIf="mobileRe.specification">
+                                                Specification Title &nbsp; : &nbsp; <a class="qc_badge"
+                                                    href="javascript:"
+                                                    (click)="getSpec()">{{mobileRe.specificationName || 'N / A'}}</a>
+                                            </h4>
+                                            <mat-label *ngIf="!mobileRe.specification">
+                                                <span>Specification Title</span>
+                                                <span>{{mobileRe.specificationName || 'N / A'}}</span>
+                                            </mat-label>
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            </div>
+
+
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+                <div class="qc_heading_spce">
+                    <mat-card class="mat-card-heading">
+                        <mat-card-content>
+                            <h4 class="cardtitle"> Details of Lab Chemicals</h4>
+                            <div class="px-5">
+
+
+
+                                <div class="py-m-0">
+                                    <div class="mt-2 pl-1 pr-1 qc_mobp-mstable">
+
+                                        <lims-grid [btnType]="'VIEW'" [headers]="headerData" [dataSource]="dataSource"
+                                            [extraColumns]="extraColumns" [removeAction]="removeActions"
+                                            (onActionClicked)="onActionClicked($event)" [actions]="action">
+                                        </lims-grid>
+                                    </div>
+                                </div>
+
+                                <div align="right" class="mt-4 pb-3">
+                                    <button type="button" mat-raised-button class="btnbase btn-blue "
+                                        (click)="Uploadfiles('MP_REQ')">
+                                        <i class="fa fa-file" aria-hidden="true"></i>&nbsp;View Documents
+                                    </button>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+
+            </mat-tab>
+
+
+            <mat-tab label="Preparation">
+                <div class="qc_heading_spce">
+                    <mat-card class="mat-card-heading">
+                        <mat-card-content>
+                            <h4 class="cardtitle">Preparation Details</h4>
+                            <div class="px-5">
+                                <div class="mt-2 pl-1 pr-1">
+
+                                    <div *ngFor="let phse of preparationList" class="view-inv add-hr mb-3">
+                                        <ul>
+
+                                            <li class="w-100">
+                                                <mat-label>
+                                                    <span>{{phse.preparationName}}</span>
+                                                    <span>{{formatValueString(phse.preparation)}}</span>
+                                                </mat-label>
+                                            </li>
+
+
+                                            <li *ngIf="purposeType != typeCode">
+                                                <mat-label>
+                                                    <span>Solution PH</span>
+                                                    <span>{{formatValueString(phse.preparationSolPH)}}</span>
+                                                </mat-label>
+                                            </li>
+                                            <li *ngIf="purposeType != typeCode">
+                                                <mat-label>
+                                                    <span>Weight</span>
+                                                    <span>{{formatValueString(phse.weight)}}</span>
+                                                </mat-label>
+                                            </li>
+
+                                        </ul>
+                                        <div align="right" *ngIf="purposeType != typeCode" class="mt-2 pb-2">
+                                            <button type="button" mat-raised-button class="btnbase btn-blue"
+                                                (click)="openOccupancy(phse)">
+                                                <i class="fa fa-thermometer-full" aria-hidden="true"></i>&nbsp;
+                                                Occupancy
+                                            </button>
+
+                                        </div>
+                                    </div>
+
+
+                                    <!-- <div *ngFor="let phse of preparationList">
+    
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>{{phse.preparationName}}</mat-label>
+                                <textarea [disabled]="disabledControls" matInput name="{{phse.preparationName}}" cols="30"
+                                    rows="5" maxlength="8000" [(ngModel)]="phse.preparation"></textarea>
+                            </mat-form-field>
+    
+                            <div>
+                                <mat-form-field appearance="outline" class="half-width">
+                                    <mat-label>Solution PH</mat-label>
+                                    <input matInput (keypress)="allowDecimal($event)"
+                                        name="{{phse.preparationName}} solutionPH" [disabled]="disabledControls"
+                                        [(ngModel)]="phse.preparationSolPH">
+                                </mat-form-field>
+                                <button type="button" mat-raised-button class="btnbase btn-blue"
+                                    (click)="openOccupancy(phse)" [disabled]="disabledControls">
+                                    <i class="fa fa-thermometer-full" aria-hidden="true"></i>&nbsp;PH Meter Used
+                                </button>&nbsp;&nbsp;
+                            </div>
+                        </div> -->
+
+
+
+                                    <ul>
+                                        <!-- <li *ngIf="getActiveControls()">
+                                <mat-label>
+                                    <span>Buffer Preparation</span>:
+                                    <span>{{formatValueString(mobileRe.bufferPrep)}}</span>
+                                </mat-label>
+                            </li>
+                            <li *ngIf="getActiveControls()">
+                                <mat-label>
+                                    <span>Solution PH </span>:
+                                    <span>{{formatValueString(mobileRe.solPH)}}</span>
+                                </mat-label>
+                            </li>
+                            <li *ngIf="getActiveControls()">
+                                <mat-label class="lineheightforview">
+                                    <span>PH Meter Used </span>:
+                                    <span>&nbsp;
+                                        <button type="button" mat-raised-button class="btnbase btn-blue"
+                                            (click)="openOccupancy()">
+                                            <i class="fa fa-thermometer-full" aria-hidden="true"></i>&nbsp;PH Meter
+                                        </button>
+                                    </span>
+                                </mat-label>
+                            </li>
+                            <li>
+                                <mat-label>
+                                    <span>{{ getActiveControls() ? 'Mobile Phase A' : 'Mobile Phase'}}</span>:
+                                    <span>{{formatValueString(mobileRe.phaseA)}}</span>
+                                </mat-label>
+                            </li>
+                            <li *ngIf="getActiveControls()">
+                                <mat-label>
+                                    <span>Mobile Phase B</span>:
+                                    <span>{{formatValueString(mobileRe.phaseB)}}</span>
+                                </mat-label>
+                            </li>
+                            <li *ngIf="getActiveControls()">
+                                <mat-label>
+                                    <span>Diluent Preparation</span>:
+                                    <span>{{formatValueString(mobileRe.diluentPrep)}}</span>
+                                </mat-label>
+                            </li> -->
+                                        <!-- <li>
+                                <mat-label>
+                                    <span>Other Information</span>:
+                                    <span>{{formatValueString(mobileRe.otherInfo)}}</span>
+                                </mat-label>
+                            </li> -->
+                                    </ul>
+                                </div>
+
+                                <div align="right" class="mt-2 pb-2 pr-1">
+                                    <button type="button" mat-raised-button class="btnbase btn-blue"
+                                        (click)="Uploadfiles('MP_PRE')">
+                                        <i class="fa fa-file" aria-hidden="true"></i>&nbsp;View Documents
+                                    </button>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+                <manage-add-field [obj]="rs232Obj" [isViewPage]="'true'" #viewCustField>
+                </manage-add-field>
+            </mat-tab>
+
+
+            <mat-tab label="Output">
+                <div class="qc_heading_spce" *ngFor="let phse of getPreparationUnEmptyList()">
+                    <mat-card class="mat-card-heading">
+                        <mat-card-content>
+                            <h4 class="cardtitle">{{phse.preparationName}}</h4>
+                            <div class="view-inv">
+                                <ul>
+                                    <li>
+                                        <mat-label>
+                                            <span>Final Volume</span>
+                                            <span>{{formatValueString(phse.prepartionVolum)}} <p
+                                                    style="display: inline;" *ngIf="phse.prepartionVolum">
+                                                    {{uom}}</p>
+                                            </span>
+                                        </mat-label>
+                                    </li>
+                                    <li>
+                                        <mat-label>
+                                            <span>Validity Period</span>
+                                            <span>{{formatValueString(phse.validityPeriod)}}</span>
+                                        </mat-label>
+                                    </li>
+                                    <li class="no-border mb-0">
+                                        <mat-label>
+                                            <span>Valid Up to</span>
+                                            <span>{{formatValueString(phse.useBeforeDate  | datePipe:'datetime')}}</span>
+                                        </mat-label>
+                                    </li>
+                                    <li class="w-100 mt-0  no-border" *ngIf="typeCode == purposeType">
+                                        <hr>
+                                        <mat-label>
+                                            <span class="bold mt-2">Remarks </span>
+                                            <span> {{mobileRe.outputOtherInfo || 'N / A'}} </span>
+                                        </mat-label>
+                                    </li>
+                                </ul>
+                            </div>
+
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+
+
+
+
+                <!-- <ul>
+                            <li>
+                                <mat-label>
+                                    <span>Final Volume</span>:
+                                    <span>{{formatValueString(mobileRe.finalVol)}}</span>
+                                </mat-label>
+                            </li>
+                            <li>
+                                <mat-label>
+                                    <span>Validity Period</span>:
+                                    <span>{{formatValueString(mobileRe.validityPeriodValue)}}</span>
+                                </mat-label>
+                            </li>
+                            <li>
+                                <mat-label>
+                                    <span>Use Before Date</span>:
+                                    <span>{{mobileRe.validityDate | datePipe:'datetime'}}</span>
+                                </mat-label>
+                            </li>
+    
+                        </ul> -->
+
+
+
+                <div class="px-5" *ngIf="typeCode != purposeType">
+                    <div class="view-inv add-hr mt-2">
+                        <ul>
+                            <li>
+                                <mat-label>
+                                    <span>Final Volume</span>
+                                    <span>{{formatValueString(finalVolume)}}
+                                        <p style="display: inline;" *ngIf="finalVolume">{{uom}}</p></span>
+                                </mat-label>
+                            </li>
+
+                            <li>
+                                <mat-label>
+                                    <span>Valid Up to</span>
+                                    <span>{{formatValueString(mobileRe.useBeforeDateTime  | datePipe:'datetime')}}</span>
+                                </mat-label>
+                            </li>
+
+
+                            <li class="w-100 no-border">
+                                <mat-label>
+                                    <span>Remarks </span>
+                                    <span> {{mobileRe.outputOtherInfo || 'N / A'}} </span>
+                                </mat-label>
+                            </li>
+
+                        </ul>
+
+                    </div>
+                </div>
+
+                <div align="right" class="mt-3 mb-2">
+                    <button type="button" mat-raised-button class="btnbase btn-blue" (click)="Uploadfiles('MP_OUT')">
+                        <i class="{{_global.icnViewFiles}}" aria-hidden="true"></i>&nbsp;View Documents
+                    </button>
+                </div>
+
+            </mat-tab>
+        </mat-tab-group>
+    </mat-card-content>
+</mat-card>

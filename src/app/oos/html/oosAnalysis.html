@@ -1,0 +1,40 @@
+<div class="oos_chip">
+    <mat-chip-list class="mat-chip-list">
+        <ul>
+            <li *ngFor="let phase of phaseList; let i = index">
+                <mat-chip class="mat-chip mat-primary mat-standard-chip mat_cust_chip" [matTooltip]="phase.phaseTitle">
+                    <span>{{phase.phaseTitle}} </span>
+                    <!-- <mat-icon style="color:red;" matTooltip="Add">cancel</mat-icon> -->
+
+                </mat-chip>
+                <i aria-hidden="true" [class]="getIcons('ADD')" (click)="getComponent(phase)"></i>
+            </li>
+        </ul>
+    </mat-chip-list>
+</div>
+<div class="qc_heading_spce" *ngIf="encOosTestDetID">
+    <!-- <mat-card class="mat-card-heading">
+        <mat-card-content> -->
+            <!-- <h4 class="cardtitle"> {{phaseTitle}}</h4> -->
+            <oos-chk-grid *ngIf="phaseType == 'CL'" [pageType]="pageType" [encOosTestDetID]="encOosTestDetID" [phaseTitle]="phaseTitle">
+            </oos-chk-grid>
+            <oos-hypo-test *ngIf="phaseType == 'HYPTST' || phaseType == 'EXTLAB'" [pageType]="pageType"
+                [encOosTestID]="encOosTestID" [encOosTestDetID]="encOosTestDetID" [appBo]="appBo" [phaseTitle]="phaseTitle"> </oos-hypo-test>
+            <oos-tst-sample
+                *ngIf="phaseType == 'SA' || phaseType == 'DA' || phaseType == 'NS' || phaseType == 'NS2' || phaseType == 'NS3' || phaseType == 'NS4' || phaseType == 'TA' || phaseType == 'FA'"
+                [encOosTestID]="encOosTestID" [pageType]="pageType" [encOosTestDetID]="encOosTestDetID" [appBo]="appBo" [phaseTitle]="phaseTitle"
+                (emitArdsExecID)="getArdsExec($event)">
+            </oos-tst-sample>
+            <oos-dept-review *ngIf="phaseType == 'REV'" [encOOSTestDetID]="encOosTestDetID" [pageType]="pageType" [phaseTitle]="phaseTitle">
+            </oos-dept-review>
+            <oos-catB *ngIf="phaseType == 'CATB_COMMENT'" [encOosTestID]="encOosTestID" [phaseTitle]="phaseTitle"
+                [encOosTestDetID]="encOosTestDetID" [appBo]="appBo" [pageType]="pageType"></oos-catB>
+            <oos-sincom *ngIf="phaseType == 'COMMENT' || phaseType == 'OOSP2'" [encOosTestID]="encOosTestID" [phaseTitle]="phaseTitle"
+                [encOosTestDetID]="encOosTestDetID" [pageType]="pageType"></oos-sincom>
+            <oos-manu-chk *ngIf="phaseType == 'MFGCL'" [encOOSTestDetID]="encOosTestDetID" [encOosTestID]="encOosTestID" [phaseTitle]="phaseTitle"
+                [pageType]="pageType">
+            </oos-manu-chk>
+
+        <!-- </mat-card-content>
+    </mat-card> -->
+</div>

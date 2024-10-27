@@ -1,0 +1,40 @@
+<page-head [pageTitle]="pageTitle" viewBack="true" [backUrl]="backUrl" [status]="headerInfo.status"
+    [refNo]="headerInfo.arNumber" [viewHistoryVisible]="showHistory" [encEntityActID]="encArdsExecID"
+    [viewHistory]="viewHistory" [entityCode]="entityCode" showRpts="true" 
+    [encRptEntActID]="encSioID"></page-head>
+<mat-card class="sam-matcard-custom mt-15">
+    <mat-card-content>
+        <div align="right" class="qc_btnbase-confirm">
+            <button type="button" mat-raised-button class="btnbase-confirm mr-0" (click)="confirm()"
+                *ngIf="showConfirm() && pageType != 'VIEW'">
+                <i class="{{_global.icnConfirm}}" aria-hidden="true"></i>&nbsp;&nbsp;Confirm</button>&nbsp;&nbsp;
+        </div>
+
+        <mat-tab-group #sampleAnaTab mat-align-tabs="center" class="ana-tab" (selectedIndexChange)="setTabIndex($event)"
+            (selectedTabChange)="tabChanged($event)">
+            <mat-tab label="Initiation">
+                <analy-header></analy-header>
+            </mat-tab>
+            <mat-tab label="Sampling" *ngIf="headerInfo.sampleMode != 'S'">
+                <samp-info #sampling [pageType]="pageType"></samp-info>
+            </mat-tab>
+            <mat-tab label="ARDS" *ngIf="headerInfo.sampleMode != 'S'">
+                <app-analysis-ards [encEntityActID]="encSioID" #ards [entityCode]="'QCSAMPASYS'" [pageType]="pageType">
+                </app-analysis-ards>
+            </mat-tab>
+            <mat-tab label="Container Wise Analysis"
+                *ngIf="headerInfo.sampleMode != 'S' && containerWiseAnalysisApp == 'Yes'">
+                <con-ana [encSioID]="encSioID" #conAnalysis [pageType]="pageType"
+                    (emitArdsExecID)="getArdsExec($event)"></con-ana>
+            </mat-tab>
+            <mat-tab label="Analysis" *ngIf="headerInfo.sampleMode != 'S'">
+                <app-analysis [encEntityActID]="encSioID" #samAnalysis [entityCode]="'QCSAMPASYS'" [pageType]="pageType"
+                    (emitArdsExecID)="getArdsExec($event)"></app-analysis>
+            </mat-tab>
+            <mat-tab label="Supplier COA" *ngIf="headerInfo.sampleMode == 'S'">
+                <sup-coa #supCOA [pageType]="pageType"></sup-coa>
+            </mat-tab>
+        </mat-tab-group>
+
+    </mat-card-content>
+</mat-card>

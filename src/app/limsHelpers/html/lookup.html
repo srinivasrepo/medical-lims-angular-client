@@ -1,0 +1,76 @@
+<ng-template #modalContent let-close="close">
+    <div class="new-popupTitle" mat-dialog-title>
+        <h1 class="colorwhite">{{info.title}}</h1>
+        <div class="popup-close">
+            <i class="{{_global.icnCancel}}" aria-hidden="true" matTooltip="Close" (click)="modelclose()"></i>
+        </div>
+    </div>
+
+    <div class="mt-3 mb-3 ml-3 mr-2 pr-2 modal-over" style="position: relative;">
+
+        <div class="pl-1 pr-1">
+        <mat-form-field appearance="outline" class="full-width searchLookUpTxt pl-0 pr-0">
+            <mat-label>Search Text </mat-label>
+            <input matInput placeholder="Search Text" [(ngModel)]="searchVal" maxlength="25">
+
+        </mat-form-field>
+
+        <div class="search_buttonlookup">
+            <button mat-raised-button class="btnlookup" color="primary" (click)="onFilterClick()"  id="lkpbtnLoaders" btnLoader [isLoaderOn]="isLoaderStart">
+                <i class="{{_global.icnSearch}}" aria-hidden="true"></i></button>
+        </div>
+
+
+        <div *ngIf="length > 0" class="lkp-total">
+            Total No. of Records : {{length}}
+        </div>
+    </div>
+
+        <div class="mt-2" style=" height: 300px!important; border: 0px solid #000; display:block;" mat-dialog-content>
+            <lims-grid *ngIf="length > 0" (onRowClicked)="onRowClick($event);" [headers]='headerData'
+                [dataSource]='dataSource'>
+            </lims-grid>
+            <div *ngIf="length == 0" align="center">
+                No record found
+            </div>
+        </div>
+
+    </div>
+</ng-template>
+
+
+<mat-form-field class="full-width searchLookUpTxt" appearance="outline">
+    <mat-label>{{info.placeholder}}
+        <span class="fieldMandatory" *ngIf="isMandatory">*</span>
+    </mat-label>
+
+    <input matInput [ngClass]="{'hide' : dataList && dataList.length != 0}" [(ngModel)]="displayTextVal"
+        [placeholder]="info.placeholder" [disabled]="disableBtn" readonly>
+    <mat-chip-list class="mat-chip-list" *ngIf="canSelectMultiple">
+        <div class="mat-chip-list-wrapper">
+            <mat-chip class="mat-chip mat-primary mat-standard-chip ng-star-inserted"
+                *ngFor="let item of dataList; let i = index" [matTooltip]="item.name">{{item.code}} &nbsp;&nbsp;
+                <mat-icon *ngIf="!disableBtn" (click)="remove(i)" style="color:red;" matTooltip="Delete">cancel
+                </mat-icon>
+            </mat-chip>
+        </div>
+    </mat-chip-list>
+
+    <div class="buttonlookup" [ngClass]="{'lkp-btn': dataList && dataList.length != 0}">
+
+        <button matSuffix mat-raised-button matTooltip="Search" class="btnlookup" color="primary"
+            (click)="onLookupClick()" [disabled]="disableBtn" type="button"
+            *ngIf="displayTextVal == '' || canSelectMultiple">
+            <i class="{{_global.icnAdd}}" aria-hidden="true"></i>
+            <!-- <i class="material-icons">
+                add
+            </i> -->
+        </button>
+
+        <button matSuffix mat-raised-button matTooltip="Clear" class="btnlookup" color="secondary" (click)="clear()"
+            type="button" [disabled]="disableBtn" *ngIf="displayTextVal != '' && !canSelectMultiple">
+            <i class="{{_global.icnClear}}" aria-hidden="true"></i>
+        </button>
+    </div>
+
+</mat-form-field>

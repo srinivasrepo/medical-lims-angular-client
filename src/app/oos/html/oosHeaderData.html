@@ -1,0 +1,120 @@
+<div class="qc_heading_spce">
+    <mat-card class="mat-card-heading">
+        <mat-card-content>
+            <h4 class="cardtitle"> Request Details</h4>
+            <div class="view-inv pb-2">
+                <ul>
+                    <li class="w-100">
+                        <mat-label>
+                            <span>Material / Product Name</span>
+                            <span>{{formatingString(testInfo.material)}}</span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label>
+                            <span>Material Code</span>
+                            <span>{{formatingString(testInfo.matCode)}}</span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label>
+                            <span>Stage</span>
+                            <span>{{formatingString(testInfo.stage)}}</span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label>
+                            <span>Batch Number</span>
+                            <span>{{formatingString(testInfo.batchNumber)}}</span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label>
+                            <span>AR Number</span>
+                            <span>{{formatingString(testInfo.arNum)}}</span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label>
+                            <span>Specification Number</span>
+                            <span>{{formatingString(testInfo.specNumber)}}</span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label>
+                            <span>Project</span>
+                            <span>{{formatingString(testInfo.projectName)}}</span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label>
+                            <span>Specification Limit</span>
+                            <span>{{formatingString(testInfo.specDesc)}}</span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label>
+                            <span>Test Name</span>
+                            <span>{{formatingString(testInfo.testTitle)}}</span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label>
+                            <span>Result</span>
+                            <span>{{formatingString(testInfo.result)}}</span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label>
+                            <span>Analyzed By</span>
+                            <span>{{formatingString(testInfo.analysisBy)}}</span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label>
+                            <span>Analyzed On</span>
+                            <span>{{dateFormate(testInfo.analysisOn)}}</span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label>
+                            <span>Schedule No.</span>
+                            <span>{{formatingString(testInfo.oosProcessName)}}
+                                ({{formatingString(testInfo.oosProcessCode)}})</span>
+                        </mat-label>
+                    </li>
+                    <li class="w-100">
+                        <mat-label>
+                            <span>Additional Samples</span>
+                            <span>{{formatingString(testInfo.adnlSamples)}}</span>
+                        </mat-label>
+                    </li>
+                    <li *ngIf="oosPageType == 'VIEW'" class="w-100 no-border">
+                        <mat-label>
+                            <span>Description of OOS</span>
+                            <span>{{formatingString(testInfo.summary)}}</span>
+                        </mat-label>
+                    </li>
+                </ul>
+                <div class="pl-1 pr-1 mt-2">
+                    <mat-form-field appearance="outline" class="full-width mt-2"
+                        *ngIf="oosPageType == 'MNG'">
+                        <mat-label>Description of OOS</mat-label>
+                        <textarea matInput placeholder="Description of OOS"
+                            [(ngModel)]="testInfo.summary" [disabled]="btnType == 'Update'"
+                            maxlength="1000"></textarea>
+                        <mat-hint align='end'>{{testInfo.summary?.length || 0}} / 1000</mat-hint>
+                    </mat-form-field>
+                    <div align="right" class="mt-2 pb-2" *ngIf="oosPageType == 'MNG'">
+                        <button type="button" mat-raised-button class="btnbase btn-blue"
+                            (click)="updateSummary()"  id="btnLoaders" btnLoader [isLoaderOn]="isLoaderStart">
+                            <i class="{{_global.icnSave}}" *ngIf="btnType=='Save'"
+                                aria-hidden="true"></i>
+                            <i class="{{_global.icnUpdate}}" *ngIf="btnType=='Update'"
+                                aria-hidden="true"></i>&nbsp;{{btnType}}</button>
+                    </div>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

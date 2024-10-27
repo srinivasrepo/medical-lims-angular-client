@@ -1,0 +1,60 @@
+<div align="right" class="pr-2 workallotmentinfo">
+
+
+
+    <mat-label><span>Total Samples</span> : <span>{{totalSamples}}</span></mat-label>
+    <mat-label><span>Assigned Samples</span> : <span>{{assignedSamples}}</span></mat-label>
+    <mat-label><span>Un Assigned Samples</span> : <span>{{unAssignedSamples}}</span></mat-label>
+
+    <span align="left">
+        <mat-form-field appearance="outline">
+            <input class="nomargin nopadding" matInput placeholder="Search Text" [(ngModel)]="searchText"
+                (keyup)="onFilterClick($event)" maxlength="25">
+        </mat-form-field>
+        <!-- <mat-checkbox class="nomargin nopadding" class="check-wrk" [(ngModel)]="isSelect" (change)="selectCheck()"> Previous shift pending work </mat-checkbox> -->
+
+    </span>
+</div>
+
+
+
+
+
+<div class="pr-4 pl-4 mt-4 workallotment-accordion">
+
+    <mat-accordion>
+        <mat-expansion-panel *ngFor="let sampl of getSamplesTypes">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <span class="">
+                        <mat-checkbox id="{{sampl}}" [disabled]="btnSaveType == 'Update' || disableAll"
+                            (change)="$event ? changeSamplesSelect($event, sampl) : null"
+                            (click)="$event.stopPropagation();" [checked]="isSelectedAllSamples(sampl)"></mat-checkbox>
+                    </span>
+                    <span class="">
+                        <mat-label> {{sampl}}</mat-label>
+                    </span>
+                    <span align="end" class="plancount">
+                        <span class="span125px">
+                            {{getSamplesSelectedCount(sampl)}}
+                        </span>
+                    </span>
+                </mat-panel-title>
+
+            </mat-expansion-panel-header>
+
+            <div class="sampleplan-samples-grid mt-2">
+                <lims-grid [headers]="headersData" [isEnableCheckbox]="btnSaveType == 'Update' || disableAll"
+                    [checkboxField]="'isSelected'" [dataSource]="getSamplesDataSource(sampl)">
+                </lims-grid>
+            </div>
+        </mat-expansion-panel>
+    </mat-accordion>
+
+
+
+
+
+
+
+</div>

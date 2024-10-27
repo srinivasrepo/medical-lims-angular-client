@@ -1,0 +1,26 @@
+<div class="new-popupTitle" mat-dialog-title>
+    <h1>{{pageTitle}}</h1>
+    <div class="popup-close">
+        <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+    </div>
+</div>
+<div class="mt-3 mb-3 pl-3 pr-3" mat-dialog-content>
+    <div>
+        <mat-radio-group color="primary" [(ngModel)]="switchObj.ardsMode">
+            <mat-radio-button class="mt-1 mr-1" *ngFor="let item of analysisModes" [value]="item.catItemCode">{{item.catItem}}</mat-radio-button>
+        </mat-radio-group>
+
+        <div align="center" class="mt-2">
+            <span>
+                <mat-label>Note*: Make sure that once you change ARDS mode , test/parameter result will be clear, do you want to create
+                    ?
+                </mat-label>
+            </span>
+        </div>
+
+        <div align="right" class="mt-3">
+            <button type="button" class="btnbase btn-blue" (click)="save()">
+                <i class="{{_global.icnSave}}" aria-hidden="true"></i>Save</button>
+        </div>
+    </div>
+</div>

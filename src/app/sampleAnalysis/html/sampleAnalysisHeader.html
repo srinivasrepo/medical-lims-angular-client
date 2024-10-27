@@ -1,0 +1,186 @@
+<div class="qc_heading_spce">
+    <mat-card class="mat-card-heading">
+        <mat-card-content>
+            <h4 class="cardtitle"> Sample Details</h4>
+            <div class="view-inv pb-2">
+
+
+                <ul>
+                    <li class="w-100">
+                        <mat-label>
+                            <span>Product / Material Name </span>
+                            <span>{{headerInfo.productName}}</span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label><span>Material Code </span>
+                            <span>{{headerInfo.matCode || 'N / A'}}</span>
+                        </mat-label>
+                    </li>
+                    <!-- <li>
+            <mat-label><span>Stage </span>
+                <span>{{headerInfo.stage || 'N / A'}}</span>
+            </mat-label>
+        </li> -->
+                    <li>
+                        <mat-label><span>Batch Number </span>
+                            <span>{{headerInfo.invBatchNumber || 'N / A'}}</span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label><span>Batch Quantity </span>
+                            <span>{{getBatchQty()}}</span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label><span>Sample Inward No. </span>
+                            <span> {{headerInfo.sioCode || 'N / A'}}</span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label>
+                            <span>Sample Number </span>
+                            <span> {{headerInfo.sampleNumber || 'N / A'}}</span></mat-label>
+                    </li>
+                    <li>
+                        <mat-label><span>Analysis Type </span>
+                            <span>{{headerInfo.analysisType}}</span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label><span>Status </span>
+                            <span>{{headerInfo.status || 'N / A'}}</span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label><span>Specification Number </span>
+                            <span>{{headerInfo.specNumber || 'N / A'}}</span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label><span>Batch Source </span>
+                            <span>{{ headerInfo.batchSource || 'N / A'}}</span>
+                        </mat-label>
+                    </li>
+                    <span>
+                        <li>
+                            <mat-label><span>AR Number </span>
+                                <span>{{headerInfo.arNumber || 'N / A'}}</span>
+                            </mat-label>
+                        </li>
+                    </span>
+
+                    <span *ngIf="showHideFields('BATCH_MFG_DATE')">
+                        <li>
+                            <mat-label><span>Batch Mfg. Date </span>
+                                <span>{{getBatchDate()}}</span>
+                            </mat-label>
+                        </li>
+                    </span>
+
+                    <!-- <li *ngIf="showHideFields('BATCH_QNTY')">
+            <mat-label><span>Batch Quantity / Vial Quantity </span>
+                <span>{{ headerInfo.batchQty || 'N / A'}}</span>
+            </mat-label>
+        </li> -->
+                    <span *ngIf="showHideFields('PROJECT')">
+                        <li>
+                            <mat-label><span>Project </span>
+                                <span>{{ headerInfo.projectName || 'N / A'}}</span>
+                            </mat-label>
+                        </li>
+                    </span>
+                    <span *ngIf="showHideFields('NOOF_DRUMS')">
+                        <li>
+                            <mat-label><span>Number of Drums / Containers </span>
+                                <span>{{ headerInfo.noOfContainers|| 'N / A'}}</span>
+                            </mat-label>
+                        </li>
+                    </span>
+                    <span *ngIf="showHideFields('MRR_NUMB')">
+                        <li>
+                            <mat-label><span>MRR Number </span>
+                                <span>{{ headerInfo.mrrNumber|| 'N / A'}}</span>
+                            </mat-label>
+                        </li>
+                    </span>
+                    <span *ngIf="showHideFields('MRR_DATE')">
+                        <li>
+                            <mat-label><span>MRR Date </span>
+                                <span>{{ headerInfo.mrrDate |  datePipe: 'date'}}</span>
+                            </mat-label>
+                        </li>
+                    </span>
+                    <!-- <li *ngIf="showHideFields('PRODUCT')">
+            <mat-label><span>Product Name </span>
+                <span>{{ headerInfo.productName|| 'N / A'}}</span>
+            </mat-label>
+        </li> -->
+                    <span *ngIf="showHideFields('STAGE')">
+                        <li>
+                            <mat-label><span>Stage </span>
+                                <span>{{ headerInfo.stage || 'N / A'}}</span>
+                            </mat-label>
+                        </li>
+                    </span>
+                    <span *ngIf="showHideFields('SAM_QNTY')">
+                        <li>
+                            <mat-label><span>Sample Quantity </span>
+                                <span>{{ getSampleUom()}}</span>
+                            </mat-label>
+                        </li>
+                    </span>
+                    <span *ngIf="showHideFields('FREQ')">
+                        <li>
+                            <mat-label><span>Frequency </span>
+                                <span>{{getFrequency(headerInfo.frequency)}}</span>
+                            </mat-label>
+                        </li>
+                    </span>
+                    <span *ngIf="showHideFields('CONDITION')">
+                        <li>
+                            <mat-label><span>Condition </span>
+                                <span>{{headerInfo.conditionName || 'N / A'}}</span>
+                            </mat-label>
+                        </li>
+                    </span>
+                    <span *ngIf="showHideFields('SOUCE_UNIT')">
+                        <li>
+                            <mat-label><span>Source Unit </span>
+                                <span>{{ headerInfo.sourceUnit|| 'N / A'}}</span>
+                            </mat-label>
+                        </li>
+                    </span>
+                    <span *ngIf="showHideFields('DATE_OF_REQ')">
+                        <li>
+                            <mat-label><span>Date of Request </span>
+                                <span>{{ headerInfo.iuRequestDate |  datePipe: 'date'}}</span>
+                            </mat-label>
+                        </li>
+                    </span>
+                    <span *ngIf="showHideFields('SAM_TYPE')">
+                        <li>
+                            <mat-label><span>Sample Type </span>
+                                <span>{{headerInfo.iuSampleType || 'N / A'}}</span>
+                            </mat-label>
+                        </li>
+                    </span>
+                    <span *ngIf="showHideFields('SAMPLE_POINT')">
+                        <li>
+                            <mat-label><span>Sampling Point(s) </span>
+                                <span>{{ headerInfo.samplingPoint || 'N / A'}}</span>
+                            </mat-label>
+                        </li>
+                    </span>
+                    <span *ngIf="showHideFields('MIXED')">
+                        <li>
+                            <mat-label><span>Stored in Mixed / Storage tankers</span>
+                                <span>{{ headerInfo.isMixedSolvent || 'N / A'}}</span>
+                            </mat-label>
+                        </li>
+                    </span>
+                </ul>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

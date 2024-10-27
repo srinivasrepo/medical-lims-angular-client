@@ -1,0 +1,17 @@
+
+    <mat-grid-list cols="2" rowHeight="68px" gutterSize="30px">
+        <mat-grid-tile>
+            <div class="full-width px-in-0">
+                <lims-lookup [info]="productsInfo" #products (onSelect)="onSelectedLookup($event)"></lims-lookup>
+            </div>
+        </mat-grid-tile>
+        <mat-grid-tile>
+            <mat-form-field appearance="outline" class="full-width pl-0 pr-0">
+                <mat-label> Stage</mat-label>
+                <mat-select placeholder="Stage" [disabled]="disable" [(ngModel)]="stage"
+                    (ngModelChange)="selectedStage()">
+                    <mat-option *ngFor="let sta of stagesList" [value]="sta.id">{{sta.name}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-grid-tile>
+    </mat-grid-list>

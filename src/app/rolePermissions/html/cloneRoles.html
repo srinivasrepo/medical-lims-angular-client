@@ -1,0 +1,66 @@
+<!-- <div>
+    <form action="" [formGroup]="cloneForm">
+
+        <div>
+            <div class="mt-3">
+                <div [ngClass]="{disabledControl: isVisible == true}">
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Department</mat-label>
+                        <mat-select name="apptype" id="apptype" formControlName="deptID" (change)="changeDept()">
+                            <mat-option *ngFor="let dep of ddlDept" [value]="dep.deptID">{{dep.deptName}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="mt-3">
+                <div [ngClass]="{disabledControl: isVisible == true}">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Role From</mat-label>
+                        <mat-select name="roleFrom" id="roleFrom" formControlName="fromRoleID">
+                            <mat-option *ngFor="let actRole of activeRole" [value]="actRole.roleID">{{actRole.roleName}}
+                            </mat-option>
+
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="mt-3">
+                <div [ngClass]="{disabledControl: isVisible == true}">
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Role To</mat-label>
+                        <mat-select name="roleTo" id="roleTo" formControlName="toRoleID">
+                            <mat-option *ngFor="let actRole of activeRole" [value]="actRole.roleID">{{actRole.roleName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="mt-3 text-right">
+                <button type="button" mat-raised-button color="primary" (click)="searchRolePermission('Search')">
+                    {{searchtype}}</button>
+            </div>
+        </div>
+    </form>
+
+    <div>
+        <div class=" mt-3">
+            <lims-grid [headers]="headerData" [dataSource]="dataSource" (onCheckBoxChanged)="onCheckBoxChange($event)" [isCheckBoxVisible]="isCheckBoxVisible"
+                (onChkSelectAllChanged)="onChkSelectAllChanged($event)" #roleClone>
+            </lims-grid>
+        </div>
+
+
+        <div class="mt-3 text-center">
+            <button type="button" mat-raised-button color="primary" (click)="cloneRoles('Clone')" *ngIf="isVisible">
+                Clone</button>
+
+            <button type="button" mat-raised-button color="primary" (click)="previousPage()">
+                Back</button>
+        </div>
+    </div>
+</div> -->

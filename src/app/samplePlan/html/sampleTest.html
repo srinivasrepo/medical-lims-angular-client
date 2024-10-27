@@ -1,0 +1,297 @@
+<div class="sampleplan_sampletest">
+    <!-- <mat-tab-group #sampTestTab mat-align-tabs="center" class="sampletest-matlabel">
+        <mat-tab label="SAMPLING" >
+            <div class="ml-5 mr-5 sampleplan_sampletest_divheight">
+                <lims-grid [headers]="prepareHeaders('SAMPLING')" [isParentCheckBoxVisible]='true'
+                    [isEnableCheckbox]="btnSaveType == 'Update'" [checkboxField]="'isSelected'"
+                    [dataSource]="getDataSource('SAMPLING')" [allCheckboxSelected]="isSelectAllCheckBox('SAMPLING')">
+                </lims-grid>
+            </div>
+        </mat-tab>
+        <mat-tab label="{{types}}" *ngFor="let types of testTypesList" [ngClass]="{hide: testTypesList.length < 1}">
+            <div class="ml-5 mr-5 sampleplan_sampletest_divheight">
+                <lims-grid [headers]="prepareHeaders(types)" [isEnableCheckbox]="btnSaveType == 'Update'"
+                    [isParentCheckBoxVisible]='true' [checkboxField]="'isSelected'" [dataSource]="getDataSource(types)"
+                    [allCheckboxSelected]="isSelectAllCheckBox(types)">
+                </lims-grid>
+            </div>
+        </mat-tab>
+        <mat-tab label="invalidations">
+            <div class="ml-5 mr-5 sampleplan_sampletest_divheight">
+                <lims-grid [headers]="prepareHeaders('invalidations')" [isEnableCheckbox]="btnSaveType == 'Update'"
+                    [isParentCheckBoxVisible]='true' [checkboxField]="'isSelected'"
+                    [dataSource]="getDataSource('invalidations')"
+                    [allCheckboxSelected]="isSelectAllCheckBox('invalidations')">
+                </lims-grid>
+            </div>
+        </mat-tab>
+
+    </mat-tab-group> -->
+
+    <div align="right" class="pr-2 workallotmentinfo">
+        <mat-checkbox class="nomargin nopadding" class="check-wrk" [(ngModel)]="isSelect" (change)="selectCheck()"> Previous shift pending work </mat-checkbox>
+
+
+        <mat-label><span>Total Sample Tests</span> : <span>{{totalTest}}</span></mat-label>
+        <mat-label><span>Available Sample Tests</span> : <span>{{availabelTests}}</span></mat-label>
+        <mat-label><span>Not Available Sample Tests</span> : <span>{{notAvailableTests}}</span></mat-label>
+    </div>
+
+
+    <div class="pr-4 pl-4 mt-4 workallotment-accordion">
+        <mat-accordion>
+            <mat-expansion-panel [ngClass]="{hide: !sampleDetails || !sampleDetails.sam || sampleDetails.sam.length < 1}">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <span class="">
+                            <mat-checkbox id="SAMPLING" [disabled]="btnSaveType == 'Update' || disableAll"
+                                (change)="$event ? changeSamplesTestSelect($event, 'SAMPLING') : null"
+                                (click)="$event.stopPropagation();" [checked]="isSelectedAllSampleTests('SAMPLING')">
+                            </mat-checkbox>
+                        </span>
+                        <span>
+                            SAMPLING
+                        </span>
+                        <span align="end" class="plancount">
+                            <span class="span125px">
+                                {{getSamplesSelectedCount('SAMPLING')}}
+                            </span>
+                        </span>
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <div class="sampleplan-samples-grid mt-2">
+                    <lims-grid [headers]="prepareHeaders('SAMPLING')" [isParentCheckBoxVisible]='true'
+                        [isEnableCheckbox]="btnSaveType == 'Update' || disableAll" [checkboxField]="'isSelected'"
+                        [dataSource]="getDataSource('SAMPLING')"
+                        [allCheckboxSelected]="isSelectAllCheckBox('SAMPLING')">
+                    </lims-grid>
+                </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel *ngFor="let types of testTypesList" [ngClass]="{hide: testTypesList.length < 1}">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <span>
+                            <mat-checkbox id="{{types}}" [disabled]="btnSaveType == 'Update' || disableAll"
+                                (change)="$event ? changeSamplesTestSelect($event, types) : null"
+                                (click)="$event.stopPropagation();" [checked]="isSelectedAllSampleTests(types)">
+                            </mat-checkbox>
+                        </span>
+                        <span>
+                            {{types}}
+                        </span>
+                        <span align="end" class="plancount">
+                            <span class="span125px">
+                                {{getSamplesSelectedCount(types)}}
+                            </span>
+                        </span>
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <mat-expansion-panel *ngFor="let testLt of sampleDetails.masterList" class="mt-2"
+                    [ngClass]="{hide: getMasterTests(testLt.masterTestID).data.length < 1}">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <span>
+                                <mat-checkbox id="{{testLt.masterTestID}}" [disabled]="btnSaveType == 'Update' || disableAll"
+                                    (change)="$event ? changeMasterTestSelect($event, testLt.masterTestID) : null"
+                                    (click)="$event.stopPropagation();"
+                                    [checked]="isSelectedAllMasterTests(testLt.masterTestID)"></mat-checkbox>
+                            </span>
+                            <span>
+                                {{testLt.testName}}
+                            </span>
+                            <span align="end" class="plancount">
+                                <span class="span125px">
+                                    {{getMasterTestsSelectedCount(testLt.masterTestID)}}
+                                </span>
+                            </span>
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+
+                    <div class="sampleplan-samples-grid mt-2">
+                        <lims-grid [headers]="prepareHeaders(types)" [isEnableCheckbox]="btnSaveType == 'Update' || disableAll"
+                            [isParentCheckBoxVisible]='true' [checkboxField]="'isSelected'"
+                            [dataSource]="getMasterTests(testLt.masterTestID)"
+                            [allCheckboxSelected]="isSelectedAllMasterTests(testLt.masterTestID)">
+                        </lims-grid>
+                    </div>
+
+                </mat-expansion-panel>
+
+                <mat-expansion-panel [ngClass]="{hide: getMasterTests(0).data.length < 1}">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <span>
+                                <mat-checkbox id="{{0}}" [disabled]="btnSaveType == 'Update' || disableAll"
+                                    (change)="$event ? changeMasterTestSelect($event, 0) : null"
+                                    (click)="$event.stopPropagation();" [checked]="isSelectedAllMasterTests(0)">
+                                </mat-checkbox>
+                            </span>
+                            <span>
+                                Master Technique Not Assigned Tests
+                            </span>
+                            <span align="end" class="plancount">
+                                <span class="span125px">
+                                    {{getMasterTestsSelectedCount(0)}}
+                                </span>
+                            </span>
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+
+                    <div class="sampleplan-samples-grid mt-2">
+                        <lims-grid [headers]="prepareHeaders(types)" [isEnableCheckbox]="btnSaveType == 'Update' || disableAll"
+                            [isParentCheckBoxVisible]='true' [checkboxField]="'isSelected'"
+                            [dataSource]="getMasterTests(0)" [allCheckboxSelected]="isSelectedAllMasterTests(0)">
+                        </lims-grid>
+                    </div>
+
+                </mat-expansion-panel>
+            </mat-expansion-panel>
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <span>
+                            <mat-checkbox id="invalidations" [disabled]="btnSaveType == 'Update' || disableAll"
+                                (change)="$event ? changeSamplesTestSelect($event, 'invalidations') : null"
+                                (click)="$event.stopPropagation();"
+                                [checked]="isSelectedAllSampleTests('invalidations')"></mat-checkbox>
+                        </span>
+                        <span>
+                            INVALIDATIONS
+                        </span>
+                        <span align="end" class="plancount">
+                            <span class="span125px">
+                                {{getSamplesSelectedCount('invalidations')}}
+                            </span>
+                        </span>
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <div class="sampleplan-samples-grid mt-2">
+                    <lims-grid [headers]="prepareHeaders('invalidations')" [isEnableCheckbox]="btnSaveType == 'Update' || disableAll"
+                        [isParentCheckBoxVisible]='true' [checkboxField]="'isSelected'"
+                        [dataSource]="getDataSource('invalidations')"
+                        [allCheckboxSelected]="isSelectAllCheckBox('invalidations')">
+                    </lims-grid>
+                </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <span>
+                            <mat-checkbox id="oos" [disabled]="btnSaveType == 'Update' || disableAll"
+                                (change)="$event ? changeSamplesTestSelect($event, 'oos') : null"
+                                (click)="$event.stopPropagation();" [checked]="isSelectedAllSampleTests('oos')">
+                            </mat-checkbox>
+                        </span>
+                        <span>
+                            OUT OF SPECIFICATIONS
+                        </span>
+                        <span align="end" class="plancount">
+                            <span class="span125px">
+                                {{getSamplesSelectedCount('oos')}}
+                            </span>
+                        </span>
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div class="sampleplan-samples-grid mt-2">
+                    <lims-grid [headers]="prepareHeaders('oos')" [isEnableCheckbox]="btnSaveType == 'Update' || disableAll"
+                        [isParentCheckBoxVisible]='true' [checkboxField]="'isSelected'"
+                        [dataSource]="getDataSource('oos')" [allCheckboxSelected]="isSelectAllCheckBox('oos')">
+                    </lims-grid>
+                </div>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <span>
+                            <mat-checkbox id="DR" [disabled]="btnSaveType == 'Update' || disableAll"
+                                (change)="$event ? changeSamplesTestSelect($event, 'DR') : null"
+                                (click)="$event.stopPropagation();" [checked]="isSelectedAllSampleTests('DR')">
+                            </mat-checkbox>
+                        </span>
+                        <span>
+                           Data Review
+                        </span>
+                        <span align="end" class="plancount">
+                            <span class="span125px">
+                                {{getSamplesSelectedCount('DR')}}
+                            </span>
+                        </span>
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div class="sampleplan-samples-grid mt-2">
+                    <lims-grid [headers]="prepareHeaders('DR')" [isEnableCheckbox]="btnSaveType == 'Update' || disableAll"
+                        [isParentCheckBoxVisible]='true' [checkboxField]="'isSelected'"
+                        [dataSource]="getDataSource('DR')" [allCheckboxSelected]="isSelectAllCheckBox('DR')">
+                    </lims-grid>
+                </div>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <span>
+                            <mat-checkbox id="CALIB" [disabled]="btnSaveType == 'Update' || disableAll"
+                                (change)="$event ? changeSamplesTestSelect($event, 'CALIB') : null"
+                                (click)="$event.stopPropagation();" [checked]="isSelectedAllSampleTests('CALIB')">
+                            </mat-checkbox>
+                        </span>
+                        <span>
+                           Calibrations
+                        </span>
+                        <span align="end" class="plancount">
+                            <span class="span125px">
+                                {{getSamplesSelectedCount('CALIB')}}
+                            </span>
+                        </span>
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div class="sampleplan-samples-grid mt-2">
+                    <lims-grid [headers]="prepareHeaders('CALIB')" [isEnableCheckbox]="btnSaveType == 'Update' || disableAll"
+                        [isParentCheckBoxVisible]='true' [checkboxField]="'isSelected'"
+                        [dataSource]="getDataSource('CALIB')" [allCheckboxSelected]="isSelectAllCheckBox('CALIB')">
+                    </lims-grid>
+                </div>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <span>
+                            <mat-checkbox id="DAILY_CALIB" [disabled]="btnSaveType == 'Update' || disableAll"
+                                (change)="$event ? changeSamplesTestSelect($event, 'DAILY_CALIB') : null"
+                                (click)="$event.stopPropagation();" [checked]="isSelectedAllSampleTests('DAILY_CALIB')">
+                            </mat-checkbox>
+                        </span>
+                        <span>
+                           Daily Calibrations
+                        </span>
+                        <span align="end" class="plancount">
+                            <span class="span125px">
+                                {{getSamplesSelectedCount('DAILY_CALIB')}}
+                            </span>
+                        </span>
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div class="sampleplan-samples-grid mt-2">
+                    <lims-grid [headers]="prepareHeaders('DAILY_CALIB')" [isEnableCheckbox]="btnSaveType == 'Update' || disableAll"
+                        [isParentCheckBoxVisible]='true' [checkboxField]="'isSelected'"
+                        [dataSource]="getDataSource('DAILY_CALIB')" [allCheckboxSelected]="isSelectAllCheckBox('DAILY_CALIB')">
+                    </lims-grid>
+                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </div>
+    <!-- 
+    <div class="btn-sampleplan mt-2" align="right">
+        <button type="button" mat-raised-button class="btnbase btn-green" (click)="saveTestSample()"
+            [disabled]="disableBtn">
+            <i class="{{_global.icnSave}}" *ngIf="btnSaveType == 'Save'" aria-hidden="true"></i>
+            <i class="{{_global.icnUpdate}}" *ngIf="btnSaveType == 'Update'" aria-hidden="true"></i>
+            &nbsp;{{btnSaveType}}</button>
+    </div> -->
+
+</div>

@@ -1,0 +1,77 @@
+
+<div class="qc_box-n">
+    <mat-card class="matcard-nobg">
+        <mat-card-content>
+            <div class="matcard-custom-search search-bg">
+            <page-head [pageTitle]="pageTitle"></page-head>
+            <div class="search-fields">
+                <mat-grid-list cols="2"  rowHeight="68px">
+                    <mat-grid-tile>
+                        <mat-form-field appearance="outline" class="full-width pl-0">
+                            <mat-label>Category</mat-label>
+                            <mat-select placeholder="Category" name="category"
+                                [(ngModel)]="manageData.categoryID" (ngModelChange)="chngCategory()">
+                                <mat-option *ngFor="let ddl of ddlCategory" [value]="ddl.categoryID">{{ddl.category}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                        <mat-form-field appearance="outline" class="full-width pr-0">
+                            <mat-label>Category Item Code</mat-label>
+                            <input matInput placeholder="Category Item Code" [(ngModel)]="manageData.catItemCode"
+                                #catItemCode="ngModel" maxlength="25">
+                            <!-- <mat-icon matSuffix>sentiment_very_satisfied</mat-icon> -->
+                            <mat-hint align="end">{{catItemCode.value?.length || 0}}/25</mat-hint>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                        <mat-form-field appearance="outline" class="full-width pl-0">
+                            <mat-label>Category Item</mat-label>
+                            <input matInput placeholder="Category Item" [(ngModel)]="manageData.catItem"
+                                #catItem="ngModel" maxlength="500">
+                            <!-- <mat-icon matSuffix>sentiment_very_satisfied</mat-icon> -->
+                            <mat-hint align="end">{{catItem.value?.length || 0}}/500</mat-hint>
+                        </mat-form-field>
+                    </mat-grid-tile>
+
+                </mat-grid-list>
+
+            </div>
+            <div align="right" class="mt-2">
+
+                <button mat-raised-button class="btnbase btn-blue" *ngIf="hasCreateCap && chngCategory()"
+                    (click)="filterTypes('create')"><i class="{{_global.icnAdd}}"></i>&nbsp; Create
+                    New</button>
+                <button mat-raised-button class="btnbase btn-blue" *ngIf="hasCreateCap && (entityType == 'SOLMGMT' || entityType == 'LABINV')"
+                    (click)="addValidityPeriods()"><i class="{{_global.icnAdd}}"></i>&nbsp; Add Validity
+                    Period</button>
+                <!-- <button mat-raised-button class="btnbase btn-green" (click)="syncMaster()"><i
+                        class="{{_global.icnSync}}"></i>&nbsp;Sync Master Info</button> -->
+                <button mat-raised-button class="btnbase btn-blue" (click)="filterTypes('search')"><i aria-hidden="true"
+                            class="{{_global.icnSearch}}"></i>&nbsp;Search</button>
+                <button mat-raised-button class="btnbase btn-blue mr-0" (click)="filterTypes('searchAll')"><i
+                            aria-hidden="true" class="{{_global.icnSearchAll}}"></i>&nbsp;Search
+                        All</button>
+
+            </div>
+        </div>
+
+        <div class="mt-5 mb-5">
+            <mat-card class="matcard-custom pxy-2 qc_table-Analysis">
+                <mat-card-content>
+                    <lims-grid (onActionClicked)="onActionClicked($event);" [headers]="headerData"
+                        [dataSource]="dataSource" [actions]="actions"></lims-grid>
+
+                    <div class="mt-1">
+                        <lims-paging (onPageIndexClicked)="onPageIndexClicked($event);"
+                            [currentSelectedIndex]="currentSelectedIndex" [totalRecords]="totalRecords">
+                        </lims-paging>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+    </mat-card-content>
+</mat-card>
+</div>

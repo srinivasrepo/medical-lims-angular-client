@@ -1,0 +1,118 @@
+<mat-card class="mat-card-c mt-3">
+    <mat-card-content>
+        <div class="view-inv">
+
+            <div class="mt-2 mb-2">
+                <h4>Vendor Documents</h4>
+                <button type="button" mat-raised-button class="btnbase btn-blue" (click)="UploadfilesPreInsp()">
+                    <i class="{{globalIcons('VIEW')}}" aria-hidden="true"></i>&nbsp;View
+                    Documents</button>
+            </div>
+
+            <ul>
+                <li>
+                    <mat-label><span>Supplier COA Specification </span> <span>{{coaDet.coaSpec || 'N / A'}}</span>
+                    </mat-label>
+                </li>
+
+                <li *ngIf="pageType != 'MNG'">
+                    <mat-label><span>Sampled / Reviewed By </span> <span>{{coaDet.sampledBy || 'N / A'}}</span>
+                    </mat-label>
+                </li>
+                <li *ngIf="pageType != 'MNG'">
+                    <mat-label><span>Sample Result </span>
+                        <span>{{coaDet.sampleResult == 'A' ? 'Approved' : coaDet.sampleResult == 'R' ? 'Rejected' : ''
+                            || 'N / A'}}</span>
+                    </mat-label>
+                </li>
+                <li *ngIf="pageType != 'MNG'">
+                    <mat-label><span>Retest / Expiry Type </span>
+                        <span>{{coaDet.supRetestExpiryTypeValue == 'RTST' ? 'Retest Date' :
+                            coaDet.supRetestExpiryTypeValue == 'EXP' ? 'Expiry Date' : '' || 'N / A'}}</span>
+                    </mat-label>
+                </li>
+                <li *ngIf="pageType != 'MNG'">
+                    <mat-label><span>Retest / Expiry Date </span> <span>{{coaDet.testDate || 'N / A'}}</span>
+                    </mat-label>
+                </li>
+                <li *ngIf="pageType != 'MNG'">
+                    <mat-label><span>Sample Storage Temp. ( ℃ ) </span>
+                        <span>{{coaDet.storageCondition || 'N / A'}}</span>
+                    </mat-label>
+                </li>
+                <li *ngIf="pageType != 'MNG'">
+                    <mat-label><span>Sampled / Reviewed Remarks </span> <span>{{coaDet.remarks || 'N / A'}}</span>
+                    </mat-label>
+                </li>
+
+            </ul>
+
+            <div *ngIf="pageType != 'MNG'">
+                <button type="button" mat-raised-button class="btnbase btn-blue" (click)="openChecklist()">
+                    <i class="{{_global.icnList}}"></i>&nbsp;Checklist</button>
+                <button type="button" mat-raised-button class="btnbase btn-blue" (click)="Uploadfiles()">
+                    <i class="{{globalIcons('VIEW')}}" aria-hidden="true"></i>
+                    &nbsp;{{btnUpload}}</button>&nbsp;&nbsp;
+
+            </div>
+
+        </div>
+
+        <div *ngIf="pageType == 'MNG'">
+
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Sampled / Reviewed By</mat-label>
+                <input matInput placeholder="Sampled / Reviewed By" (keypress)="allowAlphabets($event)"
+                    [(ngModel)]="coaDet.sampledBy" [disabled]="btnType=='Update'" maxlength="100">
+                <mat-hint align="end">{{coaDet.sampledBy?.length || 0}} / 100</mat-hint>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Sample Result</mat-label>
+                <mat-select placeholder="Sample Result" [(ngModel)]="coaDet.sampleResult"
+                    [disabled]="btnType=='Update'">
+                    <mat-option value="A">Approved</mat-option>
+                    <mat-option value="R">Rejected</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label> Retest / Expiry Type</mat-label>
+                <mat-select placeholder="Retest / Expiry Type" [(ngModel)]="coaDet.supRetestExpiryTypeValue"
+                    [disabled]="btnType=='Update'">
+                    <mat-option value="RTST">Retest Date</mat-option>
+                    <mat-option value="EXP">Expiry Date</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Retest / Expiry Date</mat-label>
+                <input matInput [min]="minDate" [matDatepicker]="date1" name="datefrom" [(ngModel)]="testDate"
+                    [disabled]="btnType=='Update'" placeholder="Retest / Expiry Date">
+                <mat-datepicker-toggle matSuffix [for]="date1"></mat-datepicker-toggle>
+                <mat-datepicker #date1></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Sample Storage Temp. ( ℃ )</mat-label>
+                <input matInput placeholder="Sample Storage Temp. ( ℃ )" [(ngModel)]="coaDet.storageCondition"
+                    [disabled]="btnType=='Update'" maxlength="50">
+                <mat-hint align="end">{{coaDet.storageCondition?.length || 0}} / 50</mat-hint>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Sampled / Reviewed Remarks</mat-label>
+                <textarea matInput placeholder="Sampled / Reviewed Remarks" [(ngModel)]="coaDet.remarks"
+                    [disabled]="btnType=='Update'" maxlength="1000"></textarea>
+                <mat-hint align="end">{{coaDet.remarks?.length || 0}} / 1000</mat-hint>
+            </mat-form-field>
+            <div align="center" class="mt-2 pb-2">
+                <button type="button" mat-raised-button class="btnbase btn-blue" (click)="openChecklist()">
+                    <i class="{{_global.icnList}}"></i>&nbsp;Checklist</button>
+                <button type="button" mat-raised-button class="btnbase btn-blue" (click)="Uploadfiles()" *ngIf="pageType == 'MNG'">
+                    <i class="{{globalIcons(pageType == 'MNG' ? btnType == 'Save' ? 'UPLOAD' :'VIEW' : 'VIEW')}}"
+                        aria-hidden="true"></i>
+                    &nbsp;{{btnUpload}}</button>&nbsp;&nbsp;
+                <button type="button" mat-raised-button class="btnbase btn-blue" (click)="saveCOADetails()" *ngIf="pageType == 'MNG'"
+                    id="btnLoaders" btnLoader [isLoaderOn]="isLoaderStart" [disabled]="btnDisabledReq">
+                    <i class="{{globalIcons('SAVE')}}" aria-hidden="true"></i>&nbsp;{{btnType}}</button>
+            </div>           
+        </div>     
+
+    </mat-card-content>
+</mat-card>

@@ -1,0 +1,354 @@
+<div class="qc_heading_spce">
+    <mat-card class="mat-card-heading">
+        <mat-card-content>
+            <h4 class="cardtitle"> Summary of Laboratory Investigation</h4>
+    <div class="view-inv" *ngIf="pageType == 'VIEW' || phaseCompleted">
+        <ul>
+            <li class="w-50">
+                <mat-label>
+                    <span>Root cause analysis for out-of-specification event(OOS)</span>
+                    <span>{{summaryBO.rootCauseDesc || 'N/A'}}</span>
+                </mat-label>
+            </li>
+            <li class="w-50">
+                <mat-label>
+                    <span>Other Cause</span>
+                    <span>{{summaryBO.otherCause || 'N/A'}}</span>
+                </mat-label>
+            </li>
+            <li class="w-50">
+                <mat-label>
+                    <span>Has the laboratory investigation been reviewed ?</span>
+                    <span>{{summaryBO.isLabInvestReviewed || 'N/A'}}</span>
+                </mat-label>
+            </li>
+            <li class="w-50">
+                <mat-label>
+                    <span>Has the Manufacturing Investigation was done</span>
+                    <span>{{summaryBO.mfgInvstDone || 'N/A'}}</span>
+                </mat-label>
+            </li>
+            <li class="w-50">
+                <mat-label>
+                    <span>Root cause was identified from Manufacturing Investigation was done </span>
+                    <span>{{summaryBO.isLabInvestReviewed || 'N/A'}}</span>
+                </mat-label>
+            </li>
+            <li class="w-50">
+                <mat-label>
+                    <span>Checklist for Manufacturing Investigation was attached</span>
+                    <span>{{summaryBO.isLabInvestReviewed  || 'N/A'}}</span>
+                </mat-label>
+            </li>
+            <li class="w-50">
+                <mat-label>
+                    <span>Referred for Deviation Investigation</span>
+                    <span>{{summaryBO.isLabInvestReviewed   || 'N/A'}}</span>
+                </mat-label>
+            </li>
+            <li class="w-50" *ngIf="summaryBO.refDevInvestigation == 'Yes'">
+                <mat-label>
+                    <span>Deviation Number</span>
+                    <span>{{summaryBO.devNumber  || 'N/A'}}</span>
+                </mat-label>
+            </li>
+        </ul>
+
+    </div>
+    <div class="pl-2 pr-2 mt-2">
+    <mat-grid-list cols="2" rowHeight="70px" class="oos-sum" *ngIf="pageType == 'MNG' && !phaseCompleted">
+        <mat-grid-tile>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Root cause analysis for out-of-specification event(OOS)</mat-label>
+                <mat-select placeholder="Root cause analysis for out-of-specification event(OOS)"
+                    [disabled]="btnType=='Update'" [(ngModel)]="summaryBO.rootCauseOOS" (ngModelChange)="getRootCode()">
+                    <mat-option *ngFor="let rt of rootCauseList" [value]="rt.catItemID">{{rt.catItem}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Other Cause</mat-label>
+                <input matInput placeholder="Other Cause" [(ngModel)]="summaryBO.otherCause"
+                    [disabled]="disOthRoot || btnType=='Update'" maxlength="50">
+                <mat-hint align="end">{{summaryBO.otherCause?.length || 0}} / 50</mat-hint>
+            </mat-form-field>
+        </mat-grid-tile>
+    </mat-grid-list>
+        <mat-grid-list cols="1" rowHeight="40px" class="oos-sum" *ngIf="pageType == 'MNG' && !phaseCompleted">
+        <mat-grid-tile>
+            <mat-label class="cardtitle_dark mr-3">Has the laboratory investigation been reviewed ? : </mat-label>
+            <mat-radio-group class="mat-radio-btn" [(ngModel)]="summaryBO.isLabInvestReviewed"
+                [disabled]="btnType=='Update'">
+                <mat-radio-button color="primary" value="Yes"> Yes </mat-radio-button>
+                <mat-radio-button color="primary" value="No"> No </mat-radio-button>
+            </mat-radio-group>
+        </mat-grid-tile>
+        <mat-grid-tile>
+            <mat-label class="cardtitle_dark mr-3">Has the Manufacturing Investigation was done : </mat-label>
+            <mat-radio-group class="mat-radio-btn" [(ngModel)]="summaryBO.mfgInvstDone" [disabled]="btnType=='Update'">
+                <mat-radio-button color="primary" value="Yes"> Yes </mat-radio-button>
+                <mat-radio-button color="primary" value="No"> No </mat-radio-button>
+                <mat-radio-button color="primary" value="N/A"> N / A </mat-radio-button>
+            </mat-radio-group>
+        </mat-grid-tile>
+        <mat-grid-tile>
+            <mat-label class="cardtitle_dark mr-3">Root cause was identified from Manufacturing Investigation was done : </mat-label>
+            <mat-radio-group class="mat-radio-btn" [(ngModel)]="summaryBO.rootCauseMfgInvestigation"
+                [disabled]="btnType=='Update'">
+                <mat-radio-button color="primary" value="Yes"> Yes </mat-radio-button>
+                <mat-radio-button color="primary" value="No"> No </mat-radio-button>
+            </mat-radio-group>
+        </mat-grid-tile>
+        <mat-grid-tile>
+            <mat-label class="cardtitle_dark mr-3">Checklist for Manufacturing Investigation was attached : </mat-label>
+            <mat-radio-group class="mat-radio-btn" [(ngModel)]="summaryBO.mfgChkAttached"
+                [disabled]="btnType=='Update'">
+                <mat-radio-button color="primary" value="Yes"> Yes </mat-radio-button>
+                <mat-radio-button color="primary" value="No"> No </mat-radio-button>
+            </mat-radio-group>
+        </mat-grid-tile>
+        <mat-grid-tile>
+            <mat-label class="cardtitle_dark mr-3"> Referred for Deviation Investigation : </mat-label>
+            <mat-radio-group class="mat-radio-btn" [(ngModel)]="summaryBO.refDevInvestigation"
+                [disabled]="disRefDev || btnType=='Update'">
+                <mat-radio-button color="primary" value="Yes"> Yes </mat-radio-button>
+                <mat-radio-button color="primary" value="No"> No </mat-radio-button>
+            </mat-radio-group>
+        </mat-grid-tile>
+        <mat-grid-tile *ngIf="summaryBO.refDevInvestigation == 'Yes'">
+            <mat-form-field appearance="outline" class="w-66">
+                <mat-label>Select Deviation </mat-label>
+                <mat-select placeholder="RSelect Deviation" [disabled]="btnType=='Update'"
+                    [(ngModel)]="summaryBO.devID">
+                    <mat-option *ngFor="let dev of devList" [value]="dev.deV_ID">{{dev.deV_NUMBER}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <button type="button" mat-raise-button class="btnbase btn-blue dev-btn" matTooltip="Generate Deviation"
+                [disabled]="btnType=='Update'" (click)="generateDev()" id="btnLoadersGenDev" btnLoader [isLoaderOn]="isLoaderStartObj.isLoaderGenDev">
+                <i class="{{_global.icnAdd}}" aria-hidden="true"></i>
+            </button>
+        </mat-grid-tile>
+    </mat-grid-list>
+</div>
+
+    <div class="pl-2 pr-2 mt-3 qc_accordion-1">
+        <mat-accordion multi>
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Corrective Actions
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <mng-capa capaType='C' moduleCode='QC' capaSourceCode='CAPA_OOS' [sourceReferenceID]="encOosTestID"
+                    [pageType]="capaPageType">
+                </mng-capa>
+            </mat-expansion-panel>
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Preventive Actions
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <mng-capa capaType='P' moduleCode='QC' capaSourceCode='CAPA_OOS' [sourceReferenceID]='encOosTestID'
+                    [pageType]="capaPageType">
+                </mng-capa>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </div>
+    <div class="pl-2 pr-2 mt-3">
+
+        <mat-grid-list cols="7" rowHeight="70px" class="oos-sum-grid">
+            <mat-grid-tile colspan="2" class="oos-sum-head fst-child">Timeline Verification</mat-grid-tile>
+            <mat-grid-tile class="oos-sum-head">Acceptance Criteria</mat-grid-tile>
+            <mat-grid-tile colspan="2" class="oos-sum-head">Observation</mat-grid-tile>
+            <mat-grid-tile colspan="2" class="oos-sum-head">Justification if 'No'</mat-grid-tile>
+            <mat-grid-tile colspan="2" class="fst-child">OOS Login and Lab Investigation Checklist Completion
+            </mat-grid-tile>
+            <mat-grid-tile>24 Hrs.</mat-grid-tile>
+            <mat-grid-tile colspan="2" *ngIf="pageType == 'MNG' && !phaseCompleted">
+                <mat-radio-group class="mat-radio-btn" [(ngModel)]="summaryBO.checkListObservation"
+                    [disabled]="btnType=='Update'" (change)="isJustificationClear('CHK')">
+                    <mat-radio-button color="primary" value="Yes"> Yes
+                    </mat-radio-button>
+                    <mat-radio-button color="primary" value="No"> No
+                    </mat-radio-button>
+                    <mat-radio-button color="primary" value="N/A"> N / A
+                    </mat-radio-button>
+                </mat-radio-group>
+            </mat-grid-tile>
+            <mat-grid-tile colspan="2" *ngIf="pageType == 'VIEW' || phaseCompleted">
+                {{summaryBO.checkListObservation || 'N/A'}}
+            </mat-grid-tile>
+            <mat-grid-tile colspan="2" *ngIf="pageType == 'VIEW' || phaseCompleted">
+                {{summaryBO.checkListJustification || 'N/A'}}
+            </mat-grid-tile>
+            <mat-grid-tile colspan="2" *ngIf="pageType == 'MNG' && !phaseCompleted">
+                <mat-form-field appearance="outline" class="full-width">
+                    <textarea matInput [(ngModel)]="summaryBO.checkListJustification"
+                        [disabled]="summaryBO.checkListObservation != 'No' || btnType=='Update'"
+                        maxlength="100"></textarea>
+                    <mat-hint align="end">{{summaryBO.checkListJustification?.length || 0}} / 100</mat-hint>
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile colspan="2" class="fst-child">Re-analysis initiation</mat-grid-tile>
+            <mat-grid-tile>Subsequent 48 Hrs.</mat-grid-tile>
+            <mat-grid-tile colspan="2" *ngIf="pageType == 'MNG' && !phaseCompleted">
+                <mat-radio-group class="mat-radio-btn" [(ngModel)]="summaryBO.reAnaObservation"
+                    [disabled]="btnType=='Update'" (change)="isJustificationClear('ANA')">
+                    <mat-radio-button color="primary" value="Yes"> Yes
+                    </mat-radio-button>
+                    <mat-radio-button color="primary" value="No"> No
+                    </mat-radio-button>
+                    <mat-radio-button color="primary" value="N/A"> N / A
+                    </mat-radio-button>
+                </mat-radio-group>
+            </mat-grid-tile>
+            <mat-grid-tile colspan="2" *ngIf="pageType == 'VIEW' || phaseCompleted">
+                {{summaryBO.reAnaObservation || 'N/A'}}
+            </mat-grid-tile>
+            <mat-grid-tile colspan="2" *ngIf="pageType == 'VIEW' || phaseCompleted">
+                {{summaryBO.reAnaJustification || 'N/A'}}
+            </mat-grid-tile>
+            <mat-grid-tile colspan="2" *ngIf="pageType == 'MNG' && !phaseCompleted">
+                <mat-form-field appearance="outline" class="full-width">
+                    <textarea matInput [(ngModel)]="summaryBO.reAnaJustification"
+                        [disabled]="summaryBO.reAnaObservation != 'No' || btnType=='Update'" maxlength="100"></textarea>
+                    <mat-hint align="end">{{summaryBO.reAnaJustification?.length || 0}} / 100</mat-hint>
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile colspan="2" class="fst-child">Confirmation analysis initiation</mat-grid-tile>
+            <mat-grid-tile>Subsequent 48 Hrs.</mat-grid-tile>
+            <mat-grid-tile colspan="2" *ngIf="pageType == 'MNG' && !phaseCompleted">
+                <mat-radio-group class="mat-radio-btn" [(ngModel)]="summaryBO.confirmAnaObservation"
+                    [disabled]="btnType=='Update'" (change)="isJustificationClear('CNF')">
+                    <mat-radio-button color="primary" value="Yes"> Yes
+                    </mat-radio-button>
+                    <mat-radio-button color="primary" value="No"> No
+                    </mat-radio-button>
+                    <mat-radio-button color="primary" value="N/A"> N / A
+                    </mat-radio-button>
+                </mat-radio-group>
+            </mat-grid-tile>
+            <mat-grid-tile colspan="2" *ngIf="pageType == 'VIEW' || phaseCompleted">
+                {{summaryBO.confirmAnaObservation || 'N/A'}}
+            </mat-grid-tile>
+            <mat-grid-tile colspan="2" *ngIf="pageType == 'VIEW' || phaseCompleted">
+                {{summaryBO.confirmAnaJustification || 'N/A'}}
+            </mat-grid-tile>
+            <mat-grid-tile colspan="2" *ngIf="pageType == 'MNG' && !phaseCompleted">
+                <mat-form-field appearance="outline" class="full-width">
+                    <textarea matInput [(ngModel)]="summaryBO.confirmAnaJustification"
+                        [disabled]="summaryBO.confirmAnaObservation != 'No' || btnType=='Update'"
+                        maxlength="100"></textarea>
+                    <mat-hint align="end">{{summaryBO.confirmAnaJustification?.length || 0}} / 100</mat-hint>
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile colspan="2" class="fst-child">OOS Investigation completion</mat-grid-tile>
+            <mat-grid-tile>30 days from OOS initiation</mat-grid-tile>
+            <mat-grid-tile colspan="2" *ngIf="pageType == 'MNG' && !phaseCompleted">
+                <mat-radio-group class="mat-radio-btn" [(ngModel)]="summaryBO.oosInvestObservation"
+                    [disabled]="btnType=='Update'" (change)="isJustificationClear('OOS')">
+                    <mat-radio-button color="primary" value="Yes"> Yes
+                    </mat-radio-button>
+                    <mat-radio-button color="primary" value="No"> No
+                    </mat-radio-button>
+                    <mat-radio-button color="primary" value="N/A"> N / A
+                    </mat-radio-button>
+                </mat-radio-group>
+            </mat-grid-tile>
+            <mat-grid-tile colspan="2" *ngIf="pageType == 'VIEW' || phaseCompleted">
+                {{summaryBO.oosInvestObservation || 'N/A'}}
+            </mat-grid-tile>
+            <mat-grid-tile colspan="2" *ngIf="pageType == 'VIEW' || phaseCompleted">
+                {{summaryBO.oosInvestJustification || 'N/A'}}
+            </mat-grid-tile>
+            <mat-grid-tile colspan="2" *ngIf="pageType == 'MNG' && !phaseCompleted">
+                <mat-form-field appearance="outline" class="full-width">
+                    <textarea matInput [(ngModel)]="summaryBO.oosInvestJustification"
+                        [disabled]="summaryBO.oosInvestObservation != 'No' || btnType=='Update'"
+                        maxlength="100"></textarea>
+                    <mat-hint align="end">{{summaryBO.oosInvestJustification?.length || 0}} / 100</mat-hint>
+                </mat-form-field>
+            </mat-grid-tile>
+        </mat-grid-list>
+    </div>
+    <div class="mt-2" *ngIf="pageType == 'MNG' && !phaseCompleted">
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Summary of OOS</mat-label>
+            <textarea matInput placeholder="Summary of OOS" [(ngModel)]="summaryBO.summaryOOS"
+                [disabled]="btnType=='Update'" maxlength="8000"> </textarea>
+            <mat-hint align="end">{{summaryBO.summaryOOS?.length || 0}}/8000</mat-hint>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Comments (if any)</mat-label>
+            <textarea matInput placeholder="Comments (if any)" [(ngModel)]="summaryBO.commentsIfAny"
+                [disabled]="btnType=='Update'" maxlength="8000"> </textarea>
+            <mat-hint align="end">{{summaryBO.commentsIfAny?.length || 0}}/8000</mat-hint>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Proposed Preventive Action</mat-label>
+            <textarea matInput placeholder="Proposed Preventive Action" [(ngModel)]="summaryBO.praposePrevAction"
+                [disabled]="btnType=='Update'" maxlength="8000"> </textarea>
+            <mat-hint align="end">{{summaryBO.praposePrevAction?.length || 0}}/8000</mat-hint>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Justification for any procedural Violations</mat-label>
+            <textarea matInput placeholder="Justification for any procedural Violations" [disabled]="btnType=='Update'"
+                [(ngModel)]="summaryBO.procViolationJustification" maxlength="8000"> </textarea>
+            <mat-hint align="end">{{summaryBO.procViolationJustification?.length || 0}}/8000</mat-hint>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width" *ngIf="summaryBO.showJustificationDelay">
+            <mat-label>Justification for Delay</mat-label>
+            <textarea matInput placeholder="Justification for Delay" [(ngModel)]="summaryBO.justificationForDelay"
+                [disabled]="btnType=='Update'" maxlength="8000"> </textarea>
+            <mat-hint align="end">{{summaryBO.justificationForDelay?.length || 0}}/8000</mat-hint>
+        </mat-form-field>
+    </div>
+    <div class="view-inv mt-3" *ngIf="pageType == 'VIEW' || phaseCompleted">
+        <ul>
+            <li class="w-100">
+                <mat-label>
+                    <span>Summary of OOS</span>
+                    <span>{{summaryBO.summaryOOS || 'N/A'}}</span>
+                </mat-label>
+            </li>
+            <li class="w-100">
+                <mat-label>
+                    <span>Comments (if any)</span>
+                    <span>{{summaryBO.commentsIfAny || 'N/A'}}</span>
+                </mat-label>
+            </li>
+            <li class="w-100">
+                <mat-label>
+                    <span>Proposed Preventive Action</span>
+                    <span>{{summaryBO.praposePrevAction || 'N/A'}}</span>
+                </mat-label>
+            </li>
+            <li class="w-100">
+                <mat-label>
+                    <span>Justification for any procedural Violations</span>
+                    <span>{{summaryBO.procViolationJustification || 'N/A'}}</span>
+                </mat-label>
+            </li>
+            <li class="w-100" *ngIf="summaryBO.showJustificationDelay">
+                <mat-label>
+                    <span>Justification for Delay</span>
+                    <span>{{summaryBO.justificationForDelay || 'N/A'}}</span>
+                </mat-label>
+            </li>
+        </ul>
+    </div>
+    <div align="right" class="mt-2 pb-2 pr-1">
+        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="Uploadfiles()">
+            <i class="{{_global.icnView}}" *ngIf="btnUpload != 'Upload'" aria-hidden="true"></i>
+            <i class="{{_global.icnUpload}}" *ngIf="btnUpload == 'Upload'"
+                aria-hidden="true"></i>&nbsp;{{btnUpload}}</button>
+        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="save()"
+            *ngIf="pageType == 'MNG' && !phaseCompleted" id="btnLoadersOosSum" btnLoader [isLoaderOn]="isLoaderStartObj.isLoaderOosSum">
+            <i class="{{_global.icnSave}}" *ngIf="btnType=='Save'" aria-hidden="true"></i>
+            <i class="{{_global.icnUpdate}}" *ngIf="btnType=='Update'" aria-hidden="true"></i>&nbsp;{{btnType}}</button>
+    </div>
+    </mat-card-content>
+    </mat-card>
+</div>

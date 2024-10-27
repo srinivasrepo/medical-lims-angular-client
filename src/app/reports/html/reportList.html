@@ -1,0 +1,118 @@
+<div class="qc_box-n">
+    <mat-card class="matcard-nobg">
+        <mat-card-content>
+            <div class="matcard-custom-search search-bg">
+                <page-head [pageTitle]="pageTitle"></page-head>
+                <form [formGroup]="rptForm">
+                    <div class="search-fields">
+                        <mat-grid-list cols="2" rowHeight="68px">
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width pl-0">
+                                    <mat-label>Log Reports</mat-label>
+                                    <mat-select placeholder="Log Reports" formControlName="reportCode" name="report"
+                                        (ngModelChange)="rptChange()">
+                                        <mat-option *ngFor="let k of reportsList" [value]="k.entityRPTCode">
+                                            {{k.reportName}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile *ngIf="reportType == 'LOG'">
+                                <mat-form-field appearance="outline" class="full-width pr-0">
+                                    <mat-label>Year</mat-label>
+                                    <mat-select placeholder="Year" formControlName="year" name="year">
+                                        <mat-option *ngFor="let k of yearList" [value]="k">
+                                            {{k}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile *ngIf="reportType == 'LOG'">
+                                <mat-form-field appearance="outline" class="full-width pl-0">
+                                    <mat-label>Month</mat-label>
+                                    <mat-select placeholder="Month" formControlName="month" name="month">
+                                        <mat-option *ngFor="let k of monthList" [value]="k.monthID">
+                                            {{k.monthName}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile *ngIf="reportType == 'RPT'">
+                                <mat-form-field appearance="outline" class="full-width pr-0">
+                                    <input matInput type="text" maxlength="50" class="form-control"
+                                        formControlName="refCode" placeholder="System Code">
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile *ngIf="reportType == 'RPT'">
+                                <mat-form-field appearance="outline" class="full-width pl-0">
+                                    <mat-label>Date From</mat-label>
+                                    <input matInput formControlName="datefrom" [owlDateTime]="dateFrom"
+                                        owl-date-time="dateFrom" readonly>
+                                    <owl-date-time #dateFrom></owl-date-time>
+                                    <mat-icon matTooltip="Calendar" matSuffix [owlDateTimeTrigger]="dateFrom">date_range
+                                    </mat-icon>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile *ngIf="reportType == 'RPT'">
+                                <mat-form-field appearance="outline" class="full-width pr-0">
+                                    <mat-label>Date To</mat-label>
+                                    <input matInput formControlName="dateto" [owlDateTime]="dateTo"
+                                        owl-date-time="dateTo" readonly>
+                                    <owl-date-time #dateTo></owl-date-time>
+                                    <mat-icon matTooltip="Calendar" matSuffix [owlDateTimeTrigger]="dateTo">date_range
+                                    </mat-icon>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile [ngClass]="{'hide':reportType != 'RPT' || entityType !='LABINV'}">
+                                <div class="full-width pl-in-0">
+                                    <lims-lookup [info]="matInfo" #materials></lims-lookup>
+                                </div>
+                            </mat-grid-tile>
+                        </mat-grid-list>
+                    </div>
+
+                    <div align="right" class="full-width">
+                        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="searchfilter()"
+                            *ngIf="reportType == 'RPT'">
+                            <i class="{{_global.icnSearch}}" aria-hidden="true"></i>&nbsp;Search</button>
+                        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="clear()"
+                            *ngIf="reportType == 'RPT'">
+                            <i class="{{_global.icnSearchAll}}" aria-hidden="true"></i>&nbsp;Search
+                            All</button>
+
+                        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="GetReport()"
+                            *ngIf="reportType == 'LOG'">
+                            <i class="{{_global.icnPdf}}" aria-hidden="true"></i> &nbsp;Get Log Report</button>
+
+                    </div>
+
+                </form>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+<ng-container *ngIf="dataSource && dataSource.data && dataSource.data.length > 0">
+    <div class="mt-5 mb-5">
+        <mat-card class="matcard-custom pxy-2 qc_table-Analysis">
+            <mat-card-content>
+                <div>
+                    <lims-grid [headers]='headerData' [dataSource]='dataSource' [actions]='actions'
+                        (onActionClicked)="onActionClicked($event);"></lims-grid>
+                </div>
+
+                <div>
+                    <lims-paging (onPageIndexClicked)="onPageIndexClicked($event);" [totalRecords]="totalRecords"
+                        [indexes]='pageIndexes' [currentSelectedIndex]="currentSelectedIndex"></lims-paging>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</ng-container>
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="card-body">
+
+        </div>
+    </div>
+</div>

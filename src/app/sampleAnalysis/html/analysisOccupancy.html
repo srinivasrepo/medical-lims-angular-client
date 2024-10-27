@@ -1,0 +1,211 @@
+<form>
+    <div class="new-popupTitle" mat-dialog-title>
+        <h1 class="colorwhite"> Instrument Occupancy </h1>
+        <div class="popup-close">
+            <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+        </div>
+    </div>
+
+    <div class=" mt-0 mb-3 pl-3 pr-3 modal_body" mat-dialog-content>
+        <div *ngIf="mode == 'MNG'">
+
+
+            <div class="pt-1">
+                <label class="cardtitle_dark pl-1">Occupancy Required :</label>&nbsp;&nbsp;&nbsp;
+                <mat-radio-group color="primary" [(ngModel)]="manageOccuBO.occupancyReq" name="occupancyRequired"
+                    [disabled]="disabledControls || (dataSource && dataSource.data.length > 0)"
+                    (ngModelChange)="changeOccuRequired()">
+                    <mat-radio-button value="Y">Yes</mat-radio-button>&nbsp;&nbsp;&nbsp;
+                    <mat-radio-button value="N">No</mat-radio-button>
+                </mat-radio-group>
+            </div>
+
+            <mat-grid-list cols="2" rowHeight="68px" class="mt-2" *ngIf="manageOccuBO.occupancyReq == 'Y'">
+                <mat-grid-tile>
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Occupancy Type</mat-label>
+                        <mat-select placeholder="Occupancy Type" name="occupancyType" [disabled]="disabledControls"
+                            [(ngModel)]="manageOccuBO.occupancyType" (ngModelChange)="changeOccupancyType()">
+                            <mat-option value="Eqp_Sam_Ana">Primary Occupancy</mat-option>
+                            <mat-option value="Eqp_Add_Sam_Ana">Additional Occupancy</mat-option>
+                            <mat-option *ngIf="manageOccuBO.entityCode == 'ENGGMNT'" value="Eqp_Para_Sam_Ana">Parameter
+                                Occupancy</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-grid-tile>
+
+                <mat-grid-tile
+                    *ngIf="manageOccuBO.occupancyType == 'Eqp_Sam_Ana' || manageOccuBO.occupancyType == 'Eqp_Para_Sam_Ana'">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Instrument Title</mat-label>
+                        <mat-select placeholder="Instrument Title" name="instrumentTitle"
+                            [(ngModel)]="manageOccuBO.instrumentTitleID" [disabled]="disabledControls"
+                            (ngModelChange)="changeInstrumentTitle('DDL_TITLE',$event)">
+                            <mat-option *ngFor="let item of instrumentList" [value]="item.eqpID">{{item.eqpName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-grid-tile>
+
+                <mat-grid-tile *ngIf="manageOccuBO.occupancyType == 'Eqp_Add_Sam_Ana'">
+                    <div class="full-width">
+                        <lims-lookup [info]="analysisOccuInfo" #analysisOccu
+                            (onSelect)="changeInstrumentTitle('LKP_TITLE',$event)">
+                        </lims-lookup>
+                    </div>
+                </mat-grid-tile>
+                <mat-grid-tile *ngIf= "manageOccuBO.entityCode != 'ENGGMNT' || manageOccuBO.occupancyType == 'Eqp_Add_Sam_Ana'">
+                    <mat-checkbox [checked]="manageOccuBO.isRefOcc" (change)="prepareRefLkp($event)"
+                        [disabled]="disabledControls"> 
+                        Refer existing occupancy?
+                    </mat-checkbox>
+                </mat-grid-tile>
+                <mat-grid-tile *ngIf="manageOccuBO.isRefOcc">
+                    <div class="full-width">
+                        <lims-lookup [info]="refOccuInfo" #refOccu (onSelect)="getRefEqpOCC($event)">
+                        </lims-lookup>
+                    </div>
+                </mat-grid-tile>
+
+                <mat-grid-tile>
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Instrument Start Time</mat-label>
+                        <input matInput placeholder="Instrument Start Time" name="instrumentStartTime"
+                            [(ngModel)]="manageOccuBO.dateFrom" readonly style="width: 97%;">
+                        <i class="far fa-calendar-alt" aria-hidden="true" (click)="getCurrentDateTime('dateFrom')"></i>
+                    </mat-form-field>
+                </mat-grid-tile>
+
+                <mat-grid-tile>
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Instrument End Time</mat-label>
+                        <input matInput placeholder="Instrument End Time" name="instrumentEndTime"
+                            [(ngModel)]="manageOccuBO.dateTo" readonly style="width: 97%;">
+                        <i class="far fa-calendar-alt" aria-hidden="true" (click)="getCurrentDateTime('dateTo')"></i>
+                    </mat-form-field>
+                </mat-grid-tile>
+
+                <mat-grid-tile *ngIf="showHideFields">
+                    <div class="full-width ">
+                        <lims-lookup [info]="columnIDInfo" #columnID (onSelect)="selectedColumnIns($event)">
+                        </lims-lookup>
+                    </div>
+                </mat-grid-tile>
+
+                <mat-grid-tile *ngIf="showHideFields">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Data Seq. File</mat-label>
+                        <input matInput placeholder="Data Seq. File" name="dataSeqFile" [disabled]="disabledControls"
+                            [(ngModel)]="columnBO.dataSeqFile" maxLength="100" />
+                        <mat-hint align="end">{{columnBO.dataSeqFile?.length || 0}} / 100</mat-hint>
+                    </mat-form-field>
+                </mat-grid-tile>
+
+                <mat-grid-tile *ngIf="showHideFields && !hideMobilePhaseLKp">
+                    <div class="full-width">
+                        <lims-lookup [info]="mobilePhaseInfo" #mobilePhase (onSelect)="selectedMobilePhase($event)">
+                        </lims-lookup>
+                    </div>
+                </mat-grid-tile>
+                <mat-grid-tile *ngIf="showHideFields  && !hideMobilePhaseLKp" colspan="2">
+                    <mat-label class="mr-1 pl-1 pb-1"> <b>Valid Up to </b> : {{useBeforeDate || "N / A"}}</mat-label>
+                </mat-grid-tile>
+
+
+                <mat-grid-tile *ngIf="showHideFields">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>No. of injections</mat-label>
+                        <input matInput placeholder="No. of injections" name="noofinjections"
+                            [disabled]="disabledControls" (keypress)="allowNumber($event)"
+                            [(ngModel)]="columnBO.noOfInjections" maxLength="3" />
+                        <mat-hint align="end">{{columnBO.noOfInjections?.length || 0}} / 3</mat-hint>
+                    </mat-form-field>
+                </mat-grid-tile>
+
+                <mat-grid-tile *ngIf="showHideFields">
+                    <mat-form-field appearance="outline" class="full-width" *ngIf="!additionalCountHide">
+                        <mat-label>Cumulative no. of injections</mat-label>
+                        <input matInput placeholder="Cumulative no. of injections" [disabled]="disabledControls"
+                            (keypress)="allowNumber($event)" name="cumulativenoofinjections"
+                            [(ngModel)]="columnBO.cumulativeInj" maxLength="7" />
+                        <mat-hint align="end">{{columnBO.cumulativeInj?.length || 0}} / 7</mat-hint>
+                    </mat-form-field>
+
+                    <mat-label *ngIf="additionalCountHide">
+                        Cumulative no. of injections : &nbsp;&nbsp;
+                    </mat-label>
+                    <p *ngIf="additionalCountHide">{{columnBO.cumulativeInj}}</p>
+
+                </mat-grid-tile>
+            </mat-grid-list>
+            <div *ngIf="showHideFields">
+                <mat-form-field appearance="outline" class="mt-1 full-width">
+                    <mat-label>Remarks</mat-label>
+                    <textarea matInput placeholder="Remarks" [disabled]="disabledControls" name="remarks"
+                        [(ngModel)]="columnBO.remarks" maxLength="500"></textarea>
+                    <mat-hint align="end">{{columnBO.remarks?.length || 0}} / 500</mat-hint>
+                </mat-form-field>
+                <div align="right" *ngIf="btnType != 'Update'">
+                    <button type="button" mat-raised-button class="btnbase btn-blue" (click)='addColumnData()'>
+                        <i class="{{_global.icnAdd}}" aria-hidden="true"></i>&nbsp;Add</button>
+                    &nbsp;&nbsp;
+                </div>
+            </div>
+            <div *ngIf="colDataSource && colDataSource.data && colDataSource.data.length > 0">
+                <lims-grid (onActionClicked)="onActionClicked($event, 'SUB')" [headers]="colHeadersData"
+                    [dataSource]="colDataSource" [actions]="colActions">
+                </lims-grid>
+            </div>
+            <mat-grid-list cols="1" rowHeight="27px" *ngIf="manageOccuBO.occupancyReq == 'Y'">
+
+                <mat-grid-tile>
+                    <mat-label class="mr-1 pl-1 pb-1"> <b>Duration </b> : {{durationTime() || ' N / A '}}</mat-label>
+                </mat-grid-tile>
+
+            </mat-grid-list>
+
+            <mat-form-field appearance="outline" class="mt-1 full-width">
+                <mat-label>Remarks</mat-label>
+                <textarea matInput placeholder="Remarks" [disabled]="disabledControls" name="remarks"
+                    [(ngModel)]="manageOccuBO.remarks" maxLength="500"></textarea>
+                <mat-hint align="end">{{manageOccuBO.remarks?.length || 0}} / 500</mat-hint>
+            </mat-form-field>
+
+            <div align="right" class="mt-2">
+                <button type="button" mat-raised-button class="btnbase btn-blue" (click)='manageOccu()' id="btnLoaders"
+                    btnLoader [isLoaderOn]="isLoaderStart">
+                    <i class="{{changeIcons()}}" aria-hidden="true"></i>&nbsp;{{btnType}}</button>
+                &nbsp;&nbsp;
+                <button type="button" mat-raised-button class="btnbase btn-blue" (click)='clear()'
+                    [disabled]="disabledControls">
+                    <i class="{{_global.icnClear}}" aria-hidden="true"></i>&nbsp;Clear</button>
+            </div>
+        </div>
+
+        <div *ngIf="mode == 'VIEW' || mode == 'UPD'" class="view-inv add-hr">
+            <ul>
+                <li class="w-100">
+                    <mat-label><span>Occupancy Required</span>
+                        <span>{{manageOccuBO.occupancyReq == 'Y' ? 'Yes' : manageOccuBO.occupancyReq == 'N' ? 'No' :'N /
+                            A'}}</span>
+                    </mat-label>
+                </li>
+                <li *ngIf="manageOccuBO.occupancyReq != 'Y'" class="w-100 no-border">
+                    <mat-label><span>Remarks</span>
+                        <span>{{manageOccuBO.remarks || 'N / A'}}</span>
+                    </mat-label>
+                </li>
+            </ul>
+        </div>
+
+        <div *ngIf="manageOccuBO.occupancyReq == 'Y'" class="qc_table-inocc  mt-3">
+            <lims-grid (onActionClicked)="onActionClicked($event, 'MAIN')" [headers]="headersData"
+                [dataSource]="dataSource" [actions]="actions" [extraColumns]="extraColumns"
+                [removeAction]="removeActions" [isSolventGrid]="'true'">
+            </lims-grid>
+        </div>
+
+
+    </div>
+
+</form>

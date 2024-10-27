@@ -1,0 +1,225 @@
+<page-head [pageTitle]="pageTitle" viewBack="true" [backUrl]="backUrl" [status]="status" [refNo]="refNo"
+    [encEntityActID]="encIndicatorID" [viewHistoryVisible]="viewHistoryVisible" [viewHistory]="viewHistory"
+    [entityCode]="entityCode" showRpts="true" [encRptEntActID]="encIndicatorID"></page-head>
+
+<mat-card class="mat-card-c div-content mb-4 mt-1rem qc_mobp-main-tab">
+    <mat-card-content>
+        <div align="right" class="pos-r-btn pr-2">
+            <button type="button" mat-raised-button class="btnbase-confirm" *ngIf="appBO.canApprove && encIndicatorID"
+                (click)="confirm()">
+                <i class="{{_global.icnConfirm}}" aria-hidden="true"></i>&nbsp;&nbsp;Confirm</button>
+        </div>
+
+        <div class="qc_heading_spce pt-5">
+            <mat-card class="mat-card-heading">
+                <mat-card-content>
+                    <h4 class="cardtitle">Initiation Details</h4>
+                    <div class="pl-1 pr-1 mt-2">
+
+
+                        <mat-grid-list cols="2" rowHeight="68px">
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label> Solution Type</mat-label>
+                                    <mat-select placeholder="Type" [disabled]="disable || disableAll"
+                                        [(ngModel)]="subCategory" (ngModelChange)="changeIndicatorType()">
+                                        <mat-option *ngFor="let typ of getCatItemList('INDICATOR_TYPE')" [value]="typ.catItemID">{{typ.catItem}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <div class="full-width">
+                                    <div class="mat-lkp">
+                                        <lims-lookup [info]="solutionInfo" #solution></lims-lookup>
+                                    </div>
+                                    <!-- <div class="mat">
+                            <button type="button" mat-raised-button class="btnbase btn-green" matTooltip="Add Material"
+                                (click)="addMaterial()" [disabled]="buttonType == 'Update'">
+                                <i class="{{_global.icnAdd}}" aria-hidden="true"></i>
+                            </button>
+                        </div> -->
+                                </div>
+                            </mat-grid-tile>
+                        </mat-grid-list>
+
+                        <div align="right" class="pb-2 mt-2">
+
+                            <button type="button" mat-raised-button class="btnbase btn-blue"
+                                (click)="savePreparation('REQ')" [disabled]="btnDisabledReq  || disableAll"
+                                id="initDtlsBtnLoader" btnLoader [isLoaderOn]="isLoaderStart">
+                                <i class="{{_global.icnSave}}" *ngIf="buttonType=='Save'" aria-hidden="true"></i>
+                                <i class="{{_global.icnUpdate}}" *ngIf="buttonType=='Update'"
+                                    aria-hidden="true"></i>&nbsp;{{buttonType}}</button>
+                            <button type="button" mat-raised-button class="btnbase btn-blue"
+                                [disabled]="buttonType == 'Update'  || disableAll" (click)="clear('REQ')">
+                                <i class="{{_global.icnCancel}}" aria-hidden="true"></i>&nbsp;Clear</button>
+                        </div>
+
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+        <div class="qc_heading_spce" *ngIf="buttonType == 'Update'">
+            <mat-card class="mat-card-heading">
+                <mat-card-content>
+                    <h4 class="cardtitle"> Details of Lab Chemicals</h4>
+                    <div class="px-5">
+
+
+
+                        <div class="py-m-0">
+                            <div class="mt-2 pl-1 pb-2 pr-1 qc_mobp-mstable">
+
+                                <mng-solv [encEntActID]="encIndicatorID"
+                                    [pageAction]="appBO.operationType == 'VIEW'?'VIEW':'EDIT'"
+                                    [entitySourceCode]="'INDICATOR'" [initTime]="appBO.initTime"
+                                    [sourceType]="sourceType" [dataSource]="dataSource"
+                                    (updateData)="updateInitTime($event)" [requestCode]="appBO.referenceNumber">
+                                </mng-solv>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+
+        <div class="qc_heading_spce mt-5" *ngIf="buttonType == 'Update'">
+            <mat-card class="mat-card-heading">
+                <mat-card-content>
+                    <h4 class="cardtitle">Preparation / Output Details</h4>
+                    <div class="pl-1 pr-1 mt-2">
+                        <mat-grid-list cols="2" rowHeight="68px" class="mt-1">
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width ">
+                                    <mat-label>Primary Standard Drying temperature</mat-label>
+                                    <input type="text" [disabled]="buttonTypeOutput == 'Update' || disableAll" matInput
+                                        [(ngModel)]="dryingTemp" maxlength="50">
+                                    <mat-hint align="end">{{dryingTemp?.length || 0}} / 50</mat-hint>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Drying Duration</mat-label>
+                                    <input type="text" [disabled]="buttonTypeOutput == 'Update' || disableAll" matInput
+                                        [(ngModel)]="dryingDuration" maxlength="50">
+                                    <mat-hint align="end">{{dryingDuration?.length || 0}} / 50
+                                    </mat-hint>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label> Cooling Duration</mat-label>
+                                    <input type="text" [disabled]="buttonTypeOutput == 'Update' || disableAll" matInput
+                                        [(ngModel)]="coolingDuration" maxlength="50">
+                                    <mat-hint align="end">{{coolingDuration?.length || 0}} / 50
+                                    </mat-hint>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                        </mat-grid-list>
+
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Brief Description Of Preparation</mat-label>
+                            <textarea matInput rows="4" [(ngModel)]="briefDescription" name="breafDescription"
+                                maxlength="5000" [disabled]="disabledFields() || disableAll"></textarea>
+                            <mat-hint align="end">{{briefDescription?.length || 0}} / 5000</mat-hint>
+                        </mat-form-field>
+                        <mat-grid-list cols="2" rowHeight="68px">
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width" rs232
+                                [mngObj]="prepareRs232('Solution PH', 'INDICATOR_PRE_PH','INDICATOR_PRE_PH')"
+                                (emitValue)="getRS232Values($event)" [pageAction]='buttonTypeOutput'>
+                                    <mat-label>Solution PH</mat-label>
+                                    <input type="text" matInput placeholder="Solution PH" [(ngModel)]="solutionPH"
+                                        max="10" (keypress)="allowdecimal($event)"
+                                        [disabled]="disabledFields() || disableAll">
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width" rs232
+                                [mngObj]="prepareRs232('Weight','INDICATOR_PRE_WEIGHT', 'INDICATOR_PRE_WEIGHT')"
+                                (emitValue)="getRS232Values($event)" [pageAction]='buttonTypeOutput'>
+                                    <mat-label>Weight</mat-label>
+                                    <input type="text" matInput placeholder="Weight" [(ngModel)]="weight" maxlength="10"
+                                        [disabled]="disabledFields() || disableAll">
+                                </mat-form-field>
+                            </mat-grid-tile>
+                        </mat-grid-list>
+
+                        <mat-grid-list cols="2" rowHeight="68px">
+                            <mat-grid-tile colspan="2">
+                                <mat-form-field appearance="outline" class="full-width searchLookUpTxt">
+                                    <mat-label>Volume Prepared</mat-label>
+                                    <input type="text" matInput [disabled]="disabledFields()  || disableAll"
+                                        [(ngModel)]="volPrepared" name="volumePrepared" onpaste="return false"
+                                        (keypress)="allowdecimal($event)">
+                                    <span>{{uom}}</span>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Validity Period</mat-label>
+                                    <mat-select placeholder="Validity Period" [(ngModel)]="validationPeriodID"
+                                        [disabled]="disabledFields()  || disableAll"
+                                        (ngModelChange)="getValidityDate(validationPeriodID)">
+                                        <mat-option *ngFor="let item of validityPeriodList" [value]="item.id">
+                                            {{item.name}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Valid Up to</mat-label>
+                                    <input type="text" matInput [(ngModel)]="useBefore" name="useBefore" maxlength="25"
+                                        [disabled]="true">
+                                    <!-- <mat-hint align="end">{{useBefore?.length || 0}} / 25</mat-hint> -->
+                                </mat-form-field>
+                            </mat-grid-tile>
+                        </mat-grid-list>
+
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Other Information</mat-label>
+                            <textarea matInput placeholder="Other Information" [(ngModel)]="otherInfo"
+                                [disabled]="buttonTypeOutput == 'Update'  || disableAll" maxlength="1000"></textarea>
+                            <mat-hint align="end">{{otherInfo?.length || 0}} / 1000</mat-hint>
+                        </mat-form-field>
+
+                        <div align="right" class="pb-2 mt-2">
+                            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="Uploadfiles()">
+                                <i class="{{_global.icnViewFiles}}" *ngIf="btnUpload != 'Upload'"
+                                    aria-hidden="true"></i>
+                                <i class="{{_global.icnUpload}}" *ngIf="btnUpload == 'Upload'"
+                                    aria-hidden="true"></i>&nbsp;{{btnUpload}}</button>
+                            <button type="button" mat-raised-button class="btnbase btn-blue"
+                                [disabled]="buttonTypeOutput == 'Update' || disableAll" (click)="masterData()">
+                                <i class="{{_global.icnMaster}}" aria-hidden="true"></i>&nbsp;Master Data</button>
+                            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="addOccupancy()">
+                                <i class="{{_global.icnAdd}}" aria-hidden="true"
+                                    *ngIf="buttonTypeOutput == 'Save' "></i>
+                                <i class="{{_global.icnView}}" aria-hidden="true"
+                                    *ngIf="buttonTypeOutput == 'Update'"></i>
+                                &nbsp;&nbsp;Occupancy</button>
+                            <button type="button" mat-raised-button class="btnbase btn-blue"
+                                (click)="savePreparation('OUT')" [disabled]="disableAll"
+                                id="outBtnLoader" btnLoader [isLoaderOn]="isLoaderStartIcn">
+                                <i class="{{_global.icnSave}}" *ngIf="buttonTypeOutput == 'Save'"
+                                    aria-hidden="true"></i>
+                                <i class="{{_global.icnUpdate}}" *ngIf="buttonTypeOutput == 'Update'"
+                                    aria-hidden="true"></i>&nbsp;{{buttonTypeOutput}}</button>
+                            <button type="button" mat-raised-button class="btnbase btn-blue"
+                                [disabled]="buttonTypeOutput == 'Update' || disableAll" (click)="clear('OUT')">
+                                <i class="{{_global.icnCancel}}" aria-hidden="true"></i>&nbsp;Clear</button>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+    </mat-card-content>
+</mat-card>

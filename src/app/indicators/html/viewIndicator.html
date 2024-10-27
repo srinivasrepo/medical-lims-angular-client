@@ -1,0 +1,170 @@
+<page-head [pageTitle]="pageTitle" viewBack="true" [backUrl]="backUrl" [viewHistoryVisible]="true" [encEntityActID]="encIndicatorID"
+    [viewHistory]="viewHistory" [status]="status" [refNo]="refNo" [entityCode]="entityCode" [encRptEntActID]="encIndicatorID" showRpts="true"></page-head>
+
+<mat-card class="mat-card-c div-content mb-4 mt-5 qc_mobp-main-tab"> 
+    <mat-card-content>
+        <div class="qc_heading_spce">
+        <mat-card class="mat-card-heading"> 
+        <mat-card-content>
+            <h4 class="cardtitle"> Initiation Details</h4>
+   
+           
+            <div class="view-inv">
+                <ul>
+                    <li class="w-100">
+                        <mat-label>
+                            <span>Solution Type</span>
+                            <span>{{indicatorInfo.indicatorType}}</span>
+                        </mat-label>
+                    </li>
+                    <li class="w-100 no-border">
+                        <mat-label>
+                            <span>Name of the Solution</span>
+                            <span>{{indicatorInfo.materialName}}</span>
+                        </mat-label>
+                    </li>
+                </ul>
+            </div>
+           
+       
+       
+    </mat-card-content>
+</mat-card>
+</div>
+<div class="qc_heading_spce">
+    <mat-card class="mat-card-heading"> 
+    <mat-card-content>
+        <h4 class="cardtitle"> Details of Lab Chemicals</h4>
+<div class="px-5">
+    <div class="py-m-0">
+        <div class="mt-2 pb-2 pl-1 pr-1 qc_mobp-mstable">
+            
+            <mng-solv [pageAction]="'VIEW'" [encEntActID]="encIndicatorID" [sourceType]="sourceType"
+                            [entitySourceCode]="entityCode" [dataSource]="dataSource">
+                        </mng-solv>
+        </div>
+    </div>
+
+</div>
+</mat-card-content>
+</mat-card>
+</div>
+
+
+<div class="qc_heading_spce">
+    <mat-card class="mat-card-heading"> 
+    <mat-card-content>
+        <h4 class="cardtitle">Preparation / Output Details</h4>
+
+            
+    
+            <div class="view-inv">
+                <ul>
+                    <li>
+                        <mat-label>
+                            <span>Primary Standard Drying temperature</span>
+                            <span>{{indicatorInfo.dryingTemp || 'N / A'}}</span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label>
+                            <span>Drying Duration</span>
+                            <span>{{indicatorInfo.dryingDuration || 'N / A'}}</span>
+                        </mat-label>
+                    </li>
+                    <li >
+                        <mat-label>
+                            <span>Cooling Duration</span>
+                            <span>{{indicatorInfo.coolingDuration || 'N / A'}}</span>
+                        </mat-label>
+                    </li>
+                     
+                    <li class="w-100">
+                        <mat-label>
+                            <span>Brief Description Of Preparation</span>
+                            <span>{{indicatorInfo.breafDescription || 'N / A'}}</span>
+                        </mat-label>
+                    </li>
+                    
+                    <li>
+                        <mat-label>
+                            <span>Solution PH</span>
+                            <span>{{indicatorInfo.solutionPH || 'N / A'}}</span>
+                        </mat-label>
+                    </li>
+                    
+                    <li>
+                        <mat-label>
+                            <span>Weight</span>
+                            <span>{{indicatorInfo.weight || 'N / A'}}</span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label>
+                            <span>Volume Prepared</span>
+                            <span>{{indicatorInfo.volumePrepared == null ? 'N / A' : indicatorInfo.volumePrepared + ' ' + indicatorInfo.uom}}</span>
+                        </mat-label>
+                    </li>
+                    <li>
+                        <mat-label>
+                            <span>Validity Period</span>
+                            <span>{{indicatorInfo.validityPeriod == null ? 'N / A' : indicatorInfo.validityPeriod}}</span>
+                        </mat-label>
+                    </li>
+    
+                    <li>
+                        <mat-label>
+                            <span>Valid Up to</span>
+                            <span>{{useBefore || 'N / A'}}</span>
+                        </mat-label>
+                    </li>        
+                    <li class="w-100">
+                        <mat-label>
+                            <span>Other Information</span>
+                            <span>{{indicatorInfo.otherInfo || 'N / A'}}</span>
+                        </mat-label>
+                    </li>
+                  
+                    
+                    <div *ngIf="indicatorInfo.discardedBy">
+                        
+                        <li>
+                            <mat-label>
+                                <span>Discarded By</span>
+                                <span>{{indicatorInfo.discardedBy}}</span>
+                            </mat-label>
+                        </li>
+                        <li>
+                            <mat-label>
+                                <span>Discarded On</span>
+                                <span>{{indicatorInfo.discardedOn | date : 'dd/MMM/yyyy' }}</span>
+                            </mat-label>
+                        </li>
+                        <li class="w-100">
+                            <mat-label>
+                                <span>Comment</span>
+                                <span>{{indicatorInfo.comment}}</span>
+                            </mat-label>
+                        </li>
+                    </div>
+                </ul>
+               
+            </div>
+        
+        <div align="right" class="mt-2 pb-2 pr-1">
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="viewOccupancy()">
+                <i class="{{_global.icnView}}" aria-hidden="true"></i>
+                &nbsp;&nbsp;Occupancy</button>
+                <button type="button" mat-raised-button class="btnbase btn-blue" (click)="Uploadfiles('IND_REQ')">
+                    <i class="{{_global.icnViewFiles}}" aria-hidden="true"></i>&nbsp;View Documents
+                </button>
+               
+        </div>
+
+        </mat-card-content>
+        </mat-card>
+        </div>
+
+    </mat-card-content>
+</mat-card>
+

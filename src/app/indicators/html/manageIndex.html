@@ -1,0 +1,60 @@
+<div class="qc_box-n">
+    <div class="matcard-custom-search search-bg">
+        <page-head [pageTitle]="pageTitle" viewBack="true" [backUrl]="backUrl"></page-head>
+        <div class="search-fields">
+            <mat-grid-list cols="2" rowHeight="68px" gutterSize="30px">
+                <mat-grid-tile>
+                    <div class="mat-lkp-overide-Width px-in-0">
+                        <lims-lookup [info]="materialInfo" #material></lims-lookup>
+                    </div>
+                    <div class="mat-lkp-overide-Width-btn" align="right">
+                        <button type="button" mat-raised-button class="btnbase btn-blue mr-0"
+                            matTooltip="Add New Solution" [disabled]="buttonType == 'Update'" (click)="addMaterial()">
+                            <i class="{{_global.icnAdd}}" aria-hidden="true"></i>&nbsp;Add New Solution
+                        </button>
+                    </div>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <mat-form-field appearance="outline" class="full-width pl-0 pr-0">
+                        <mat-label> Ref. Number</mat-label>
+                        <input matInput [(ngModel)]="stpRefNumber" placeholder="Ref. Number" name="STPRefNumber"
+                            maxlength="25">
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <mat-form-field appearance="outline" class="full-width pl-0 pr-0">
+                        <mat-label> Status</mat-label>
+                        <mat-select [(ngModel)]="status" placeholder="Status">
+                            <mat-option value="ACT">Active</mat-option>
+                            <mat-option value="OBS">Obsoleted</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-grid-tile>
+            </mat-grid-list>
+        </div>
+
+        <div align="right" class="mt-1">
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="getVolSolIndex('SEARCH')">
+                <i class="{{_global.icnSearch}}" aria-hidden="true"></i>&nbsp;&nbsp;Search</button>
+
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="getVolSolIndex('SEARCHALL')">
+                <i class="{{_global.icnSearchAll}}" aria-hidden="true"></i>&nbsp;&nbsp;Search All</button>
+
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="addIndex()" id="addIdxbtnLoader"
+                btnLoader [isLoaderOn]="isLoaderOn">
+                <i class="{{_global.icnAdd}}" aria-hidden="true"></i>&nbsp;&nbsp;{{buttonType}}</button>
+        </div>
+    </div>
+</div>
+
+<div class="mt-5 mb-5">
+    <mat-card class="matcard-custom pxy-2 qc_table-Analysis">
+        <mat-card-content>
+            <lims-grid (onActionClicked)="onActionClicked($event)" [headers]="headerData" [dataSource]="dataSource"
+                [actions]="action" [removeAction]="removeActions"></lims-grid>
+            <div align="right" class="mt-2">
+                <mat-label>Total Records : {{totalRecords}}</mat-label>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

@@ -1,0 +1,52 @@
+<page-head [pageTitle]="pageTitle" [backUrl]="backUrl" viewBack="true"></page-head>
+<mat-card class="mat-card-c div-content mb-4 mt-1rem qc_mobp-main-tab">
+    <mat-card-content>
+        <div class="qc_heading_spce">
+            <mat-card class="mat-card-heading">
+                <mat-card-content>
+                    <h4 class="cardtitle">Manage Group Technique</h4>
+                    <div class="pl-2 pr-2 mt-2" [ngClass]="{'hide' : btnText == 'Change'}">
+                        <mat-grid-list cols="1" rowHeight="68px" class="mt-3">
+                            <mat-grid-tile>
+                                <div class="full-width" >
+                                    <lims-lookup [info]="specificationsInfo" #specifications (onSelect)="getNewSpec($event)">
+                                    </lims-lookup>
+                                </div>
+                                </mat-grid-tile>
+                            </mat-grid-list>
+                    </div>
+                    <div class="view-inv" [ngClass]="{'hide' : btnText == 'Go'}">
+                        <ul>
+                            <li class="w-100">
+                                <mat-label>
+                                    <span>Specification </span>
+                                    <span> {{specificationName || 'N / A'}}</span>
+                                </mat-label>
+                            </li>
+                        </ul>
+                    </div>
+                    <div align="right" class="mt-1 pb-2 pr-2">
+                        <button mat-raised-button class="btnbase btn-blue" (click)="goGroupTest()"><i
+                                class="fas fa-chevron-circle-right"></i>&nbsp;{{btnText}}</button>
+                    </div>
+
+                        
+        <div class="mt-4 pl-2 pr-2 view-calib-grid">
+            <app-calib-grid [columns]="calibrationHeadersData" [dataSource]="calibrationDatasource"
+                [actionPage]="'MANAGE_GP_TECH'">
+            </app-calib-grid>
+        </div>
+        <div align="right" class="mt-2 pb-2 pr-1"
+            *ngIf="calibrationDatasource && calibrationDatasource.data && calibrationDatasource.data.length > 0">
+            <button type="button" mat-raised-button class="btnbase btn-blue " (click)="manageGroupTechnique()">
+                <i class="{{_global.icnAdd}}"></i> &nbsp;Manage Group Technique</button>&nbsp;
+        </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+
+
+    
+    </mat-card-content>
+</mat-card>

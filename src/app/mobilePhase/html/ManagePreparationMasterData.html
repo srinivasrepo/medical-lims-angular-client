@@ -1,0 +1,25 @@
+<div class="new-popupTitle" mat-dialog-title>
+    <h1 >{{pageTitle}}</h1>
+    <div class="popup-close">
+        <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+    </div>
+</div>
+
+<div class="mt-3 mb-3 pl-3 pr-3  modal_body" mat-dialog-content>
+
+    <div *ngFor="let phse of phasePrepation">
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{phse.preparationTextType}}</mat-label>
+            <textarea matInput name="{{phse.preparationTextType}}" cols="30" rows="5"
+                [disabled]="!isVisBtnDisable || buttonType=='Update'" maxlength="8000"
+                [(ngModel)]="phse.preparationText"></textarea>
+        </mat-form-field>
+    </div>
+    <div align="right">
+        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="save()"
+         *ngIf="isVisBtnDisable" id="mngDatabtnLoader" btnLoader [isLoaderOn]="isLoaderStart">
+            <i class="{{_global.icnSave}}" *ngIf="buttonType=='Save'" aria-hidden="true"></i>
+            <i class="{{_global.icnUpdate}}" *ngIf="buttonType=='Update'"
+                aria-hidden="true"></i>&nbsp;{{buttonType}}</button>
+    </div>
+</div>

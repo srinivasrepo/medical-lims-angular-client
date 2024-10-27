@@ -1,0 +1,60 @@
+<div class="qc_heading_spce">
+    <mat-card class="mat-card-heading mat-card">
+        <mat-card-content>
+            <div class="cardtitle cust-add-field">
+                <h4> Custom Fields</h4>
+                <i [ngClass]="{'hide': isViewPage ? isViewPage : buttonType == 'Update' }" class="far fa-plus-square"
+                    aria-hidden="true" matTooltip="Add Custom Field" btnAddNewField [obj]="obj"
+                    (emitValues)="getRS232IntegrationOther()"></i>
+            </div>
+            <div class="pl-1 pr-1 mt-2 pb-2" [ngClass]="{'hide': isViewPage }">
+
+                <mat-form-field *ngFor="let item of otherFieldsList;let i = index;" appearance="outline" class="w-50"
+                    rs232 [mngObj]="prepareRs232(item.keyTitle, item, 'other' + i)" [pageAction]="buttonType"
+                    (emitValue)="getRS232Values($event)" [className]="'rs232Inte_icon'">
+                    <mat-label>{{item.keyTitle}}</mat-label>
+                    <input matInput (keypress)="allowDecimal($event)"
+                        [disabled]="getRS232IntegrationMode() || buttonType=='Update'" name="{{item.keyTitle}}"
+                        [(ngModel)]="item.keyValue">
+                </mat-form-field>
+
+                <div align="end" [ngClass]="{'hide': otherFieldsList.length == 0 }">
+
+                    <!-- <button type="button" mat-raised-button class="btnbase btn-blue" (click)="openOccupancy()">
+                        <i class="{{icnThermometer}}" aria-hidden="true"></i>&nbsp; Occupancy
+                    </button> -->
+
+                    <button type="button" mat-raised-button class="btnbase btn-blue" (click)="saveOtherData()"
+                        id="otherNewFields" btnLoader [isLoaderOn]="isLoaderStart">
+                        <i class="{{icnSave}}" *ngIf="buttonType=='Save'" aria-hidden="true"></i>
+                        <i class="{{icnUpdate}}" *ngIf="buttonType=='Update'"
+                            aria-hidden="true"></i>&nbsp;{{buttonType}}</button>
+                </div>
+
+            </div>
+            <div class="view-inv pb-2" [ngClass]="{'hide': !isViewPage }">
+                <ul>
+
+                    <li *ngFor="let phse of otherFieldsList">
+                        <mat-label>
+                            <span>{{phse.keyTitle}}</span>
+                            <span>{{formatValueString(phse.keyValue)}}</span>
+                        </mat-label>
+                    </li>
+
+                </ul>
+
+                <!-- <div align="end" [ngClass]="{'hide': otherFieldsList.length == 0 }">
+
+                    <button type="button" mat-raised-button class="btnbase btn-blue" (click)="openOccupancy()">
+                        <i class="{{icnThermometer}}" aria-hidden="true"></i>&nbsp; Occupancy
+                    </button>
+                 
+                </div> -->
+
+            </div>
+
+        </mat-card-content>
+    </mat-card>
+
+</div>

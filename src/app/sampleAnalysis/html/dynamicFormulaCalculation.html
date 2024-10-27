@@ -1,0 +1,111 @@
+<div class="new-popupTitle" mat-dialog-title>
+    <h1> Dynamic Formula Execution</h1>
+    <div class="popup-close">
+        <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+    </div>
+</div>
+<div class=" mt-0 mb-3 pl-3 pr-3" mat-dialog-content>
+    <div>
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Dependent Formula</mat-label>
+            <mat-select placeholder="Dependent Formula" [(ngModel)]="slctDetailID" [disabled]="btnType == 'Change'">
+                <mat-option *ngFor="let item of formulaList" [value]="item.detailID">{{item.description}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <div align="center">
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="go()">{{btnType}}</button>
+        </div>
+    </div>
+    <div *ngIf="btnType == 'Change'&& dependentLst && dependentLst.length > 0">
+        <div class="dync-frml">
+            <ul>
+                <li *ngFor="let item of dependentLst">
+                    <span> {{item.inputDescription}}</span>
+                    <span> {{item.value}}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="addx-scroll mt-3">
+        <div class="qc_n-table">
+
+            <mat-table class="qcf_scroll" #table [dataSource]="impDatadataSource">
+
+                <ng-container *ngFor="let column of impHeaders" [matColumnDef]="column.columnDef"
+                    [sticky]="column.columnDef == 'dynImpName'">
+                    <mat-header-cell *matHeaderCellDef class="{{column.class}}">
+                        {{ column.header }}
+                    </mat-header-cell>
+
+                    <mat-cell *matCellDef="let row; let i = index;" class="{{column.class}}">
+                        <span
+                            *ngIf="column.columnDef != 'outputValue' && column.columnDef!= 'type' && !showInputFileld(column.columnDef, row, column.detailID)">
+                            {{formatString(column.cell(row), column.columnDef, row, column.detailID, 'LBL')}}
+                            <span *ngIf="column.columnDef == 'dynImpName'">
+                                <span class="formula-F2" [ngClass]="{'formula-assign' : row.formulaResultFlag && row.formulaResultFlag == 'F2'}"
+                                    *ngIf="row.type != 'SKIP' && testType == 'R'">
+                                    <i (click)="manageIsFinalFormula(row.detailID, 'F2', row)" style="color: #fff;">F2</i>
+                                </span>
+                                <span class="formula-F1" [ngClass]="{'formula-assign' : row.formulaResultFlag && row.formulaResultFlag == 'F1'}"
+                                    *ngIf="row.type != 'SKIP'">
+                                    <i (click)="manageIsFinalFormula(row.detailID, 'F1', row)" style="color: #fff;">F1</i>
+                                </span>
+                            </span>
+                        </span>
+                        <mat-form-field appearance="outline"
+                            *ngIf=" column.columnDef != 'outputValue' && column.columnDef!= 'type' && showInputFileld(column.columnDef, row, column.detailID)"
+                            class="full-width pl-0 pr-0">
+                            <input matInput placeholder="{{column.header}}" (keypress)="allowNumber($event)"
+                                [ngModel]="formatString(column.cell(row), column.columnDef, row, column.detailID, 'TXT')"
+                                (blur)="addValue(column.detailID, row.impurityValueID, $event.target.value)"
+                                [disabled]="btnSaveType == 'Update' || row.isDisable">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" *ngIf="column.columnDef == 'outputValue'"
+                            class="full-width pl-0 pr-0">
+                            <input matInput placeholder="Value" (keypress)="allowNumber($event)" [(ngModel)]="row.value"
+                                (blur)="addOutputValue(row)" [disabled]="btnSaveType == 'Update' || row.isDisable">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" *ngIf="column.columnDef == 'type'">
+                            <mat-label>Type</mat-label>
+                            <mat-select placeholder="Type" [(ngModel)]="row.type" (ngModelChange)="typeChange(row)"
+                                [disabled]="btnSaveType == 'Update'">
+                                <mat-option value="SKIP">Skip</mat-option>
+                                <mat-option value="ND">Not Detected</mat-option>
+                                <mat-option value="DR">Disregard</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                    </mat-cell>
+
+                </ng-container>
+
+                <ng-container matColumnDef="actions" stickyEnd>
+                    <mat-header-cell style="flex-direction: row-reverse;" *matHeaderCellDef style="max-width: 150px;">
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row;"
+                        style="max-width: 150px; flex-direction: row-reverse; text-align: right;">
+                        <button type="button" mat-raised-button class="btnbase btn-blue" *ngIf="!row.isDisable"
+                            [disabled]="btnSaveType == 'Update'" (click)="exec(row)">
+                            Exec </button>
+                        <button type="button" mat-raised-button class="btnbase btn-blue" *ngIf="row.isDisable"
+                            [disabled]="btnSaveType == 'Update'" (click)="remove(row)">
+                            Remove </button>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="impHeaderDisplayCol; sticky: true">
+                </mat-header-row>
+                <mat-row *matRowDef="let row; columns: impHeaderDisplayCol;">
+                </mat-row>
+
+            </mat-table>
+        </div>
+        <div align="right" class="mt-2"
+            *ngIf="impDatadataSource && impDatadataSource.data && impDatadataSource.data.length > 0">
+            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="save()">
+                {{btnSaveType}} </button>
+        </div>
+    </div>
+</div>

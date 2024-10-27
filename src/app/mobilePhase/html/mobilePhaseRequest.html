@@ -1,0 +1,225 @@
+<page-head [pageTitle]="pageTitle" viewBack="true" [backUrl]="backUrl" [status]="status" [refNo]="refNo"
+    [entityCode]="entityCode" [encEntityActID]="encMobilePhaseID" [viewHistoryVisible]="viewHistoryVisible"
+    [viewHistory]="viewHistory" showRpts="true" [encRptEntActID]="encMobilePhaseID"></page-head>
+<mat-card class="mat-card-c div-content mb-4 mt-1rem qc_mobp-main-tab">
+    <mat-card-content>
+        <div align="right" class="pos-r-btn">
+            <button type="button" mat-raised-button class="btnbase-confirm" *ngIf="appBO.canApprove && encMobilePhaseID"
+                (click)="confirm()">
+                <i class="{{_global.icnConfirm}}" aria-hidden="true"></i>&nbsp;&nbsp;Confirm</button>
+        </div>
+        <mat-tab-group #mbTab mat-align-tabs="center" class="qc_mobp-main-tab mt-2">
+            <mat-tab label="Initiation">
+                <div class="qc_heading_spce">
+                    <mat-card class="mat-card-heading">
+                        <mat-card-content>
+                            <h4 class="cardtitle">Initiation Details</h4>
+                            <div class="pl-1 pr-1 mt-2">
+                                <mat-grid-list cols="2" rowHeight="68px">
+                                    <mat-grid-tile>
+                                        <mat-form-field appearance="outline" class="full-width">
+                                            <mat-label>Preparation Type</mat-label>
+                                            <mat-select placeholder="Preparation Type"
+                                                [disabled]="(!disable ? batchNumber : disable || disableAll)"
+                                                [(ngModel)]="preparationType" (ngModelChange)="onChange()">
+                                                <mat-option *ngFor="let typ of getCatItemList('PREPARATION_TYPE')"
+                                                    [value]="typ.catItemCode">
+                                                    {{typ.catItem}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile>
+                                        <mat-form-field appearance="outline" class="full-width">
+                                            <mat-label>Instrument Type</mat-label>
+                                            <mat-select placeholder="Type" [disabled]="encMobilePhaseID || disableAll"
+                                                [(ngModel)]="type">
+                                                <mat-option *ngFor="let typ of getCatItemList('MPHASE_PREP_TYPES')" [value]="typ.catItemCode">
+                                                    {{typ.catItem}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </mat-grid-tile>
+                                </mat-grid-list>
+
+                                <div [ngClass]="{'hide': preparationType != 'ANALYSIS'}">
+
+
+                                    <mat-grid-list cols="2" rowHeight="68px">
+                                        <mat-grid-tile>
+                                            <mat-form-field appearance="outline" class="full-width">
+                                                <mat-label> Material Category</mat-label>
+                                                <mat-select placeholder="Material Category"
+                                                    [disabled]="disable || disableAll" [(ngModel)]="materialCategory"
+                                                    (ngModelChange)="changeMatCat()">
+                                                    <mat-option *ngFor="let typ of catCodeList" [value]="typ.paramID">
+                                                        {{typ.paramName}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </mat-grid-tile>
+
+                                        <!-- <div *ngIf="isDisMatStageProd()">
+                                <stage-com [stageBO]="stageBO" (stageSelected)="stageSelected($event)" #stage></stage-com>
+                            </div> -->
+
+                                        <mat-grid-tile>
+                                            <div class="full-width">
+                                                <lims-lookup [info]="matInfo" #materials
+                                                    (onSelect)="onSelectedLookup($event)">
+                                                </lims-lookup>
+                                            </div>
+                                        </mat-grid-tile>
+                                    </mat-grid-list>
+
+                                    <mat-grid-list cols="1" rowHeight="68px">
+                                        <mat-grid-tile>
+                                            <div class="full-width empbox qc_fulltext">
+                                                <mat-label>Material / Product Name:
+                                                    {{prodStageDetails.product || materialName || 'N / A'}}
+                                                </mat-label>
+                                            </div>
+                                        </mat-grid-tile>
+                                    </mat-grid-list>
+
+
+                                    <mat-grid-list cols="2" rowHeight="68px">
+                                        <mat-grid-tile>
+
+                                            <div class="full-width empbox">
+                                                <mat-label>Stage: {{prodStageDetails.stage || 'N / A'}}</mat-label>
+                                            </div>
+                                        </mat-grid-tile>
+
+                                        <mat-grid-tile>
+                                            <div class="full-width">
+                                                <lims-lookup [info]="specificationsInfo" #specifications
+                                                    (onSelect)="testLkp()">
+                                                </lims-lookup>
+                                            </div>
+
+                                        </mat-grid-tile>
+                                    </mat-grid-list>
+                                </div>
+                                <div align="right">
+                                    <a href="javascript:" *ngIf="specifications.selectedId" (click)="getSpec()"
+                                        class="qc_badge  mb-2">Specification
+                                        Details</a>
+                                </div>
+                                <div [ngClass]="{'hide': preparationType != 'CALIBRATION'}">
+                                    <mat-grid-list cols="2" rowHeight="68px">
+
+                                        <mat-grid-tile>
+                                            <mat-form-field appearance="outline" class="full-width">
+                                                <mat-label>Manual No.</mat-label>
+                                                <input matInput placeholder="Manual" [(ngModel)]="manual"
+                                                    [disabled]="disable || disableAll" maxlength="100">
+                                                <mat-hint align="end">{{manual?.length || 0}}/100</mat-hint>
+                                            </mat-form-field>
+                                        </mat-grid-tile>
+                                        <!-- <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Parameter</mat-label>
+                                    <mat-select placeholder="Parameter" [(ngModel)]="parameter" [disabled]="disable">
+                                        <mat-option value="">Select Parameter</mat-option>
+                                        <mat-option *ngFor="let par of parameterList" [value]="par.parameterID">
+                                            {{par.parameterName}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </mat-grid-tile> -->
+                                        <!-- <mat-grid-tile>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Calibration Reference</mat-label>
+                                    <input matInput placeholder="Calibration Reference" [(ngModel)]="calibRef"
+                                        [disabled]="disable" maxlength="100">
+                                    <mat-hint align="end">{{calibRef?.length || 0}}/100</mat-hint>
+                                </mat-form-field>
+                            </mat-grid-tile> -->
+                                        <mat-grid-tile>
+                                            <div class="full-width">
+                                                <lims-lookup [info]="calibInfo" #calibaration
+                                                    (onSelect)="onSelectTestLkp($event)">
+                                                </lims-lookup>
+                                            </div>
+                                        </mat-grid-tile>
+                                    </mat-grid-list>
+                                    <div align="right">
+                                        <a href="javascript:" class="qc_badge mt-1 mb-1" *ngIf="calibaration.selectedId"
+                                            (click)="getSpec()">Calibration
+                                            Parameter Details</a>
+                                    </div>
+
+                                </div>
+                                <div
+                                    [ngClass]="{'hide': (preparationType != 'ANALYSIS' && preparationType != 'CALIBRATION')}">
+                                    <div class="full-width">
+                                        <lims-lookup [info]="testInfo" #specTests></lims-lookup>
+                                    </div>
+                                </div>
+
+
+                                <div align="right" class="pb-2 mt-2" >
+
+                                    <button type="button" mat-raised-button class="btnbase btn-blue"
+                                        (click)="Uploadfiles()">
+                                        <i class="{{_global.icnViewFiles}}" *ngIf="btnUpload != 'Upload'"
+                                            aria-hidden="true"></i>
+                                        <i class="{{_global.icnUpload}}" *ngIf="btnUpload == 'Upload'"
+                                            aria-hidden="true"></i>&nbsp;{{btnUpload}}</button>
+
+                                    <button type="button" mat-raised-button class="btnbase btn-blue"
+                                        (click)="savePreparation()" [disabled]="btnDisabledReq || disableAll"
+                                        *ngIf="fieldsValidate()" id="mpbtnLoaders" btnLoader [isLoaderOn]="isLoaderStart">
+                                        <i class="{{_global.icnSave}}" *ngIf="btnType=='Save'" aria-hidden="true"></i>
+                                        <i class="{{_global.icnUpdate}}" *ngIf="btnType=='Update'"
+                                            aria-hidden="true"></i>&nbsp;{{btnType}}</button>
+                                    <button type="button" mat-raised-button class="btnbase btn-blue"
+                                        [disabled]="btnType == 'Update' || disableAll || encMobilePhaseID" (click)="clear('PROD')"
+                                        *ngIf="fieldsValidate()">
+                                        <i class="{{_global.icnCancel}}" aria-hidden="true"></i>&nbsp;Clear</button>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+
+                <div class="qc_heading_spce" [ngStyle]="{'display': btnType == 'Update'? 'block': 'none'}">
+                    <mat-card class="mat-card-heading">
+                        <mat-card-content>
+                            <h4 class="cardtitle"> Details of Lab Chemicals</h4>
+                            <div class="px-5">
+
+
+
+                                <div class="py-m-0">
+                                    <div class="mt-2 pl-1 pb-2 pr-1 qc_mobp-mstable">
+
+                                        <mng-solv [encEntActID]="encMobilePhaseID" [entitySourceCode]="'MOBILE_PHASE'"
+                                            [sourceType]="sourceType" [initTime]="appBO.initTime"
+                                            [dataSource]="dataSource" (updateData)="updateInitTime($event)" #solvents
+                                            [pageAction]="appBO.operationType == 'VIEW'?'VIEW':'EDIT'"
+                                            [requestCode]="appBO.referenceNumber">
+                                        </mng-solv>
+
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </mat-tab>
+            <mat-tab label="Preparation">
+                <mob-pre [isVisBtnDisable]="fieldsValidate()" [encEntActID]="encMobilePhaseID"
+                    (updateData)="updateData($event)" [type]="type" #mobilePrep>
+                </mob-pre>
+            </mat-tab>
+            <mat-tab label="Output">
+                <mob-out [encEntActID]="encMobilePhaseID" (updateData)="updateData($event)" #mobileOut></mob-out>
+            </mat-tab>
+
+        </mat-tab-group>
+
+    </mat-card-content>
+</mat-card>

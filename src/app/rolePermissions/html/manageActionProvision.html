@@ -1,0 +1,35 @@
+<div class="new-popupTitle" mat-dialog-title>
+    <h1 class="colorwhite">{{pageTitle}}</h1>
+    <div class="popup-close">
+        <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+    </div>
+</div>
+
+<div class="mt-3 ml-3 mr-3 mb-3" mat-dialog-content>
+    <mat-grid-list class="mt-2" cols="2" rowHeight="68px">
+       
+        <mat-grid-tile>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Select Action Type</mat-label>
+                <mat-select name="operationType" name="actionCode"  [(ngModel)]="manageActObj.actionCode" placeholder="Action Code">
+                    <mat-option value="APP">Approve</mat-option>
+                    <mat-option value="REJ">Reject</mat-option>
+                    <mat-option value="CAN">Cancel</mat-option>
+                    <mat-option value="DISC">Discard</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-grid-tile>
+
+        <mat-grid-tile>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Action</mat-label>
+                <input matInput [(ngModel)]="manageActObj.action" maxlength="50">
+            </mat-form-field>
+        </mat-grid-tile>
+    </mat-grid-list>
+
+    <div align="right">
+        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="add()" [disabled]="disableBtn">
+            <i class="{{_global.icnAdd}}" aria-hidden="true"></i>&nbsp;&nbsp;Add</button>
+    </div>
+</div>

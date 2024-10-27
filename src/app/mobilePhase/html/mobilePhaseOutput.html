@@ -1,0 +1,134 @@
+<div class="qc_heading_spce">
+    <mat-card class="mat-card-heading"> 
+    <mat-card-content>
+        <h4 class="cardtitle">Mobile Phase Output</h4>
+<div class="mt-2 pl-1 pr-1">
+
+    <mat-grid-list cols="3" rowHeight="68px"
+        *ngIf="getPreparationUnEmptyList() && getPreparationUnEmptyList().length > 0">
+        <span *ngFor="let phse of getPreparationUnEmptyList()">
+
+            <!-- <mat-grid-tile>
+                <div class="full-width empbox">
+                    {{phse.preparationName}}
+                </div>
+
+            </mat-grid-tile> -->
+
+            <mat-grid-tile>
+                <mat-form-field appearance="outline" class="full-width searchLookUpTxt">
+                    <mat-label>  {{phse.preparationName}} Volume</mat-label>
+                    <input matInput name="{{phse.preparationName}} finalVol" (keypress)="allowDecimal($event)"
+                        [(ngModel)]="phse.prepartionVolum" [disabled]="disableFields() || disableAll">
+                    <span>{{uom}}</span>
+                </mat-form-field>
+            </mat-grid-tile>
+
+            <mat-grid-tile>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Validity Period</mat-label>
+                    <mat-select placeholder="Validity Period" [(ngModel)]="phse.validationPeriodID"
+                        [disabled]="disableFields() || disableAll"
+                        (ngModelChange)="getValidityDate(phse.validationPeriodID, phse.preparationID)"
+                        name="{{phse.validationPeriodID}} period">
+                        <mat-option *ngFor="let item of validityPeriodList" [value]="item.id">{{item.name}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-grid-tile>
+
+            <mat-grid-tile>
+                <mat-form-field appearance="outline" class="full-width">
+                    <!-- Use Before Date : {{phse.useBeforeDate | datePipe:'datetime'}} -->
+                    <mat-label>Valid Up to</mat-label>
+                    <input matInput name="{{phse.preparationName}} useBeforeDate" [(ngModel)]="phse.useBeforeDate"
+                        [disabled]="true">
+                </mat-form-field>
+            </mat-grid-tile>
+
+        </span>
+
+    </mat-grid-list>
+
+
+
+    <mat-grid-list cols="2" rowHeight="68px" *ngIf="typeCode != purposeType">
+        <mat-grid-tile>
+            <mat-form-field appearance="outline" class="full-width searchLookUpTxt">
+                <mat-label>Final Volume</mat-label>
+                <input matInput name="finalVol" (keypress)="allowDecimal($event)" [(ngModel)]="finalVolume"
+                    [disabled]="disableFields() || disableAll">
+                <span>{{uom}}</span>
+            </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile>
+            <div class="full-width empbox">
+                Valid Up to: {{formatValueString(useBeforeDateTime  | datePipe:'datetime')}}
+            </div>
+        </mat-grid-tile>
+
+    </mat-grid-list>
+
+
+    <!-- <div class="ml-2" *ngIf="typeCode != purposeType">
+
+        <span> Final Volume : {{formatValueString(finalVolume)}} <span *ngIf="finalVolume">{{uom}}</span></span>
+
+        <span class="ml-1"> Use Before Date : {{formatValueString(useBeforeDateTime  | datePipe:'datetime')}} </span>
+    </div> -->
+
+    <div>
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Remarks</mat-label>
+            <textarea matInput placeholder="Remarks" [(ngModel)]="otherInfo" [disabled]="disabledControls"
+                maxlength="1000"></textarea>
+            <mat-hint align="end">{{otherInfo?.length || 0}} / 1000</mat-hint>
+        </mat-form-field>
+    </div>
+
+    <!-- <mat-grid-list cols="3" rowHeight="70px">
+
+        <mat-grid-tile>
+            <mat-form-field appearance="outline" class="full-width searchLookUpTxt">
+                <mat-label>Final Volume</mat-label>
+                <input matInput name="finalVol" (keypress)="allowDecimal($event)" [(ngModel)]="finalVol"
+                    [disabled]="disabledControls">
+                <span>Liters.</span>
+            </mat-form-field>
+        </mat-grid-tile>
+
+        <mat-grid-tile>
+            <mat-form-field appearance="outline" class="full-width ">
+                <mat-label>Validity Period</mat-label>
+                <mat-select placeholder="Validity Period" [(ngModel)]="validityPeriod"
+                    [disabled]="disabledControls" (ngModelChange)="getValidityDate()">
+                    <mat-option value="">Select Validity Period</mat-option>
+                    <mat-option *ngFor="let item of validityPeriodList" [value]="item.id">{{item.name}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-grid-tile>
+
+
+        <mat-grid-tile>
+            <div class="full-width empbox">
+                Use Before Date : {{validityDate | datePipe:'datetime'}}
+            </div>
+        </mat-grid-tile>
+
+    </mat-grid-list> -->
+
+    <div align="right" class="mt-2 pb-2">
+        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="Uploadfiles()">
+            <i class="{{_global.icnViewFiles}}" *ngIf="btnUpload != 'Upload'"
+                aria-hidden="true"></i>
+            <i class="{{_global.icnUpload}}" *ngIf="btnUpload == 'Upload'"
+                aria-hidden="true"></i>&nbsp;{{btnUpload}}</button>
+        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="manageMPhaseOutput()"
+            *ngIf="isVisBtnDisable"  id="outputBtnLoader" btnLoader [isLoaderOn]="isLoaderStart">
+            <i class="{{_global.icnSave}}" *ngIf="buttonType == 'Save'" aria-hidden="true"></i>
+            <i class="{{_global.icnUpdate}}" *ngIf="buttonType == 'Update'" aria-hidden="true"></i>&nbsp;{{buttonType}}</button>
+    </div>
+
+</div>
+</mat-card-content>
+</mat-card>
+</div>

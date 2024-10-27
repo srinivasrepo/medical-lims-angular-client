@@ -1,0 +1,155 @@
+<page-head [pageTitle]="pageTitle" [status]="status" [viewBack]="'true'" [backUrl]="backUrl"></page-head>
+<mat-card class="matcard-nobg">
+    <mat-card-content>
+        <div class="matcard-custom-search pt-1 pb-3">
+
+            <div class="mt-2">
+                <div class="labelheading">
+                    <label for="condition" class="dark-heading">Module : {{appLevelDetails.condition}}</label>
+
+                    <div class="labelsticker">
+                        <label for="version">Version : {{appLevelDetails.version}}</label>
+                    </div>
+                </div>
+            </div>
+
+            <form [formGroup]="appLevelForm" class="textaligncenter">
+
+                <mat-grid-list cols="3" *ngIf="isDisplay" rowHeight="4:0.8" class="grid-control-list">
+                    <mat-grid-tile>
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Level</mat-label>
+                            <mat-select placeholder="Level" name="level" id="level" formControlName="appLevelID"
+                                (ngModelChange)="changeAppLevel()">
+                                <mat-option *ngFor="let app of appLevelList" [value]="app.id">{{app.id}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                        <!-- <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Status</mat-label>
+                            <mat-select name="Status" id="Status" formControlName="statusID">
+                                <mat-option *ngFor="let status of statusList" [value]="status.statusID">{{status.status}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field> -->
+
+                        <div class="full-width pr-1">
+                            <lims-lookup [info]="statusInfo" #lkpStatus></lims-lookup>
+                        </div>
+                        <div class="mb-2">
+                            <button type="button" mat-raised-button class="btnbase btn-blue" (click)="addStatus()">
+                                <i class="{{_global.icnAdd}}" matTooltip="Add Status" aria-hidden="true"></i></button>
+                        </div>
+
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>App Type</mat-label>
+                            <mat-select placeholder="App Type" name="apptype" id="apptype" formControlName="appType">
+                                <mat-option value="P">Parallel</mat-option>
+                                <mat-option value="S">Sequential</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-grid-tile>
+
+
+                    <mat-grid-tile>
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Operation Type</mat-label>
+                            <mat-select placeholder="Operation Type" name="operationType" id="operationType"
+                                formControlName="operationType">
+                                <mat-option value="MANAGE">Manage</mat-option>
+                                <mat-option value="VIEW">View</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-grid-tile>
+
+                    <mat-grid-tile>
+                        <div class="full-width pr-1">
+                            <lims-lookup [info]="componentInfo" #lkpComponent></lims-lookup>
+                        </div>
+
+                    </mat-grid-tile>
+
+                </mat-grid-list>
+
+                <div class="demo-grid-2 mdl-grid" *ngIf="isDisplay">
+
+                    <div class="mdl-cell mdl-cell--4-col textalign-left empbox">
+                        <label for="respectiveDept">Respective Dept :
+                            <mat-checkbox name="respectiveDept" color="primary" formControlName="respectiveDept">
+                            </mat-checkbox>
+                        </label>
+
+                        <label for="respectivePlant">Respective Plant :
+                            <mat-checkbox name="respectivePlant" color="primary" formControlName="respectivePlant">
+                            </mat-checkbox>
+                        </label>
+
+                    </div>
+
+                    <div class="mdl-cell mdl-cell--4-col textalign-left empbox">
+                        <label for="title">Actions :</label>
+                        <label *ngFor="let actio of actionsList">
+                            <mat-checkbox name="actions" [value]="actio.actionID" color="primary"
+                                *ngIf="!(appLevelForm.controls.appLevelID.value == 0 && actio.actionCode == 'Cancel') "
+                                (change)="onSelectcheckBox(actio.actionID,$event)" formControlName="action"
+                                [checked]="actio.isSelect">{{actio.actionCode}}
+                            </mat-checkbox>
+                        </label>
+                        <div align="right">
+                        <button type="button" mat-raised-button class="btnbase btn-blue"  (click)="addAction()">
+                            <i class="{{_global.icnAdd}}" aria-hidden="true" matTooltip="Add Action"></i></button></div>
+                    </div>
+
+                </div>
+
+                <div>
+                    <ul class="pl-2">
+                        <li *ngFor="let item of notes" class="textalign-left pt-1 pb-1">
+                            {{item.note}}
+                        </li>
+                    </ul>
+                </div>
+
+                <div align="right" *ngIf="isDisplay">
+
+                    <button type="button" mat-raised-button class="btnbase btn-blue" (click)="add()">
+                        <i class="{{_global.icnAdd}}" aria-hidden="true"></i>&nbsp;&nbsp;Add</button>
+                    <button type="button" mat-raised-button class="btnbase btn-blue" (click)="clear()">
+                        <i class="{{_global.icnCancel}}"></i>&nbsp;Clear</button>
+                </div>
+            </form>
+
+
+            <div class="mt-1">
+                <form>
+                    <div>
+                        <mat-card class="mat-card-c qc_table-roalp">
+                            <mat-card-content>
+                                <lims-grid (onActionClicked)="onActionClicked($event)" [headers]="headersData"
+                                    [dataSource]="dataSource" [actions]="actions"></lims-grid>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+
+                    <div align="right" class="mt-2">
+                        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="Confirm()"
+                            *ngIf="(dataSource && dataSource.data.length>0) && isDisplay"><i aria-hidden="true"
+                                class="{{_global.icnConfirm}}"></i>&nbsp;Confirm</button>
+
+                        <!-- <button type="button" mat-raised-button color="secondary" (click)="previousPage()" *ngIf="!isDisplay">Back</button>&nbsp;&nbsp; -->
+                        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="discard()"
+                            *ngIf="isDisplay"><i class="{{_global.icnCancel}}"></i>&nbsp;Discard</button>
+                        <br />
+                        <br />
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+    </mat-card-content>
+</mat-card>

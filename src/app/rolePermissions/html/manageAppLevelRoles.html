@@ -1,0 +1,253 @@
+<div *ngIf="data.type != 'AppLevelRoles'">
+    <form>
+        <div class="new-popupTitle" mat-dialog-title>
+            <h1> Manage Approval Level Roles</h1>
+            <div class="popup-close">
+                <i class="{{_global.icnCancel}}" aria-hidden="true" (click)="close()"></i>
+            </div>
+        </div>
+
+        <div class="mt-3 mb-3 ml-3 mr-3" mat-dialog-content>
+
+            <mat-accordion>
+                <mat-expansion-panel class="ml-2 mr-2" [expanded]="step === 0" (opened)="setStep(0)">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            Assign
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+
+                    <div class="mt-2 mb-2 approval-lookup modal-list">
+                        <div class="mt-3 popgridscroll border-role-per">
+                            <div class="roleCheck">
+                                <div class="checkAll">
+                                    <mat-checkbox name="selectAll" color="primary"
+                                        (change)="onSelectAllchkbox($event,'assign')" [(ngModel)]="ischekcedA">
+                                    </mat-checkbox>
+                                    <button type="submit" mat-raised-button class="ml-2 btnbase btn-blue btn-sm"
+                                        (click)="assignUnAssign('assign')">Assign</button>
+                                </div>
+                            </div>
+
+                            <ul>
+                                <li *ngFor="let appAssign of allRoles">
+                                    <p>
+                                        <mat-checkbox name="actions" color="primary" [value]="appAssign.rolE_ID"
+                                            [checked]="appAssign.isSelect" (change)="onSelectcheckBox($event,'assign')">
+                                            {{appAssign.rolE_NAME}}</mat-checkbox>
+                                    </p>
+                                </li>
+
+                            </ul>
+
+                        </div>
+                    </div>
+                </mat-expansion-panel>
+                <mat-expansion-panel class="ml-2 mr-2" [expanded]="step === 1" (opened)="setStep(1)">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            Un Assign
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+
+                    <div class="mt-2 mb-2 approval-lookup modal-list">
+                        <div class="mt-3 popgridscroll border-role-per">
+                            <div class="roleCheck">
+                                <div class="checkAll">
+                                    <mat-checkbox name="selectAll" color="primary"
+                                        (change)="onSelectAllchkbox($event,'unassign')" [(ngModel)]="ischekcedU">
+                                    </mat-checkbox>
+                                    <button type="submit" mat-raised-button class="ml-2 btnbase btn-blue btn-sm "
+                                        (click)="assignUnAssign('unassign')">Un Assign</button>
+                                </div>
+                            </div>
+
+                            <ul>
+                                <li *ngFor="let appAssign of assignedRoles">
+                                    <p>
+                                        <mat-checkbox name="actions" color="primary" [value]="appAssign.rolE_ID"
+                                            [checked]="appAssign.isSelect"
+                                            (change)="onSelectcheckBox($event,'unassign')">{{appAssign.rolE_NAME}}
+                                            &nbsp;&nbsp;&nbsp;
+                                        </mat-checkbox>
+                                    </p>
+                                </li>
+
+                            </ul>
+
+                        </div>
+                    </div>
+                </mat-expansion-panel>
+            </mat-accordion>
+        </div>
+
+    </form>
+</div>
+
+<div *ngIf="data.type == 'AppLevelRoles'">
+    <div class="new-popupTitle" mat-dialog-title>
+        <h1>Manage Approval Level Users</h1>
+        <div class="popup-close">
+            
+            <i class="material-icons" (click)="close()">
+                cancel
+            </i>
+
+        </div>
+    </div>
+
+    <div class="mt-3 mb-3 ml-3 mr-3" mat-dialog-content>
+        <mat-accordion>
+            <mat-expansion-panel class="ml-2 mr-2" [expanded]="step === 0" (opened)="setStep(0)">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Assign
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <div class="mt-2 mb-2 approval-lookup">
+                    <mat-grid-list cols="3" rowHeight="68px">
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label> Plant</mat-label>
+                                <mat-select [(ngModel)]="manageData.plantID" [disabled]="isDisabled" name="plantID"
+                                    (ngModelChange)="changePlant()">
+                                    <mat-option *ngFor="let plant of plantList" [value]="plant.plantID">
+                                        {{plant.plantName}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label> Dept</mat-label>
+                                <mat-select [(ngModel)]="manageData.deptID" [disabled]="isDisabled" name="deptID"
+                                    (ngModelChange)="getRoles()">
+                                    <mat-option *ngFor="let dept of deptByPlant" [value]="dept.deptID">{{dept.deptName}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label> Role</mat-label>
+                                <mat-select [(ngModel)]="manageData.roleID" [disabled]="isDisabled" name="roleID">
+                                    <mat-option *ngFor="let role of roleList" [value]="role.roleID">{{role.roleName}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                    </mat-grid-list>
+                    <div class="textalign-right mt-1">
+                        <button type="button" mat-raised-button class="btnbase btn-blue" *ngIf="typeBtn != 'USERS'"
+                            (click)="getUsers('ROLES')"><i class="fa fa-search" aria-hidden="true"></i>&nbsp;{{submitTypeRole}}</button>
+                        <button type="button" mat-raised-button class="btnbase btn-blue" *ngIf="typeBtn != 'ROLES'"
+                            (click)="getUsers('USERS')"><i class="fa fa-search" aria-hidden="true"></i>&nbsp;{{submitType}}</button>
+                        <button type="button" mat-raised-button class="btnbase btn-blue" (click)="close()">
+                            <i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;Close</button>&nbsp;
+                    </div>
+
+                    <div class="modal-list roleCheck unAssignUsers" *ngIf="assignArray.length > 0">
+                        <div class="checkAll">
+                            <mat-checkbox name="assignCheckAll" (change)="checkAllUsers($event, 'assign')"
+                                color="primary" [(ngModel)]="ischekcedA">Select All</mat-checkbox>&nbsp;&nbsp;
+                            <button type="button" mat-raised-button class="btnbase btn-blue "
+                                (click)="assignUsers('Assign')" id="assignbtnLoaders" btnLoader [isLoaderOn]="btnLoaderAssign">Assign</button>
+                        </div>
+
+                        <ul>
+                            <li *ngFor="let data of assignArray;let i = index;">
+                                <mat-checkbox name="data{{i}}" (change)="singleUserCheck($event, 'Assign')"
+                                    [value]="data.id" [(ngModel)]="data.isSelect" color="primary">{{data.name}}
+                                </mat-checkbox>
+                            </li>
+                        </ul>
+
+                        <!-- <div class="textalign-right mb-1">
+                            <button type="button" mat-raised-button class="btn-save" (click)="assignUsers('Assign')">Assign</button>&nbsp;&nbsp;
+                        </div> -->
+
+                    </div>
+                </div>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel class="ml-2 mr-2" [expanded]="step === 1" (opened)="setStep(1)">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Un Assign ( Users )
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <div class="modal-list roleCheck">
+
+                    <div *ngIf="plantDeptList.length > 0">
+                        <div class="mt-2 unAssignUsers" *ngFor="let parent of plantDeptList;let i = index">
+                            <div class="title">
+                                {{parent.plantName}} - {{parent.deptName}}
+                                <mat-checkbox class="deptCheckAll" name="deptCheckAll"
+                                    (change)="checkAllUsers($event, 'deptUnAssign', parent)"
+                                    [checked]="checkedDeptAll(parent, 'dept')" color="primary">Select All</mat-checkbox>
+                            </div>
+
+                            <ul>
+                                <li *ngFor="let child of getChildData(parent)">
+                                    <mat-checkbox name="usr{{i}}" (change)="singleUserCheck($event, 'UnAssign')"
+                                        [(ngModel)]="child.isSelect" color="primary">{{child.userName}}</mat-checkbox>
+                                </li>
+                            </ul>
+
+                        </div>
+
+                        <div class="textalign-right">
+                            <button type="button" mat-raised-button class="btnbase btn-blue mt-2 mr-0"
+                                (click)="assignUsers('UnAssign', 'USERS')" id="unassignUserbtnLoaders" btnLoader [isLoaderOn]="btnLoaderUsers">Un Assign</button>
+                        </div>
+
+                    </div>
+
+
+
+                </div>
+
+            </mat-expansion-panel>
+
+            <mat-expansion-panel class="ml-2 mr-2" [expanded]="step === 2" (opened)="setStep(2)">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Un Assign ( Roles )
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <div class="modal-list roleCheck">
+
+                    <div *ngIf="assignedDeptRoles.length > 0">
+                        <div class="mt-2 unAssignUsers" *ngFor="let dept of assignedDeptRoles;let i = index">
+                            <div class="title">
+                                {{dept.deptName}}
+                                <mat-checkbox class="deptCheckAll" name="roleDeptCheckAll"
+                                    (change)="checkAllRoles($event, dept)" [checked]="checkedRolesAll()"
+                                    color="primary">Select All</mat-checkbox>
+                            </div>
+
+                            <ul>
+                                <li *ngFor="let child of getChildRolesData(dept)">
+                                    <mat-checkbox name="deptRole{{i}}" (change)="singleUserCheck($event, 'UnAssign')"
+                                        [(ngModel)]="child.isSelect" color="primary">{{child.roleName}}</mat-checkbox>
+                                </li>
+                            </ul>
+
+                        </div>
+
+                        <div class="textalign-right">
+                            <button type="button" mat-raised-button class=" btnbase btn-blue mt-2 mr-0"
+                                (click)="assignUsers('UnAssign', 'ROLES')"  id="unassignRolebtnLoaders" btnLoader [isLoaderOn]="btnLoaderRoles"
+                                >Un Assign</button>
+                        </div>
+
+                    </div>
+
+                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </div>
+</div>
